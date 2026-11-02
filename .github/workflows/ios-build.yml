@@ -11,7 +11,8 @@ on:
         description: "macOS-Rechner (bei Engpass z. B. macos-15 oder macos-15-intel)"
         default: macos-26
   push:
-    branches: [main, "app/**"]
+    # Auf Arbeits-Branches nur auf Knopfdruck – jeder Push dort würde Mac-Minuten kosten.
+    branches: [main]
     paths: [ios/**, .github/workflows/ios-build.yml]
 
 jobs:
