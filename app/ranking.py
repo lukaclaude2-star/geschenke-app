@@ -70,6 +70,12 @@ def _gierig(pool: list[tuple[float, KatalogProdukt]], gewaehlt: list[KatalogProd
         gewaehlt.append(bester[1])
 
 
+def im_budget(preis: float, profil: Profil) -> bool:
+    if profil.budget_min is not None and preis < profil.budget_min:
+        return False
+    return profil.budget_max is None or preis <= profil.budget_max
+
+
 def waehle_karten(katalog: list[KatalogProdukt], profil: Profil, gesehen: set[str],
                   anzahl: int) -> tuple[list[KatalogProdukt], bool]:
     gut: list[tuple[float, KatalogProdukt]] = []
@@ -79,7 +85,7 @@ def waehle_karten(katalog: list[KatalogProdukt], profil: Profil, gesehen: set[st
             continue
         if p.id in gesehen or ist_ausgeschlossen(p, profil.ausschluesse):
             continue
-        if profil.budget_max is not None and p.preis > profil.budget_max:
+        if not im_budget(p.preis, profil):
             continue
         punkte = bewerte(p, profil)
         if punkte >= GUT_AB:

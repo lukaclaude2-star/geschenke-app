@@ -18,8 +18,8 @@ bei Amazon findet. Antworte nur mit JSON:
 {{"ideen": [{{"titel": "...", "emoji": "ein Emoji", "preis_von": Zahl, "preis_bis": Zahl,
             "suchbegriff": "2–4 Wörter für die Amazon-Suche", "themen": [...],
             "lebenslagen": [...], "farben": [...], "eigenschaften": [...]}}]}}
-Regeln: passend zu den Wünschen; NIE etwas, das einen Ausschluss trifft; preis_bis höchstens
-das Budget; keine Ideen aus der Liste "schon_gezeigt".
+Regeln: passend zu den Wünschen; NIE etwas, das einen Ausschluss trifft; Preisspanne innerhalb
+von budget_min bis budget_max (null = keine Grenze); keine Ideen aus der Liste "schon_gezeigt".
 themen nur aus: {", ".join(THEMEN)}
 lebenslagen nur aus: {", ".join(LEBENSLAGEN)}
 farben (Hauptfarben, falls festgelegt) nur aus: {", ".join(FARBEN)}
@@ -45,10 +45,24 @@ def _nur(werte, erlaubt) -> list[str]:
     return [w for w in werte if isinstance(w, str) and w in erlaubt]
 
 
+def spanne_im_budget(von: float | None, bis: float | None, profil: Profil) -> bool:
+    """Ideen haben nur eine Preisspanne: sie muss sich mit dem Budget überschneiden."""
+    if profil.budget_min is None and profil.budget_max is None:
+        return True
+    if von is None and bis is None:
+        return False
+    von = von if von is not None else bis
+    bis = bis if bis is not None else von
+    if profil.budget_max is not None and von > profil.budget_max:
+        return False
+    return profil.budget_min is None or bis >= profil.budget_min
+
+
 async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str]) -> list[Karte]:
     anfrage = {
         "wuensche": [{"tag": w.tag, "gewicht": w.gewicht} for w in profil.wuensche],
         "ausschluesse": [a.schluessel for a in profil.ausschluesse],
+        "budget_min": profil.budget_min,
         "budget_max": profil.budget_max,
         "anzahl": anzahl,
         "schon_gezeigt": sorted(i.removeprefix("idee:") for i in gesehen if i.startswith("idee:")),
@@ -77,7 +91,7 @@ async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str]) -> list[K
             continue
         themen = _nur(idee.get("themen"), THEMEN)
         preis_von, preis_bis = _zahl(idee.get("preis_von")), _zahl(idee.get("preis_bis"))
-        if profil.budget_max is not None and (preis_bis is None or preis_bis > profil.budget_max):
+        if not spanne_im_budget(preis_von, preis_bis, profil):
             continue
         pruefling = KatalogProdukt(
             id=karten_id, titel=f"{titel} {suchbegriff}", beschreibung="", preis=preis_bis or 0,

@@ -77,7 +77,13 @@ async def test_idee_mit_ausgeschlossenem_thema_wird_verworfen(ki):
 
 
 async def test_idee_ueber_budget_wird_verworfen(ki):
-    assert await ideen_karten(profil(budget_max=20), 5, set()) == []
+    # Idee kostet 15–25 €: keine Überschneidung mit „bis 10 €“ → raus
+    assert await ideen_karten(profil(budget_max=10), 5, set()) == []
+
+
+async def test_idee_mit_ueberschneidung_bleibt(ki):
+    # 15–25 € überschneidet sich mit „bis 20 €“ (Runde 2: Spanne muss sich überschneiden)
+    assert len(await ideen_karten(profil(budget_max=20), 5, set())) == 1
 
 
 async def test_idee_ohne_suchbegriff_wird_verworfen(ki):

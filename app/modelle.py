@@ -47,6 +47,7 @@ class Profil(BaseModel):
     zusammenfassung: str
     wuensche: list[Wunsch]
     ausschluesse: list[Ausschluss]
+    budget_min: float | None = None
     budget_max: float | None = None
 
 

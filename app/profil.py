@@ -29,10 +29,11 @@ Antworte nur mit JSON in dieser Form:
 {{"zusammenfassung": "<ein Satz über die Person>",
   "wuensche": [{{"tag": "<Wunsch-Tag>", "gewicht": <0.5 bis 1.5>}}],
   "ausschluesse": ["<art>:<wert>"],
+  "budget_min": <Untergrenze in Euro oder null>,
   "budget_max": <Obergrenze in Euro oder null>}}
 
 {REGELN}
-budget_max ist null, wenn das Budget egal ist oder nicht genannt wurde."""
+budget_min/budget_max sind null, wenn das Budget egal ist oder nicht genannt wurde."""
 
 SYSTEM_AENDERN = f"""Du änderst ein gespeichertes Personen-Profil einer Geschenke-App. Du bekommst
 das Profil und eine Anweisung. Gib NUR die Änderungen zurück, als JSON in dieser Form –
@@ -42,6 +43,7 @@ lass jeden Schlüssel weg, der sich nicht ändert:
   "entfernte_wuensche": ["<Wunsch-Tag>"],
   "neue_ausschluesse": ["<art>:<wert>"],
   "entfernte_ausschluesse": ["<art>:<wert>"],
+  "budget_min": <neue Untergrenze in Euro oder null für keine>,
   "budget_max": <neue Obergrenze in Euro oder null für egal>}}
 Ein neues Gewicht für einen bestehenden Wunsch steht in neue_wuensche.
 
@@ -97,11 +99,12 @@ def _budget(wert) -> float | None:
 
 
 def _profil(zusammenfassung: str, wuensche: dict[str, float], ausschluesse: list[str],
-            budget: float | None) -> Profil:
+            budget: float | None, budget_min: float | None = None) -> Profil:
     return Profil(
         zusammenfassung=zusammenfassung,
         wuensche=[Wunsch(tag=t, label=tag_label(t), gewicht=g) for t, g in wuensche.items()],
         ausschluesse=[Ausschluss(schluessel=s, label=label_fuer(s)) for s in ausschluesse],
+        budget_min=budget_min,
         budget_max=budget,
     )
 
@@ -113,6 +116,7 @@ def bereinige_profil(roh: dict) -> Profil:
         _wuensche(roh.get("wuensche")),
         _ausschluss_schluessel(roh.get("ausschluesse")),
         _budget(roh.get("budget_max")),
+        _budget(roh.get("budget_min")),
     )
 
 
@@ -130,10 +134,11 @@ def wende_aenderung_an(profil: Profil, roh: dict) -> Profil:
             ausschluesse.append(s)
 
     budget = _budget(roh["budget_max"]) if "budget_max" in roh else profil.budget_max
+    budget_min = _budget(roh["budget_min"]) if "budget_min" in roh else profil.budget_min
     zusammenfassung = roh.get("zusammenfassung")
     if not isinstance(zusammenfassung, str) or not zusammenfassung.strip():
         zusammenfassung = profil.zusammenfassung
-    return _profil(zusammenfassung.strip(), wuensche, ausschluesse, budget)
+    return _profil(zusammenfassung.strip(), wuensche, ausschluesse, budget, budget_min)
 
 
 async def profil_aus_gespraech(nachrichten: list[ChatNachricht]) -> Profil:
