@@ -1,0 +1,19 @@
+name: iOS-Kern testen
+
+# Die App-Logik liegt in einem Paket ohne Apple-Frameworks. Auf Linux kostet ein
+# Lauf ein Zehntel dessen, was ein macOS-Runner vom Freikontingent abzieht.
+
+on:
+  push:
+    paths: [ios/GeschenkeCore/**, .github/workflows/ios-core-tests.yml]
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    container: swift:6.2
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - name: Tests
+        run: swift test --package-path ios/GeschenkeCore
