@@ -1,0 +1,5 @@
+# Feste Versionen: genau das, was lokal getestet ist (Lehre aus dem Wecker).
+fastapi==0.141.1
+uvicorn[standard]==0.54.0
+httpx==0.28.1
+pydantic-settings==2.15.0
