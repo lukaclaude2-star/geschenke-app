@@ -103,8 +103,8 @@ public struct Gewichtung: Codable, Equatable {
     }
 
     /// Für die Schieberegler, sortiert nach Gewicht.
-    public var eintraege: [(tag: String, label: String, gewicht: Double)] {
-        gewichte.map { ($0.key, labels[$0.key] ?? $0.key, $0.value) }
+    public var eintraege: [GewichtEintrag] {
+        gewichte.map { GewichtEintrag(tag: $0.key, label: labels[$0.key] ?? $0.key, gewicht: $0.value) }
             .sorted { $0.gewicht == $1.gewicht ? $0.tag < $1.tag : $0.gewicht > $1.gewicht }
     }
 
@@ -117,4 +117,11 @@ public struct Gewichtung: Codable, Equatable {
     static func geklemmt(_ wert: Double) -> Double {
         min(maximum, max(minimum, wert))
     }
+}
+
+public struct GewichtEintrag: Identifiable, Equatable {
+    public let tag: String
+    public let label: String
+    public let gewicht: Double
+    public var id: String { tag }
 }

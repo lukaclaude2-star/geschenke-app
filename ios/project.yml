@@ -1,0 +1,35 @@
+name: Geschenke
+options:
+  bundleIdPrefix: de.luka
+  developmentLanguage: de
+  deploymentTarget:
+    iOS: "26.0"
+packages:
+  GeschenkeCore:
+    path: GeschenkeCore
+targets:
+  Geschenke:
+    type: application
+    platform: iOS
+    sources: [Geschenke]
+    scheme: {}
+    dependencies:
+      - package: GeschenkeCore
+    info:
+      path: Geschenke/Info.plist
+      properties:
+        CFBundleDisplayName: Geschenke
+        CFBundleDevelopmentRegion: de
+        UILaunchScreen: {}
+        UIUserInterfaceStyle: Dark
+        # Kommt beim CI-Build aus dem GitHub-Secret APP_TOKEN, steht nie im Repo.
+        AppToken: $(APP_TOKEN)
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: de.luka.geschenke
+        MARKETING_VERSION: "1.0"
+        CURRENT_PROJECT_VERSION: "1"
+        SWIFT_VERSION: "5.0"
+        TARGETED_DEVICE_FAMILY: "1"
+        APP_TOKEN: ""
+        ASSETCATALOG_COMPILER_APPICON_NAME: ""

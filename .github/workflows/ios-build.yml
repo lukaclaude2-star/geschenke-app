@@ -1,0 +1,50 @@
+name: iOS-App bauen
+
+# Unsigniert: SideStore signiert beim Installieren mit der kostenlosen Apple-ID.
+# macOS-Minuten zählen zehnfach, deshalb nur auf Knopfdruck oder nach einem Push, der
+# die App berührt.
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, "app/**"]
+    paths: [ios/**, .github/workflows/ios-build.yml]
+
+jobs:
+  build:
+    runs-on: macos-26
+    timeout-minutes: 25
+    defaults:
+      run:
+        working-directory: ios
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Projekt erzeugen
+        run: |
+          brew install xcodegen
+          xcodegen generate
+
+      - name: Bauen
+        env:
+          APP_TOKEN: ${{ secrets.APP_TOKEN }}
+        run: |
+          xcodebuild -project Geschenke.xcodeproj -scheme Geschenke \
+            -configuration Release -sdk iphoneos -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
+            APP_TOKEN="$APP_TOKEN" \
+            build 2>&1 | grep -E "error:|warning: .*Geschenke|BUILD" || true
+          test -d build/Build/Products/Release-iphoneos/Geschenke.app
+
+      - name: IPA packen
+        run: |
+          mkdir Payload
+          cp -R build/Build/Products/Release-iphoneos/Geschenke.app Payload/
+          zip -qr Geschenke.ipa Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Geschenke-ipa
+          path: ios/Geschenke.ipa
+          retention-days: 14
