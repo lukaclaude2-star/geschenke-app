@@ -11,9 +11,13 @@ from app.gespraech import verlauf_text
 from app.ki import frage_json
 from app.modelle import Ausschluss, ChatNachricht, Profil, Wunsch
 from app.vokabular import (EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, ist_gueltiger_ausschluss,
-                           label_fuer, tag_label)
+                           label_fuer, tag_label, vokabular_text)
 
-REGELN = f"""Erlaubte Wunsch-Tags: {", ".join(list(THEMEN) + list(LEBENSLAGEN))}
+REGELN = f"""Erlaubte Wunsch-Tags – Themen nach Oberbereich:
+{vokabular_text()}
+  lebenslagen: {", ".join(LEBENSLAGEN)}
+Nimm immer das genaueste Stichwort (grillt gern → grillen, nicht kochen; zockt → gaming) und
+für jedes genannte Hobby ein eigenes Tag.
 Ausschluss-Schlüssel haben die Form "<art>:<wert>":
 - "thema:<Wunsch-Tag>"
 - "farbe:<{"|".join(FARBEN)}>"

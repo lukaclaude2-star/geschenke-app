@@ -80,9 +80,12 @@ public struct Karte: Codable, Equatable, Identifiable {
     public let shop: String
     public let link: String
     public let tags: [String]
+    /// Ideenkarte mit Foto von Pexels, das nur ein Beispiel zeigt.
+    public let beispielbild: Bool?
 
     public init(id: String, art: String, titel: String, preis: Double?, preisVon: Double?, preisBis: Double?,
-                bildURL: String?, emoji: String?, shop: String, link: String, tags: [String]) {
+                bildURL: String?, emoji: String?, shop: String, link: String, tags: [String],
+                beispielbild: Bool? = nil) {
         self.id = id
         self.art = art
         self.titel = titel
@@ -94,16 +97,18 @@ public struct Karte: Codable, Equatable, Identifiable {
         self.shop = shop
         self.link = link
         self.tags = tags
+        self.beispielbild = beispielbild
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, art, titel, preis, emoji, shop, link, tags
+        case id, art, titel, preis, emoji, shop, link, tags, beispielbild
         case preisVon = "preis_von"
         case preisBis = "preis_bis"
         case bildURL = "bild_url"
     }
 
     public var istIdee: Bool { art == "idee" }
+    public var istBeispielbild: Bool { beispielbild == true }
 
     public var preisText: String {
         if let preis {

@@ -8,11 +8,12 @@ import re
 
 from app.config import settings
 from app.modelle import Ausschluss, KatalogProdukt, Profil
-from app.vokabular import EIGENSCHAFT_MUSTER, FARB_LABELS
+from app.vokabular import EIGENSCHAFT_MUSTER, FARB_LABELS, THEMA_BEREICH
 
 GUT_AB = 1.0
 PERSOENLICH_BONUS = 0.2
 ABWECHSLUNGS_ABZUG = 0.3
+BEREICH_ANTEIL = 0.4
 
 
 def _farbe_im_text(farbe: str, text: str) -> bool:
@@ -47,8 +48,15 @@ def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> boo
 
 
 def bewerte(p: KatalogProdukt, profil: Profil) -> float:
+    """Direkte Treffer zählen voll. Nur ohne jeden direkten Treffer zählt der Oberbereich – und
+    dann nur der stärkste Wunsch mal BEREICH_ANTEIL, damit sich verwandte Wünsche (grillen,
+    kochen, backen) nicht zu einem Wert über echten Treffern aufsummieren."""
     tags = set(p.themen) | set(p.lebenslagen)
     punkte = sum(w.gewicht for w in profil.wuensche if w.tag in tags)
+    if punkte == 0:
+        bereiche = {THEMA_BEREICH[t] for t in p.themen if t in THEMA_BEREICH}
+        punkte = max((w.gewicht * BEREICH_ANTEIL for w in profil.wuensche
+                      if THEMA_BEREICH.get(w.tag) in bereiche), default=0.0)
     if punkte > 0 and p.persoenlich:
         punkte += PERSOENLICH_BONUS
     return round(punkte, 6)

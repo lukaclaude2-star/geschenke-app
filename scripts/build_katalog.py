@@ -5,6 +5,7 @@ Aufruf: python scripts/build_katalog.py   (braucht GROQ_API_KEY in Umgebung oder
 
 import asyncio
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -27,8 +28,12 @@ def lade_quellen() -> list[QuellProdukt]:
 
 async def main() -> None:
     ziel = WURZEL / settings.katalog_pfad
+    # Das erste Modell der Kette bleibt für Chat, Profil und Ideen der App reserviert – der Katalog
+    # nutzt nur die Ersatzmodelle und höchstens KATALOG_MAX_STAPEL Stapel à 10 Produkte pro Lauf.
+    settings.ki_modelle = settings.ki_modelle[1:] or settings.ki_modelle
+    max_stapel = int(os.environ.get("KATALOG_MAX_STAPEL", "60"))
     katalog, bericht = await baue_katalog(lade_quellen(), lade_alle(str(ziel)),
-                                     pause_sekunden=20)
+                                     pause_sekunden=20, max_stapel=max_stapel)
     ziel.parent.mkdir(parents=True, exist_ok=True)
     ziel.write_text(
         json.dumps([p.model_dump() for p in katalog], ensure_ascii=False, indent=1) + "\n",

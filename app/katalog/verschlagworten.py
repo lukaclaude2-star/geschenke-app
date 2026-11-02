@@ -12,7 +12,7 @@ import logging
 
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import KatalogProdukt, QuellProdukt
-from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN
+from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, VOKABULAR_VERSION, vokabular_text
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,8 @@ Antworte nur mit JSON: {{"produkte": [{{"id": "...", "themen": [...], "lebenslag
 "farben": [...], "eigenschaften": [...], "persoenlich": true/false, "note": 1-10}}]}}
 
 Erlaubte Werte – nichts anderes verwenden:
-- themen: {", ".join(THEMEN)}
+- themen (nach Oberbereich gruppiert, nimm die genauesten):
+{vokabular_text()}
 - lebenslagen: {", ".join(LEBENSLAGEN)}
 - farben: {", ".join(FARBEN)}
 - eigenschaften: {", ".join(EIGENSCHAFTEN)}
@@ -43,7 +44,8 @@ Gib jedes Produkt genau einmal zurück, mit derselben id."""
 
 
 def inhalts_hash(p: QuellProdukt) -> str:
-    teile = [p.titel, p.beschreibung, f"{p.preis:.2f}", p.kategorie, p.farbe or ""]
+    teile = [p.titel, p.beschreibung, f"{p.preis:.2f}", p.kategorie, p.farbe or "",
+             f"vokabular-{VOKABULAR_VERSION}"]
     return hashlib.sha256("\x1f".join(teile).encode("utf-8")).hexdigest()
 
 
@@ -74,12 +76,8 @@ def _fuer_ki(p: QuellProdukt) -> dict:
 
 
 async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
-    try:
-        antwort = await frage_json(SYSTEM, json.dumps({"produkte": [_fuer_ki(p) for p in ps]},
-                                                      ensure_ascii=False), max_tokens=2500)
-    except KiUeberlastet:
-        logger.warning("KI überlastet – %d Produkte beim nächsten Lauf", len(ps))
-        return []
+    antwort = await frage_json(SYSTEM, json.dumps({"produkte": [_fuer_ki(p) for p in ps]},
+                                                  ensure_ascii=False), max_tokens=2500)
     eintraege = antwort.get("produkte")
     nach_id: dict[str, dict] = {}
     if isinstance(eintraege, list):
@@ -109,11 +107,23 @@ async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
     return ergebnis
 
 
-async def verschlagworte(ps: list[QuellProdukt], pause_sekunden: float = 0) -> list[KatalogProdukt]:
-    """pause_sekunden zwischen Stapeln: Groq erlaubt im Gratis-Tarif nur ~8.000 Token pro Minute."""
+async def verschlagworte(ps: list[QuellProdukt], pause_sekunden: float = 0,
+                         max_stapel: int | None = None) -> list[KatalogProdukt]:
+    """pause_sekunden zwischen Stapeln: Groq erlaubt im Gratis-Tarif nur ~8.000 Token pro Minute.
+
+    max_stapel begrenzt einen Lauf, und nach der ersten Überlastung ist Schluss – sonst verbraucht
+    der Katalog das Tageskontingent, das die App für Chat und Ideen braucht. Der Rest kommt beim
+    nächsten Lauf dran."""
     ergebnis: list[KatalogProdukt] = []
-    for start in range(0, len(ps), STAPELGROESSE):
+    for nummer, start in enumerate(range(0, len(ps), STAPELGROESSE)):
+        if max_stapel is not None and nummer >= max_stapel:
+            logger.warning("Stapelgrenze erreicht – %d Produkte beim nächsten Lauf", len(ps) - start)
+            break
         if start and pause_sekunden:
             await asyncio.sleep(pause_sekunden)
-        ergebnis.extend(await _stapel(ps[start:start + STAPELGROESSE]))
+        try:
+            ergebnis.extend(await _stapel(ps[start:start + STAPELGROESSE]))
+        except KiUeberlastet:
+            logger.warning("KI überlastet – %d Produkte beim nächsten Lauf", len(ps) - start)
+            break
     return ergebnis

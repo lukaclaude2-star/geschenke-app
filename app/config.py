@@ -15,6 +15,8 @@ class Settings(BaseSettings):
     ]
     katalog_pfad: str = "katalog/katalog.json"
     amazon_tag: str = ""
+    # Beispielbilder für Ideenkarten (pexels.com/api, kostenlos) – nur in Render.
+    pexels_key: str = ""
 
     # Update per Fingertipp (SideStore-Quelle): beide Werte nur in Render, nie im Repo.
     download_geheimnis: str = ""

@@ -5,11 +5,13 @@ public struct AppDaten: Codable, Equatable {
     public var profile: [GespeichertesProfil] = []
     public var merkliste: [MerkEintrag] = []
     public var design: String = "nachtblau"
+    /// Rohwert einer `Schriftstufe` – als Text gespeichert, damit unbekannte Werte nichts kaputt machen.
+    public var schriftgroesse: String = "normal"
 
     public init() {}
 
     enum CodingKeys: String, CodingKey {
-        case profile, merkliste, design
+        case profile, merkliste, design, schriftgroesse
     }
 
     // Neue Felder immer optional lesen – sonst landen die Daten aus v1 in appdaten.kaputt-*.json.
@@ -18,6 +20,7 @@ public struct AppDaten: Codable, Equatable {
         profile = try c.decodeIfPresent([GespeichertesProfil].self, forKey: .profile) ?? []
         merkliste = try c.decodeIfPresent([MerkEintrag].self, forKey: .merkliste) ?? []
         design = try c.decodeIfPresent(String.self, forKey: .design) ?? "nachtblau"
+        schriftgroesse = try c.decodeIfPresent(String.self, forKey: .schriftgroesse) ?? "normal"
     }
 }
 
@@ -28,6 +31,8 @@ public struct GespeichertesProfil: Codable, Equatable, Identifiable {
     public var gewichtung: Gewichtung
     /// Gewischte Karten – kommen bei diesem Profil nicht wieder (bis „Gesehene wieder zeigen“).
     public var gesehen: [String]
+    /// Freiwillig – für den Countdown auf der Startseite.
+    public var geburtstag: Geburtstag?
 
     public init(id: UUID = UUID(), name: String, profil: Profil, gewichtung: Gewichtung, gesehen: [String] = []) {
         self.id = id
@@ -38,7 +43,7 @@ public struct GespeichertesProfil: Codable, Equatable, Identifiable {
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, name, profil, gewichtung, gesehen
+        case id, name, profil, gewichtung, gesehen, geburtstag
     }
 
     public init(from decoder: Decoder) throws {
@@ -48,6 +53,7 @@ public struct GespeichertesProfil: Codable, Equatable, Identifiable {
         profil = try c.decode(Profil.self, forKey: .profil)
         gewichtung = try c.decode(Gewichtung.self, forKey: .gewichtung)
         gesehen = try c.decodeIfPresent([String].self, forKey: .gesehen) ?? []
+        geburtstag = try c.decodeIfPresent(Geburtstag.self, forKey: .geburtstag)
     }
 }
 

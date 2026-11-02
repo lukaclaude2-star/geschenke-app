@@ -77,6 +77,8 @@ class Karte(BaseModel):
     shop: str
     link: str
     tags: list[str]
+    # Ideenkarte mit Foto, das nur ein Beispiel zeigt (nicht das exakte Produkt).
+    beispielbild: bool = False
 
 
 class ChatNachricht(BaseModel):

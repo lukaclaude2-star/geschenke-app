@@ -6,7 +6,8 @@ from app.modelle import KatalogProdukt, QuellProdukt
 
 async def baue_katalog(quellen: list[QuellProdukt],
                        alt: list[KatalogProdukt],
-                       pause_sekunden: float = 0) -> tuple[list[KatalogProdukt], dict[str, int]]:
+                       pause_sekunden: float = 0,
+                       max_stapel: int | None = None) -> tuple[list[KatalogProdukt], dict[str, int]]:
     """Regeln → Varianten → Unverändertes wiederverwenden → Rest verschlagworten.
 
     Liefert alle verschlagworteten Produkte; gezeigt wird nur, was zeigbar() durchlässt."""
@@ -23,8 +24,15 @@ async def baue_katalog(quellen: list[QuellProdukt],
         else:
             neu.append(p)
 
-    verschlagwortet = await verschlagworte(neu, pause_sekunden)
-    alle = wiederverwendet + verschlagwortet
+    # Ganz neue Produkte zuerst: alte haben notfalls noch ihre bisherigen Schlagwörter (unten).
+    neu.sort(key=lambda p: p.id in alt_nach_id)
+    verschlagwortet = await verschlagworte(neu, pause_sekunden, max_stapel)
+    # Scheitert die KI (z. B. Tageskontingent leer), bleibt der alte Eintrag stehen – mit altem
+    # Hash, damit der nächste Lauf es erneut versucht. So schrumpft der Katalog nie über Nacht.
+    geschafft = {p.id for p in verschlagwortet}
+    offen = [p for p in neu if p.id not in geschafft]
+    behalten = [alt_nach_id[p.id] for p in offen if p.id in alt_nach_id]
+    alle = wiederverwendet + verschlagwortet + behalten
     # Auch abgelehnte Produkte bleiben mit ihrer Note gespeichert: So werden sie nicht jeden
     # Tag neu bewertet (spart Kontingent) und rutschen nicht durch eine zufällig bessere Note durch.
     katalog = sorted(alle, key=lambda p: p.id)
@@ -34,6 +42,7 @@ async def baue_katalog(quellen: list[QuellProdukt],
         "regel_raus": len(quellen) - len([p for p in quellen if pruefe_regeln(p) is None]),
         "wiederverwendet": len(wiederverwendet),
         "neu_verschlagwortet": len(verschlagwortet),
+        "noch_offen": len(offen),
         "note_raus": len(katalog) - len(zeigbar),
         "katalog": len(zeigbar),
     }

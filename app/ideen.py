@@ -4,23 +4,28 @@ Die KI nennt Geschenkideen; daraus werden Amazon-Suchlinks. Ausschlüsse und Bud
 gelten auch hier (Grundbaustein 3), und jede Karte ist als „Idee“ gekennzeichnet (Grundbaustein 1).
 """
 
+import asyncio
 import json
 from urllib.parse import quote_plus
 
+from app.bilder import beispielbild
 from app.config import settings
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import Karte, KatalogProdukt, Profil
 from app.ranking import ist_ausgeschlossen
-from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN
+from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, vokabular_text
 
 SYSTEM = f"""Du schlägst in einer Geschenke-App konkrete, kaufbare Geschenkideen vor, die man
 bei Amazon findet. Antworte nur mit JSON:
 {{"ideen": [{{"titel": "...", "emoji": "ein Emoji", "preis_von": Zahl, "preis_bis": Zahl,
             "suchbegriff": "2–4 Wörter für die Amazon-Suche", "themen": [...],
             "lebenslagen": [...], "farben": [...], "eigenschaften": [...]}}]}}
-Regeln: passend zu den Wünschen; NIE etwas, das einen Ausschluss trifft; Preisspanne innerhalb
+Regeln: passend zu den Wünschen; die Wünsche in "schwerpunkt" haben im Shop kaum Produkte –
+zu jedem davon mindestens eine Idee, und mindestens die Hälfte der Ideen dazu;
+NIE etwas, das einen Ausschluss trifft; Preisspanne innerhalb
 von budget_min bis budget_max (null = keine Grenze); keine Ideen aus der Liste "schon_gezeigt".
-themen nur aus: {", ".join(THEMEN)}
+themen nur aus (nach Oberbereich gruppiert):
+{vokabular_text()}
 lebenslagen nur aus: {", ".join(LEBENSLAGEN)}
 farben (Hauptfarben, falls festgelegt) nur aus: {", ".join(FARBEN)}
 eigenschaften (alles, was jemand ausschließen könnte) nur aus: {", ".join(EIGENSCHAFTEN)}"""
@@ -58,13 +63,15 @@ def spanne_im_budget(von: float | None, bis: float | None, profil: Profil) -> bo
     return profil.budget_min is None or bis >= profil.budget_min
 
 
-async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str]) -> list[Karte]:
+async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str],
+                       schwerpunkt: list[str] | None = None) -> list[Karte]:
     anfrage = {
         "wuensche": [{"tag": w.tag, "gewicht": w.gewicht} for w in profil.wuensche],
         "ausschluesse": [a.schluessel for a in profil.ausschluesse],
         "budget_min": profil.budget_min,
         "budget_max": profil.budget_max,
         "anzahl": anzahl,
+        "schwerpunkt": schwerpunkt or [],
         "schon_gezeigt": sorted(i.removeprefix("idee:") for i in gesehen if i.startswith("idee:")),
     }
     try:
@@ -112,4 +119,7 @@ async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str]) -> list[K
         ))
         if len(karten) >= anzahl:
             break
-    return karten
+    # Gleichzeitig: jede Bildsuche darf bis zu 5 s dauern.
+    bilder = await asyncio.gather(*(beispielbild(k.id.removeprefix("idee:")) for k in karten))
+    return [k.model_copy(update={"bild_url": bild, "beispielbild": True}) if bild else k
+            for k, bild in zip(karten, bilder)]

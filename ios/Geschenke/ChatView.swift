@@ -84,9 +84,12 @@ struct ChatView: View {
 
     @ViewBuilder private var unten: some View {
         if stapel != nil {
-            Button("Weiter wischen") { zeigeWischen = true }
-                .buttonStyle(GoldKnopf())
-                .padding()
+            VStack(alignment: .leading, spacing: 12) {
+                if let profil = modell.profil { ErkannteStichwoerter(profil: profil) }
+                Button("Weiter wischen") { zeigeWischen = true }
+                    .buttonStyle(GoldKnopf())
+            }
+            .padding()
         } else if modell.budgetOffen {
             VStack(spacing: 14) {
                 BudgetRegler(von: $budgetVon, bis: $budgetBis)
@@ -162,6 +165,7 @@ struct ProfilSpeichernView: View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Als Profil speichern?").font(.title3.bold())
             Text(profil.zusammenfassung).foregroundStyle(Look.leise)
+            ErkannteStichwoerter(profil: profil)
             TextField("", text: $name, prompt: Text("z. B. Oma Gerda").foregroundStyle(Look.leise))
                 .padding(10)
                 .background(Look.karte)
@@ -182,7 +186,30 @@ struct ProfilSpeichernView: View {
             .disabled(speichert)
         }
         .padding(24)
-        .presentationDetents([.medium])
+        .presentationDetents([.medium, .large])
         .presentationBackground(Look.hintergrund)
+    }
+}
+
+/// Nach dem Chat sichtbar, welche Stichwörter die App verstanden hat – fehlt eins, fällt es sofort auf.
+struct ErkannteStichwoerter: View {
+    let profil: Profil
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text("Erkannte Stichwörter").font(.subheadline.weight(.semibold))
+            if profil.wuensche.isEmpty {
+                Text("Keine – erzähl ruhig mehr über Hobbys und Interessen.")
+                    .font(.footnote).foregroundStyle(Look.leise)
+            } else {
+                FlussLayout(abstand: 6) {
+                    ForEach(profil.wuensche, id: \.tag) { Abzeichen(text: $0.label) }
+                }
+            }
+            if !profil.ausschluesse.isEmpty {
+                Text("Nie: " + profil.ausschluesse.map(\.label).joined(separator: ", "))
+                    .font(.footnote).foregroundStyle(Look.leise)
+            }
+        }
     }
 }

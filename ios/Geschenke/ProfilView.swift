@@ -35,6 +35,7 @@ struct ProfilView: View {
                             .font(.footnote)
                             .foregroundStyle(Look.leise)
                     }
+                    GeburtstagZeile(geburtstag: eintrag.geburtstag) { zustand.setzeGeburtstag(profilID, $0) }
                     Button("Geschenke wischen") {
                         // Immer die aktuelle Fassung aus dem Speicher nehmen (inkl. Gesehen-Liste).
                         if let aktuell = zustand.profil(profilID) {
@@ -173,5 +174,53 @@ struct FlussLayout: Layout {
             x += groesse.width + abstand
             zeile = max(zeile, groesse.height)
         }
+    }
+}
+
+/// Freiwilliger Geburtstag (nur Tag und Monat) für den Countdown auf der Startseite.
+struct GeburtstagZeile: View {
+    let geburtstag: Geburtstag?
+    let aendern: (Geburtstag?) -> Void
+
+    private static let monate = ["Jan.", "Feb.", "März", "Apr.", "Mai", "Juni",
+                                 "Juli", "Aug.", "Sep.", "Okt.", "Nov.", "Dez."]
+    private static let tageImMonat = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Text("🎂 Geburtstag").font(.headline)
+            Spacer()
+            if let g = geburtstag {
+                Picker("Tag", selection: Binding(
+                    get: { g.tag },
+                    set: { aendern(Geburtstag(tag: $0, monat: g.monat)) }
+                )) {
+                    // Monat abgesichert, damit kaputte gespeicherte Daten nicht abstürzen lassen.
+                    ForEach(1...Self.tageImMonat[min(max(g.monat, 1), 12) - 1], id: \.self) { Text("\($0).").tag($0) }
+                }
+                Picker("Monat", selection: Binding(
+                    get: { g.monat },
+                    set: { aendern(Geburtstag(tag: min(g.tag, Self.tageImMonat[$0 - 1]), monat: $0)) }
+                )) {
+                    ForEach(1...12, id: \.self) { Text(Self.monate[$0 - 1]).tag($0) }
+                }
+                Button {
+                    aendern(nil)
+                } label: {
+                    Image(systemName: "xmark.circle.fill").foregroundStyle(Look.leise)
+                }
+                .accessibilityLabel("Geburtstag entfernen")
+            } else {
+                Button("Eintragen") {
+                    let heute = Calendar.current.dateComponents([.day, .month], from: Date())
+                    aendern(Geburtstag(tag: heute.day ?? 1, monat: heute.month ?? 1))
+                }
+                .foregroundStyle(Look.akzent)
+            }
+        }
+        .pickerStyle(.menu)
+        .padding(12)
+        .background(Look.karte)
+        .clipShape(RoundedRectangle(cornerRadius: 14))
     }
 }

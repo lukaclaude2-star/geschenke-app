@@ -129,7 +129,7 @@ async def test_bericht_zaehlt_richtig(ki_bau):
     quellen = [produkt("alt"), produkt("neu"), produkt("mies"), produkt("billig", preis=1.0)]
     _, bericht = await baue_katalog(quellen, alt)
     assert bericht == {"quellen": 4, "regel_raus": 1, "wiederverwendet": 1,
-                       "neu_verschlagwortet": 2, "note_raus": 1, "katalog": 2}
+                       "neu_verschlagwortet": 2, "noch_offen": 0, "note_raus": 1, "katalog": 2}
 
 
 def test_lade_katalog_filtert_niedrige_noten(tmp_path):
@@ -161,3 +161,57 @@ async def test_pause_zwischen_stapeln(ki, monkeypatch):
     monkeypatch.setattr(verschlagworten.asyncio, "sleep", schlafen)
     await verschlagworte([produkt(str(i)) for i in range(23)], pause_sekunden=7)
     assert pausen == [7, 7]
+
+
+def test_inhalts_hash_haengt_an_vokabular_version(monkeypatch):
+    import app.katalog.verschlagworten as v
+    vorher = inhalts_hash(produkt("a"))
+    monkeypatch.setattr(v, "VOKABULAR_VERSION", 999)
+    assert inhalts_hash(produkt("a")) != vorher
+
+
+async def test_alter_eintrag_bleibt_wenn_neu_verschlagworten_scheitert(ki_bau, monkeypatch):
+    alt, _ = await baue_katalog([produkt("a"), produkt("b")], [])
+    monkeypatch.setattr(verschlagworten, "VOKABULAR_VERSION", 999)  # alles muss neu
+    ki_bau.auslassen = {"a"}  # Kontingent leer o. Ä.: "a" kommt nicht zurück
+    katalog, bericht = await baue_katalog([produkt("a"), produkt("b")], alt)
+    assert sorted(p.id for p in katalog) == ["a", "b"]
+    alt_a = next(p for p in katalog if p.id == "a")
+    assert alt_a.inhalts_hash != inhalts_hash(produkt("a"))  # wird beim nächsten Lauf erneut versucht
+    assert bericht["noch_offen"] == 1
+
+
+async def test_stoppt_nach_ueberlastung_und_bei_stapelgrenze(monkeypatch):
+    from app.ki import KiUeberlastet
+    aufrufe = 0
+
+    async def ueberlastet(*_, **__):
+        nonlocal aufrufe
+        aufrufe += 1
+        raise KiUeberlastet("Kontingent leer")
+    monkeypatch.setattr(verschlagworten, "frage_json", ueberlastet)
+    ergebnis = await verschlagworte([produkt(str(i)) for i in range(35)])
+    assert ergebnis == [] and aufrufe == 1  # nicht noch 3 weitere Stapel gegen die Wand
+
+    fake = FakeKi()
+    monkeypatch.setattr(verschlagworten, "frage_json", fake)
+    ergebnis = await verschlagworte([produkt(str(i)) for i in range(35)], max_stapel=2)
+    assert len(ergebnis) == 20 and fake.aufrufe == 2
+
+
+async def test_ganz_neue_produkte_zuerst(ki_bau):
+    alt, _ = await baue_katalog([produkt("alt")], [])
+    _, bericht = await baue_katalog([produkt("alt", preis=99.0), produkt("neu")], alt, max_stapel=1)
+    assert bericht["neu_verschlagwortet"] == 2  # beide passen in einen Stapel
+    reihenfolge = []
+
+    async def merke(system, nutzer, **_):
+        reihenfolge.extend(p["id"] for p in json.loads(nutzer)["produkte"])
+        return {"produkte": []}
+    import app.katalog.verschlagworten as v
+    v.frage_json, vorher = merke, v.frage_json
+    try:
+        await baue_katalog([produkt("alt", preis=98.0), produkt("neu2")], alt)
+    finally:
+        v.frage_json = vorher
+    assert reihenfolge == ["neu2", "alt"]
