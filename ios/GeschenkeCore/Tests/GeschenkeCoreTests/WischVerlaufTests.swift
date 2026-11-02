@@ -49,3 +49,16 @@ final class WischVerlaufTests: XCTestCase {
         XCTAssertEqual(g.gewichte["garten"]!, 1.15, accuracy: 0.0001)
     }
 }
+
+final class WischVerlaufVergessenTests: XCTestCase {
+    func testVergissEntferntNurSchritteDerPerson() {
+        var verlauf = WischVerlauf()
+        let g = Gewichtung(profil: testProfil())
+        verlauf.merke(WischSchritt(karte: testKarte("a"), person: 0, ja: true, gewichtungVorher: g, merkID: nil))
+        verlauf.merke(WischSchritt(karte: testKarte("b"), person: 1, ja: true, gewichtungVorher: g, merkID: nil))
+        verlauf.merke(WischSchritt(karte: testKarte("c"), person: 0, ja: false, gewichtungVorher: g, merkID: nil))
+        verlauf.vergiss(person: 0)
+        XCTAssertEqual(verlauf.zurueck()?.karte.id, "b")
+        XCTAssertNil(verlauf.zurueck())
+    }
+}
