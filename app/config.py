@@ -16,6 +16,12 @@ class Settings(BaseSettings):
     katalog_pfad: str = "katalog/katalog.json"
     amazon_tag: str = ""
 
+    # Update per Fingertipp (SideStore-Quelle): beide Werte nur in Render, nie im Repo.
+    download_geheimnis: str = ""
+    github_token: str = ""
+    github_repo: str = "lukaclaude2-star/geschenke-app"
+    oeffentliche_url: str = "https://geschenke.onrender.com"
+
     # Ramsch-Filter, Stufe 1 und 2
     min_preis: float = 8.0
     min_note: int = 6

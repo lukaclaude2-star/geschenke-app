@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse
 
 from app.config import settings
+from app.download import router as download_router
 from app.gespraech import naechster_schritt
 from app.karten import karten_fuer, sammel_karten_fuer
 from app.katalog.laden import lade_katalog
@@ -23,6 +24,7 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
 
 app = FastAPI(title="Geschenke")
 geschuetzt = [Depends(pruefe_token)]
+app.include_router(download_router)
 
 # Der Katalog wird einmal beim Start geladen; der tägliche Lauf committet eine neue
 # Datei, Render baut daraufhin neu und lädt sie.
