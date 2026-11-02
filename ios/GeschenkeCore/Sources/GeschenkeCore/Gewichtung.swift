@@ -72,13 +72,14 @@ public struct Gewichtung: Codable, Equatable {
     }
 
     /// Nach „Profil per Chat ändern“: neue Wünsche kommen mit ihrem Gewicht dazu, entfernte
-    /// Wünsche fallen weg, gelernte Werte bestehender Wünsche bleiben.
+    /// Wünsche fallen weg, gelernte Werte bestehender Wünsche bleiben – außer die Änderung hat
+    /// ihr Gewicht ausdrücklich neu gesetzt („Garten ist ihr jetzt nicht mehr so wichtig“).
     public mutating func uebernimm(profil: Profil) {
         let neu = Dictionary(profil.wuensche.map { ($0.tag, Self.geklemmt($0.gewicht)) }) { a, _ in a }
         for tag in start.keys where neu[tag] == nil {
             gewichte[tag] = nil
         }
-        for (tag, wert) in neu where start[tag] == nil {
+        for (tag, wert) in neu where start[tag] != wert {
             gewichte[tag] = wert
         }
         start = neu
