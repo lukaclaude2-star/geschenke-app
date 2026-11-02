@@ -1,0 +1,8 @@
+.superpowers/
+.env
+__pycache__/
+.venv/
+.pytest_cache/
+ios/*.xcodeproj
+ios/build/
+ios/GeschenkeCore/.build/
