@@ -8,11 +8,12 @@ import re
 
 from app.config import settings
 from app.modelle import Ausschluss, KatalogProdukt, Profil
-from app.vokabular import EIGENSCHAFT_MUSTER, FARB_LABELS
+from app.vokabular import EIGENSCHAFT_MUSTER, FARB_LABELS, THEMA_BEREICH
 
 GUT_AB = 1.0
 PERSOENLICH_BONUS = 0.2
 ABWECHSLUNGS_ABZUG = 0.3
+BEREICH_ANTEIL = 0.4
 
 
 def _farbe_im_text(farbe: str, text: str) -> bool:
@@ -47,8 +48,15 @@ def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> boo
 
 
 def bewerte(p: KatalogProdukt, profil: Profil) -> float:
+    """Direkter Treffer zählt voll, ein Thema aus demselben Oberbereich nur BEREICH_ANTEIL."""
     tags = set(p.themen) | set(p.lebenslagen)
-    punkte = sum(w.gewicht for w in profil.wuensche if w.tag in tags)
+    bereiche = {THEMA_BEREICH[t] for t in p.themen if t in THEMA_BEREICH}
+    punkte = 0.0
+    for w in profil.wuensche:
+        if w.tag in tags:
+            punkte += w.gewicht
+        elif THEMA_BEREICH.get(w.tag) in bereiche:
+            punkte += w.gewicht * BEREICH_ANTEIL
     if punkte > 0 and p.persoenlich:
         punkte += PERSOENLICH_BONUS
     return round(punkte, 6)
