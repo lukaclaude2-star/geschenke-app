@@ -30,22 +30,37 @@ public struct Profil: Codable, Equatable {
     public var wuensche: [Wunsch]
     public var ausschluesse: [Ausschluss]
     public var budgetMax: Double?
+    public var budgetMin: Double?
 
-    public init(zusammenfassung: String, wuensche: [Wunsch], ausschluesse: [Ausschluss], budgetMax: Double?) {
+    public init(zusammenfassung: String, wuensche: [Wunsch], ausschluesse: [Ausschluss], budgetMax: Double?,
+                budgetMin: Double? = nil) {
         self.zusammenfassung = zusammenfassung
         self.wuensche = wuensche
         self.ausschluesse = ausschluesse
         self.budgetMax = budgetMax
+        self.budgetMin = budgetMin
     }
 
     enum CodingKeys: String, CodingKey {
         case zusammenfassung, wuensche, ausschluesse
         case budgetMax = "budget_max"
+        case budgetMin = "budget_min"
     }
 
-    // budget_max immer mitschicken (auch als null), damit der Server es eindeutig sieht.
+    // Profile aus v1 haben kein budget_min.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        zusammenfassung = try c.decode(String.self, forKey: .zusammenfassung)
+        wuensche = try c.decode([Wunsch].self, forKey: .wuensche)
+        ausschluesse = try c.decode([Ausschluss].self, forKey: .ausschluesse)
+        budgetMax = try c.decodeIfPresent(Double.self, forKey: .budgetMax)
+        budgetMin = try c.decodeIfPresent(Double.self, forKey: .budgetMin)
+    }
+
+    // Budget immer mitschicken (auch als null), damit der Server es eindeutig sieht.
     public func encode(to encoder: Encoder) throws {
         var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(budgetMin, forKey: .budgetMin)
         try c.encode(zusammenfassung, forKey: .zusammenfassung)
         try c.encode(wuensche, forKey: .wuensche)
         try c.encode(ausschluesse, forKey: .ausschluesse)
@@ -151,7 +166,42 @@ public struct KartenAntwort: Codable, Equatable {
     }
 }
 
+/// Eine Person in der Sammelsuche; `id` kommt in `SammelKarte.fuer` zurück.
+public struct SammelPerson: Encodable, Equatable {
+    public let id: String
+    public let profil: Profil
+    public let gesehen: [String]
+
+    public init(id: String, profil: Profil, gesehen: [String]) {
+        self.id = id
+        self.profil = profil
+        self.gesehen = gesehen
+    }
+}
+
+public struct SammelKarte: Codable, Equatable {
+    public let fuer: String
+    public let karte: Karte
+}
+
+public struct KartenSammelAntwort: Codable, Equatable {
+    public let karten: [SammelKarte]
+    public let duennFuer: [String]
+    public let tagLabels: [String: String]
+
+    enum CodingKeys: String, CodingKey {
+        case karten
+        case duennFuer = "duenn_fuer"
+        case tagLabels = "tag_labels"
+    }
+}
+
 // Anfragen an den Server
+
+struct KartenSammelAnfrage: Encodable {
+    let personen: [SammelPerson]
+    let anzahl: Int
+}
 
 struct ChatAnfrage: Encodable {
     let laenge: String

@@ -46,6 +46,10 @@ public struct GeschenkeAPI {
         try await post("karten", KartenAnfrage(profil: profil, gesehen: gesehen, anzahl: anzahl))
     }
 
+    public func sammelKarten(personen: [SammelPerson], anzahl: Int) async throws -> KartenSammelAntwort {
+        try await post("karten/sammel", KartenSammelAnfrage(personen: personen, anzahl: anzahl))
+    }
+
     private func post<Anfrage: Encodable, Antwort: Decodable>(_ pfad: String, _ inhalt: Anfrage) async throws -> Antwort {
         var anfrage = URLRequest(url: basis.appendingPathComponent(pfad), timeoutInterval: Self.zeitlimit)
         anfrage.httpMethod = "POST"

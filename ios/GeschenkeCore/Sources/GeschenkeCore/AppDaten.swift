@@ -4,8 +4,21 @@ import Foundation
 public struct AppDaten: Codable, Equatable {
     public var profile: [GespeichertesProfil] = []
     public var merkliste: [MerkEintrag] = []
+    public var design: String = "nachtblau"
 
     public init() {}
+
+    enum CodingKeys: String, CodingKey {
+        case profile, merkliste, design
+    }
+
+    // Neue Felder immer optional lesen – sonst landen die Daten aus v1 in appdaten.kaputt-*.json.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        profile = try c.decodeIfPresent([GespeichertesProfil].self, forKey: .profile) ?? []
+        merkliste = try c.decodeIfPresent([MerkEintrag].self, forKey: .merkliste) ?? []
+        design = try c.decodeIfPresent(String.self, forKey: .design) ?? "nachtblau"
+    }
 }
 
 public struct GespeichertesProfil: Codable, Equatable, Identifiable {
@@ -13,12 +26,28 @@ public struct GespeichertesProfil: Codable, Equatable, Identifiable {
     public var name: String
     public var profil: Profil
     public var gewichtung: Gewichtung
+    /// Gewischte Karten – kommen bei diesem Profil nicht wieder (bis „Gesehene wieder zeigen“).
+    public var gesehen: [String]
 
-    public init(id: UUID = UUID(), name: String, profil: Profil, gewichtung: Gewichtung) {
+    public init(id: UUID = UUID(), name: String, profil: Profil, gewichtung: Gewichtung, gesehen: [String] = []) {
         self.id = id
         self.name = name
         self.profil = profil
         self.gewichtung = gewichtung
+        self.gesehen = gesehen
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, name, profil, gewichtung, gesehen
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        name = try c.decode(String.self, forKey: .name)
+        profil = try c.decode(Profil.self, forKey: .profil)
+        gewichtung = try c.decode(Gewichtung.self, forKey: .gewichtung)
+        gesehen = try c.decodeIfPresent([String].self, forKey: .gesehen) ?? []
     }
 }
 
