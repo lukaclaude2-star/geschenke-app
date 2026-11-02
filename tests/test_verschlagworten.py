@@ -129,7 +129,7 @@ async def test_bericht_zaehlt_richtig(ki_bau):
     quellen = [produkt("alt"), produkt("neu"), produkt("mies"), produkt("billig", preis=1.0)]
     _, bericht = await baue_katalog(quellen, alt)
     assert bericht == {"quellen": 4, "regel_raus": 1, "wiederverwendet": 1,
-                       "neu_verschlagwortet": 2, "note_raus": 1, "katalog": 2}
+                       "neu_verschlagwortet": 2, "noch_offen": 0, "note_raus": 1, "katalog": 2}
 
 
 def test_lade_katalog_filtert_niedrige_noten(tmp_path):
