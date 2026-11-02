@@ -11,7 +11,7 @@ from app.config import settings
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import Karte, KatalogProdukt, Profil
 from app.ranking import ist_ausgeschlossen
-from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN
+from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, vokabular_text
 
 SYSTEM = f"""Du schlägst in einer Geschenke-App konkrete, kaufbare Geschenkideen vor, die man
 bei Amazon findet. Antworte nur mit JSON:
@@ -20,7 +20,8 @@ bei Amazon findet. Antworte nur mit JSON:
             "lebenslagen": [...], "farben": [...], "eigenschaften": [...]}}]}}
 Regeln: passend zu den Wünschen; NIE etwas, das einen Ausschluss trifft; Preisspanne innerhalb
 von budget_min bis budget_max (null = keine Grenze); keine Ideen aus der Liste "schon_gezeigt".
-themen nur aus: {", ".join(THEMEN)}
+themen nur aus (nach Oberbereich gruppiert):
+{vokabular_text()}
 lebenslagen nur aus: {", ".join(LEBENSLAGEN)}
 farben (Hauptfarben, falls festgelegt) nur aus: {", ".join(FARBEN)}
 eigenschaften (alles, was jemand ausschließen könnte) nur aus: {", ".join(EIGENSCHAFTEN)}"""

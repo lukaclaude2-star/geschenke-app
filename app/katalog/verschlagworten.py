@@ -12,7 +12,7 @@ import logging
 
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import KatalogProdukt, QuellProdukt
-from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN
+from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, VOKABULAR_VERSION, vokabular_text
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,8 @@ Antworte nur mit JSON: {{"produkte": [{{"id": "...", "themen": [...], "lebenslag
 "farben": [...], "eigenschaften": [...], "persoenlich": true/false, "note": 1-10}}]}}
 
 Erlaubte Werte – nichts anderes verwenden:
-- themen: {", ".join(THEMEN)}
+- themen (nach Oberbereich gruppiert, nimm die genauesten):
+{vokabular_text()}
 - lebenslagen: {", ".join(LEBENSLAGEN)}
 - farben: {", ".join(FARBEN)}
 - eigenschaften: {", ".join(EIGENSCHAFTEN)}
@@ -43,7 +44,8 @@ Gib jedes Produkt genau einmal zurück, mit derselben id."""
 
 
 def inhalts_hash(p: QuellProdukt) -> str:
-    teile = [p.titel, p.beschreibung, f"{p.preis:.2f}", p.kategorie, p.farbe or ""]
+    teile = [p.titel, p.beschreibung, f"{p.preis:.2f}", p.kategorie, p.farbe or "",
+             f"vokabular-{VOKABULAR_VERSION}"]
     return hashlib.sha256("\x1f".join(teile).encode("utf-8")).hexdigest()
 
 

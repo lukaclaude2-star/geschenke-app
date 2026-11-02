@@ -161,3 +161,10 @@ async def test_pause_zwischen_stapeln(ki, monkeypatch):
     monkeypatch.setattr(verschlagworten.asyncio, "sleep", schlafen)
     await verschlagworte([produkt(str(i)) for i in range(23)], pause_sekunden=7)
     assert pausen == [7, 7]
+
+
+def test_inhalts_hash_haengt_an_vokabular_version(monkeypatch):
+    import app.katalog.verschlagworten as v
+    vorher = inhalts_hash(produkt("a"))
+    monkeypatch.setattr(v, "VOKABULAR_VERSION", 999)
+    assert inhalts_hash(produkt("a")) != vorher
