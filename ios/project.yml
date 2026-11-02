@@ -20,6 +20,9 @@ targets:
       properties:
         CFBundleDisplayName: Geschenke
         CFBundleDevelopmentRegion: de
+        # Versionsnummer kommt vom CI-Build (1.0.<Lauf>) – SideStore vergleicht sie mit der Quelle.
+        CFBundleShortVersionString: $(MARKETING_VERSION)
+        CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
         # Kommt beim CI-Build aus dem GitHub-Secret APP_TOKEN, steht nie im Repo.
         AppToken: $(APP_TOKEN)
