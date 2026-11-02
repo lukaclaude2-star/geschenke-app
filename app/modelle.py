@@ -8,7 +8,7 @@ from pydantic import BaseModel, Field, field_validator
 def ohne_html(text: str) -> str:
     """Feeds liefern Beschreibungen oft mit HTML-Resten (<p>, &nbsp;)."""
     text = re.sub(r"<[^>]+>", " ", text)
-    text = html.unescape(text).replace(" ", " ")
+    text = html.unescape(text)  # &nbsp; wird ein geschütztes Leerzeichen, das \s unten mitnimmt
     return re.sub(r"\s+", " ", text).strip()
 
 
