@@ -1,0 +1,120 @@
+<style>
+  .wahl { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:20px; }
+  .wahl .card { padding:12px; }
+  .handy { --r:22px; border-radius:var(--r); padding:14px 12px 16px; background:var(--bg); color:var(--text);
+           font-family:-apple-system,system-ui,sans-serif; height:380px; display:flex; flex-direction:column; gap:10px; }
+  .kopf { display:flex; justify-content:space-between; align-items:center; font-size:12px; color:var(--leise); }
+  .kopf b { color:var(--text); font-size:14px; }
+  .fuer { background:var(--akzent); color:var(--aufakzent); border-radius:99px; padding:2px 8px; font-size:11px; font-weight:600; }
+  .k { background:var(--karte); border:1px solid var(--rand); border-radius:16px; overflow:hidden; flex:1; display:flex; flex-direction:column; }
+  .bild { aspect-ratio:4/3; background:var(--bild); display:flex; align-items:center; justify-content:center; font-size:40px; }
+  .info { padding:10px; display:flex; flex-direction:column; gap:4px; }
+  .titel { font-weight:700; font-size:14px; }
+  .preis { color:var(--akzent2); font-weight:700; font-size:14px; }
+  .tags { display:flex; gap:4px; flex-wrap:wrap; }
+  .tag { font-size:10px; border:1px solid var(--rand); color:var(--leise); border-radius:99px; padding:1px 6px; }
+  .knoepfe { display:flex; justify-content:space-around; align-items:center; }
+  .kn { width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+        background:var(--karte); border:1px solid var(--rand); font-size:16px; }
+  .kn.klein { width:30px; height:30px; font-size:13px; }
+  .kn.ja { background:var(--akzent); color:var(--aufakzent); border:none; }
+  .name { font-weight:700; margin-top:8px; }
+  .art { font-size:12px; opacity:.7; }
+</style>
+
+<h2>10 neue Designs – welche sollen in die App?</h2>
+<p class="subtitle">Mehrfachauswahl: klick alle an, die du willst. Nachtblau &amp; Gold bleibt sowieso drin. Jede Vorschau zeigt die Wisch-Ansicht mit dem neuen einheitlichen Bildformat (4:3), Rückgängig- und Merklisten-Knopf.</p>
+
+<div class="cards wahl" data-multiselect>
+
+  <div class="card" data-choice="rose" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#14111c;--karte:#211b2b;--rand:#3a2f47;--text:#f4ecf3;--leise:#a99bb0;--akzent:#e8a3b5;--aufakzent:#2a1420;--akzent2:#e8a3b5;--bild:linear-gradient(135deg,#3a2540,#5a3550)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">1 · Mitternacht &amp; Rosé</div><div class="art">dunkel, weich</div>
+  </div>
+
+  <div class="card" data-choice="wald" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#0f1a14;--karte:#18281f;--rand:#2c4335;--text:#eef3ea;--leise:#9db3a2;--akzent:#c9a45c;--aufakzent:#1a1408;--akzent2:#d8b874;--bild:linear-gradient(135deg,#1f3a2a,#2f5a3e)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">2 · Waldgrün &amp; Messing</div><div class="art">dunkel, natürlich</div>
+  </div>
+
+  <div class="card" data-choice="bordeaux" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#1c0d11;--karte:#2b1419;--rand:#4a2229;--text:#f7ece4;--leise:#c3a69f;--akzent:#efe0c8;--aufakzent:#3a1018;--akzent2:#efd7b0;--bild:linear-gradient(135deg,#4a1a24,#6e2a36)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">3 · Bordeaux &amp; Creme</div><div class="art">dunkel, festlich</div>
+  </div>
+
+  <div class="card" data-choice="polarlicht" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#0a1220;--karte:#121d30;--rand:#24365a;--text:#e8f1ff;--leise:#8ea3c4;--akzent:#4fe0c0;--aufakzent:#04211b;--akzent2:#a98bff;--bild:linear-gradient(135deg,#123a4a,#3a2a6a)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">4 · Polarlicht</div><div class="art">dunkel, Türkis + Violett</div>
+  </div>
+
+  <div class="card" data-choice="koralle" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#1a1d22;--karte:#252a31;--rand:#3a414b;--text:#f1f2f4;--leise:#a2a9b3;--akzent:#ff7a5c;--aufakzent:#2a0f08;--akzent2:#ff9a80;--bild:linear-gradient(135deg,#2e3540,#4a3a38)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">5 · Schiefer &amp; Koralle</div><div class="art">dunkel, modern</div>
+  </div>
+
+  <div class="card" data-choice="lime" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#0c0c0c;--karte:#171717;--rand:#2c2c2c;--text:#f5f5f5;--leise:#9a9a9a;--akzent:#c8f53c;--aufakzent:#121a00;--akzent2:#c8f53c;--bild:linear-gradient(135deg,#1e1e1e,#2e3a14)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">6 · Graphit &amp; Lime</div><div class="art">dunkel, sportlich</div>
+  </div>
+
+  <div class="card" data-choice="papier" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#f7f4ee;--karte:#ffffff;--rand:#e2dccf;--text:#1d1f2b;--leise:#6d6a62;--akzent:#1d2a5c;--aufakzent:#ffffff;--akzent2:#1d2a5c;--bild:linear-gradient(135deg,#e8e2d4,#d6cfbd)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">7 · Papier &amp; Tinte</div><div class="art">hell, ruhig</div>
+  </div>
+
+  <div class="card" data-choice="sand" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#f4ece1;--karte:#fffaf3;--rand:#e5d6c2;--text:#3b2a1f;--leise:#8a7563;--akzent:#c4673f;--aufakzent:#ffffff;--akzent2:#b5582f;--bild:linear-gradient(135deg,#ead7bf,#dcb999)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">8 · Sand &amp; Terrakotta</div><div class="art">hell, warm</div>
+  </div>
+
+  <div class="card" data-choice="lavendel" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#f3effa;--karte:#ffffff;--rand:#ddd3ee;--text:#2b1f3d;--leise:#7a6e8c;--akzent:#6b3fa0;--aufakzent:#ffffff;--akzent2:#6b3fa0;--bild:linear-gradient(135deg,#e3d8f3,#cdb9ea)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">9 · Lavendel &amp; Pflaume</div><div class="art">hell, verspielt</div>
+  </div>
+
+  <div class="card" data-choice="mint" onclick="toggleSelect(this)">
+    <div class="handy" style="--bg:#eef6f3;--karte:#ffffff;--rand:#cfe3dc;--text:#12263a;--leise:#5f7480;--akzent:#14375e;--aufakzent:#ffffff;--akzent2:#1f8a70;--bild:linear-gradient(135deg,#d3ece3,#b5dccd)">
+      <div class="kopf"><span>‹ Zurück</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer" style="align-self:flex-start">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div><div class="tags"><span class="tag">Garten</span><span class="tag">Kochen</span></div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">10 · Mint &amp; Marine</div><div class="art">hell, frisch</div>
+  </div>
+
+</div>

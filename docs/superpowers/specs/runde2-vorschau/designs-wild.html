@@ -1,0 +1,145 @@
+<style>
+  .wahl { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:22px; }
+  .wahl .card { padding:12px; }
+  .h { border-radius:24px; height:420px; padding:14px 12px 16px; display:flex; flex-direction:column; gap:10px;
+       position:relative; overflow:hidden; font-family:-apple-system,system-ui,sans-serif; }
+  .kopf { display:flex; justify-content:space-between; align-items:center; font-size:12px; position:relative; z-index:2; }
+  .kopf b { font-size:14px; }
+  .k { flex:1; display:flex; flex-direction:column; overflow:hidden; position:relative; z-index:2; }
+  .bild { aspect-ratio:4/3; display:flex; align-items:center; justify-content:center; font-size:44px; position:relative; }
+  .info { padding:10px; display:flex; flex-direction:column; gap:4px; }
+  .titel { font-weight:700; font-size:15px; }
+  .knoepfe { display:flex; justify-content:space-around; align-items:center; position:relative; z-index:2; }
+  .kn { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .kn.klein { width:32px; height:32px; font-size:13px; }
+  .name { font-weight:700; margin-top:8px; }
+  .art { font-size:12px; opacity:.75; }
+
+  /* 11 Aurora-Glas */
+  .aurora { background:#0b0620; color:#fff; }
+  .aurora::before { content:""; position:absolute; inset:-40%; z-index:0;
+    background:radial-gradient(circle at 25% 30%,#ff5fa2 0,transparent 40%),radial-gradient(circle at 75% 25%,#5f8bff 0,transparent 42%),
+               radial-gradient(circle at 50% 80%,#ffb347 0,transparent 40%),radial-gradient(circle at 85% 75%,#7b2cff 0,transparent 40%);
+    filter:blur(30px); opacity:.9; }
+  .aurora .k { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.35); border-radius:22px; backdrop-filter:blur(18px); }
+  .aurora .bild { margin:8px; border-radius:16px; background:rgba(255,255,255,.18); }
+  .aurora .fuer { background:rgba(255,255,255,.9); color:#3a1a5a; border-radius:99px; padding:2px 9px; font-size:11px; font-weight:700; align-self:flex-start; }
+  .aurora .preis { font-size:20px; font-weight:800; }
+  .aurora .kn { background:rgba(255,255,255,.18); border:1px solid rgba(255,255,255,.4); backdrop-filter:blur(10px); }
+  .aurora .kn.ja { background:linear-gradient(135deg,#ff5fa2,#ffb347); border:none; box-shadow:0 0 18px #ff5fa2; }
+
+  /* 12 Art déco */
+  .deco { background:#0e1a17; color:#e9dcb8; font-family:Didot,"Bodoni 72",Georgia,serif;
+    background-image:repeating-linear-gradient(45deg,rgba(201,164,92,.06) 0 2px,transparent 2px 14px),repeating-linear-gradient(-45deg,rgba(201,164,92,.06) 0 2px,transparent 2px 14px); }
+  .deco .kopf b { letter-spacing:3px; text-transform:uppercase; font-size:12px; color:#c9a45c; }
+  .deco .k { background:#13241f; border:1px solid #c9a45c; outline:1px solid #c9a45c; outline-offset:4px; border-radius:2px; margin:6px; }
+  .deco .bild { background:linear-gradient(180deg,#1d3a30,#0f201b); border-bottom:1px solid #c9a45c; }
+  .deco .bild::after { content:""; position:absolute; bottom:-9px; left:50%; width:16px; height:16px; background:#13241f; border:1px solid #c9a45c; transform:translateX(-50%) rotate(45deg); }
+  .deco .info { align-items:center; text-align:center; padding-top:16px; }
+  .deco .fuer { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:#c9a45c; }
+  .deco .titel { font-size:17px; font-weight:400; font-style:italic; }
+  .deco .preis { color:#c9a45c; letter-spacing:2px; font-size:14px; }
+  .deco .kn { border:1px solid #c9a45c; color:#c9a45c; border-radius:0; transform:rotate(45deg); }
+  .deco .kn span { transform:rotate(-45deg); }
+  .deco .kn.ja { background:#c9a45c; color:#0e1a17; }
+
+  /* 13 Pop-Comic */
+  .pop { background:#ffd23f; color:#111; font-family:"Arial Black","Helvetica Neue",sans-serif;
+    background-image:radial-gradient(#f2b705 1.5px,transparent 1.6px); background-size:12px 12px; }
+  .pop .kopf b { background:#111; color:#ffd23f; padding:2px 8px; transform:rotate(-2deg); }
+  .pop .k { background:#fff; border:3px solid #111; border-radius:14px; box-shadow:6px 6px 0 #111; transform:rotate(-1.5deg); margin:4px 8px 8px 2px; }
+  .pop .bild { background:#3ec1d3; border-bottom:3px solid #111; }
+  .pop .fuer { position:absolute; top:-6px; right:-8px; background:#ff3d7f; color:#fff; border:3px solid #111; border-radius:99px;
+    padding:4px 10px; font-size:12px; transform:rotate(8deg); z-index:3; }
+  .pop .titel { font-size:16px; text-transform:uppercase; }
+  .pop .preis { font-size:22px; color:#ff3d7f; -webkit-text-stroke:1px #111; }
+  .pop .kn { background:#fff; border:3px solid #111; box-shadow:3px 3px 0 #111; }
+  .pop .kn.ja { background:#ff3d7f; color:#fff; }
+
+  /* 14 Geschenkpapier */
+  .papier { background:#b3122e; color:#fff7ec;
+    background-image:repeating-linear-gradient(135deg,rgba(255,255,255,.08) 0 10px,transparent 10px 22px); }
+  .papier .k { background:#fff7ec; color:#3a0a12; border-radius:6px 6px 6px 6px; clip-path:polygon(14% 0,86% 0,100% 8%,100% 100%,0 100%,0 8%);
+    padding-top:14px; margin:0 6px; }
+  .papier .loch { position:absolute; top:6px; left:50%; width:12px; height:12px; border-radius:50%; background:#b3122e; transform:translateX(-50%); z-index:3; }
+  .papier .bild { background:#f1dfc7; margin:6px 10px 0; border-radius:4px; }
+  .papier .band { position:absolute; inset:0; pointer-events:none; }
+  .papier .band::before { content:""; position:absolute; left:0; right:0; top:46%; height:10px; background:#d4a017; }
+  .papier .band::after  { content:""; position:absolute; top:0; bottom:0; left:46%; width:10px; background:#d4a017; }
+  .papier .fuer { font-family:"Segoe Script","Brush Script MT",cursive; font-size:18px; color:#b3122e; }
+  .papier .preis { font-weight:800; color:#1f5c3a; }
+  .papier .kn { background:#fff7ec; color:#b3122e; }
+  .papier .kn.ja { background:#1f5c3a; color:#fff7ec; box-shadow:0 0 0 3px #d4a017; }
+  .papier .schnee { position:absolute; inset:0; z-index:1; background-image:radial-gradient(#fff 1px,transparent 1.5px),radial-gradient(#fff 1.5px,transparent 2px);
+    background-size:40px 40px,70px 70px; background-position:0 0,20px 35px; opacity:.5; }
+
+  /* 15 Polaroid-Pinnwand */
+  .kork { background:#c89a64; color:#2b2118;
+    background-image:radial-gradient(rgba(90,55,20,.35) 1px,transparent 1.5px),radial-gradient(rgba(255,240,210,.25) 1px,transparent 1.5px);
+    background-size:7px 7px,11px 11px; background-position:0 0,3px 5px; }
+  .kork .kopf b { font-family:"Segoe Print","Bradley Hand",cursive; font-size:16px; background:#fff59d; padding:2px 10px; transform:rotate(2deg); box-shadow:1px 2px 3px rgba(0,0,0,.3); }
+  .kork .k { background:#fdfdf8; padding:10px 10px 0; transform:rotate(2deg); box-shadow:2px 6px 14px rgba(0,0,0,.35); margin:10px 12px; overflow:visible; }
+  .kork .tape { position:absolute; top:-10px; left:50%; width:70px; height:20px; background:rgba(255,255,255,.55); transform:translateX(-50%) rotate(-4deg); z-index:3; }
+  .kork .bild { background:linear-gradient(135deg,#9fc5a8,#5f8f6c); }
+  .kork .info { font-family:"Segoe Print","Bradley Hand",cursive; }
+  .kork .fuer { color:#c0392b; font-size:13px; }
+  .kork .titel { font-weight:400; }
+  .kork .preis { font-size:15px; }
+  .kork .kn { background:#fdfdf8; box-shadow:1px 3px 6px rgba(0,0,0,.35); }
+  .kork .kn.ja { background:#c0392b; color:#fff; }
+  .kork .pin { position:absolute; width:12px; height:12px; border-radius:50%; background:#c0392b; box-shadow:1px 2px 2px rgba(0,0,0,.4); }
+</style>
+
+<h2>5 wildere Designs</h2>
+<p class="subtitle">Mehr als nur Farben: Glas, Muster, Schriften, schräge Karten. Alles davon geht in SwiftUI. Klick an, was rein soll (zusätzlich zu 2, 3, 4, 6, 10 und Nachtblau &amp; Gold).</p>
+
+<div class="cards wahl" data-multiselect>
+
+  <div class="card" data-choice="aurora" onclick="toggleSelect(this)">
+    <div class="h aurora">
+      <div class="kopf"><span>‹</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">11 · Aurora-Glas</div><div class="art">leuchtender Farbverlauf, Karten aus Milchglas – der Hintergrund bewegt sich langsam</div>
+  </div>
+
+  <div class="card" data-choice="deco" onclick="toggleSelect(this)">
+    <div class="h deco">
+      <div class="kopf"><span>‹</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><div class="bild">🌿</div><div class="info"><span class="fuer">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div></div></div>
+      <div class="knoepfe"><div class="kn klein"><span>↶</span></div><div class="kn"><span>✕</span></div><div class="kn ja"><span>♥</span></div><div class="kn klein"><span>☆</span></div></div>
+    </div>
+    <div class="name">12 · Art déco</div><div class="art">20er-Jahre-Kaufhaus: Smaragd, Goldlinien, Serifenschrift, Rauten-Knöpfe</div>
+  </div>
+
+  <div class="card" data-choice="pop" onclick="toggleSelect(this)">
+    <div class="h pop">
+      <div class="kopf"><span>‹</span><b>WEIHNACHTEN</b><span>☰ 3</span></div>
+      <div class="k" style="overflow:visible"><span class="fuer">für Mama!</span><div class="bild">🌿</div><div class="info"><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">13 · Pop-Comic</div><div class="art">knallgelb, dicke Umrisse, harte Schatten, schiefe Karte mit Sticker</div>
+  </div>
+
+  <div class="card" data-choice="geschenkpapier" onclick="toggleSelect(this)">
+    <div class="h papier">
+      <div class="schnee"></div>
+      <div class="kopf"><span>‹</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><span class="loch"></span><div class="bild">🌿<div class="band"></div></div><div class="info"><span class="fuer">für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">14 · Geschenkpapier</div><div class="art">Karte als Geschenkanhänger mit Loch, Schleifenband, Schnee – Weihnachtsmodus</div>
+  </div>
+
+  <div class="card" data-choice="pinnwand" onclick="toggleSelect(this)">
+    <div class="h kork">
+      <span class="pin" style="top:60px;left:18px"></span><span class="pin" style="top:90px;right:16px;background:#2e86de"></span>
+      <div class="kopf"><span>‹</span><b>Weihnachten</b><span>☰ 3</span></div>
+      <div class="k"><span class="tape"></span><div class="bild">🌿</div><div class="info"><span class="fuer">→ für Mama</span><div class="titel">Kräutergarten-Set</div><div class="preis">34,90 €</div></div></div>
+      <div class="knoepfe"><div class="kn klein">↶</div><div class="kn">✕</div><div class="kn ja">♥</div><div class="kn klein">☆</div></div>
+    </div>
+    <div class="name">15 · Polaroid-Pinnwand</div><div class="art">Korkwand, Fotos mit Klebeband, Handschrift – wie eine Ideen-Sammlung</div>
+  </div>
+
+</div>

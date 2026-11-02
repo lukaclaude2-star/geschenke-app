@@ -43,7 +43,7 @@ wackelnde Bilder) und mehr Persönlichkeit durch wählbare Designs.
 ### 1 · Designs (Lukas Auswahl)
 
 Acht Designs, global für die ganze App, gewählt in den Einstellungen, gespeichert auf dem Handy.
-Standard bleibt Nachtblau & Gold. Vorschauen: `.superpowers/brainstorm/2743-1793638474/content/designs*.html`.
+Standard bleibt Nachtblau & Gold. Vorschauen (verbindlich für Art déco und Pinnwand): `docs/superpowers/specs/runde2-vorschau/designs.html` und `designs-wild.html`.
 
 | Name | Art | Farben (Hintergrund / Karte / Rand / Text / Akzent / Preis) |
 |---|---|---|
@@ -58,8 +58,11 @@ Standard bleibt Nachtblau & Gold. Vorschauen: `.superpowers/brainstorm/2743-1793
 
 Die sechs „Farb“-Designs unterscheiden sich nur in Farben. Art déco und Pinnwand
 haben zusätzlich eigene Schrift, Kartenform und Hintergrund. Akzentfarbe ersetzt
-überall das bisherige `Look.gold`; auf Akzentflächen steht Text in einer
-Kontrastfarbe (je Design festgelegt). Helle Designs schalten die Statusleiste auf dunkel.
+überall das bisherige `Look.gold`. Text auf Akzentflächen (Kontrastfarbe): Nachtblau #11131C,
+Waldgrün #1A1408, Bordeaux #3A1018, Polarlicht #04211B, Graphit #121A00, Mint #FFFFFF,
+Art déco #0E1A17, Pinnwand #FFFFFF. Helle Designs schalten die Statusleiste auf dunkel.
+*Meine Entscheidung:* nur Systemschriften, keine mitgelieferten – Art déco nutzt die
+Serifenschrift von iOS (New York, `.serif`), Pinnwand eine Handschrift aus iOS (Noteworthy).
 
 ### 2 · Sammelsuche
 
@@ -73,6 +76,10 @@ Kontrastfarbe (je Design festgelegt). Helle Designs schalten die Statusleiste au
 - Auswahl wird nicht als Gruppe gespeichert.
 - Wer schon etwas Gemerktes hat, bleibt normal im Stapel.
 - Nur gespeicherte Profile können in die Sammelsuche (ohne Profil kein Name, keine Ausschlüsse).
+- Budget: jede Person mit ihrem gespeicherten Budget; Profil ohne Budget = keine Grenze. Keine Extra-Abfrage. *(meine Entscheidung)*
+- Server: eigener Endpunkt, der alle Personen in einem Aufruf bekommt und pro Person mit demselben
+  Ausschluss- und Budgetcode wie `/karten` filtert; erst danach wird dedupliziert und gemischt.
+  Ausschlüsse werden nie im Client geprüft. *(meine Entscheidung)*
 
 ### 3 · Einheitliche Bilder
 
@@ -106,13 +113,16 @@ mit dem Suchbegriff statt Emoji. Gruppiert nach Person („für Mama“).
 - Das Profil bekommt `budget_min` und `budget_max` aus dem Regler – der Regler gewinnt gegen das,
   was die KI aus dem Text liest.
 - Budget-Untergrenze ist hart wie die Obergrenze (Produkte darunter werden nicht gezeigt).
-  Ideenkarten: Spanne muss sich mit dem Budget überschneiden.
+  Ideenkarten: Spanne muss sich mit dem Budget überschneiden. Produkte ohne Preis gibt es im
+  Katalog nicht (Regelfilter); falls doch, fallen sie bei gesetztem Budget raus.
 - Im Profil per Chat änderbar („Budget jetzt bis 100 €“) wie bisher; zusätzlich zeigt das Profil
-  den Regler zum direkten Ändern. Alte Profile ohne `budget_min` funktionieren weiter (= keine Untergrenze).
+  den Regler zum direkten Ändern. Alte Profile haben nur `budget_max` (Obergrenze); `budget_min` kommt optional dazu,
+  fehlt es, gibt es keine Untergrenze. Keine Umbenennung, keine Migration nötig.
 
 ### 8 · Gesehenes merken
 
-- Gespeicherte Profile: Liste der gesehenen Karten-IDs liegt dauerhaft im Profil auf dem Handy.
+- Gespeicherte Profile: Liste der **gewischten** Karten-IDs liegt dauerhaft im Profil auf dem Handy.
+  Nur gewischte Karten zählen – geladene, aber noch nicht gewischte Karten kommen beim nächsten Mal wieder.
   Verlassen und Wiederkommen → keine Wiederholungen.
 - In „Was ich gelernt habe“: Knopf „Gesehene wieder zeigen“ leert die Liste.
 - Ohne Profil: gilt, solange die Suche offen ist; versehentliches Zurück aus dem Wischen in den Chat
@@ -123,7 +133,8 @@ mit dem Suchbegriff statt Emoji. Gruppiert nach Person („für Mama“).
 
 - Knopf ↶ in der Wisch-Ansicht, bis zu 10 Wischer zurück.
 - Zurück kommt: die Karte (oben auf den Stapel), die Gewichtung vor dem Wischer,
-  bei Ja der Merklisten-Eintrag wird entfernt, die Karte gilt wieder als ungesehen-entschieden.
+  bei Ja der Merklisten-Eintrag wird entfernt, und die Karten-ID verschwindet wieder aus der
+  dauerhaften Gesehen-Liste (sonst käme sie nie wieder).
 - Der Verlauf gilt nur, solange die Wisch-Ansicht offen ist.
 
 ### 10 · Kleinpunkte aus v1
@@ -135,7 +146,9 @@ mit dem Suchbegriff statt Emoji. Gruppiert nach Person („für Mama“).
 - M5 Kein Gesamt-Zeitlimit in `frage_json` → Obergrenze (z. B. 45 s) über alle Modelle.
 - M6 Neu sortieren bei jedem Schließen von „Gelernt“ → nur, wenn sich etwas geändert hat.
 - M7 Leerer Stapel: Hinweis erwähnt Budget/Ausschlüsse als mögliche Ursache.
-- M9 Profiländerung während des Wischens überschreibt Gelerntes → beim Speichern zusammenführen.
+- M9 Profiländerung während des Wischens überschreibt Gelerntes → beim Speichern zusammenführen:
+  Wünsche, Ausschlüsse und Budget kommen aus der Profiländerung, gelernte Gewichte und Gesehen-Liste
+  aus dem Wischen. *(meine Entscheidung)*
 - M10 `uebernimm` ignoriert geänderte Wunsch-Gewichte → übernehmen.
 - M11 HTML-Reste in Beschreibungen → beim Katalogbau entfernen.
 
