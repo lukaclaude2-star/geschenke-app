@@ -168,3 +168,14 @@ def test_inhalts_hash_haengt_an_vokabular_version(monkeypatch):
     vorher = inhalts_hash(produkt("a"))
     monkeypatch.setattr(v, "VOKABULAR_VERSION", 999)
     assert inhalts_hash(produkt("a")) != vorher
+
+
+async def test_alter_eintrag_bleibt_wenn_neu_verschlagworten_scheitert(ki_bau, monkeypatch):
+    alt, _ = await baue_katalog([produkt("a"), produkt("b")], [])
+    monkeypatch.setattr(verschlagworten, "VOKABULAR_VERSION", 999)  # alles muss neu
+    ki_bau.auslassen = {"a"}  # Kontingent leer o. Ä.: "a" kommt nicht zurück
+    katalog, bericht = await baue_katalog([produkt("a"), produkt("b")], alt)
+    assert sorted(p.id for p in katalog) == ["a", "b"]
+    alt_a = next(p for p in katalog if p.id == "a")
+    assert alt_a.inhalts_hash != inhalts_hash(produkt("a"))  # wird beim nächsten Lauf erneut versucht
+    assert bericht["noch_offen"] == 1
