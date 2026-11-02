@@ -1,0 +1,35 @@
+name: Katalog bauen
+
+# Einmal am Tag: neue/geänderte Produkte durch den Ramsch-Filter schicken und von der KI
+# verschlagworten lassen. Unveränderte Produkte werden wiederverwendet (kostet nichts).
+# Ändert sich katalog.json, wird committet – Render baut daraufhin neu.
+
+on:
+  schedule:
+    - cron: "0 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  bauen:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Katalog bauen
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: python scripts/build_katalog.py
+      - name: Committen, falls geändert
+        run: |
+          git config user.name katalog-bot
+          git config user.email katalog-bot@users.noreply.github.com
+          git add katalog/katalog.json
+          git diff --cached --quiet || git commit -m "Katalog aktualisieren"
+          git push
