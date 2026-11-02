@@ -109,10 +109,23 @@ async def seiten_aus_sitemaps(client: httpx.AsyncClient, start: list[str]) -> li
 
 def _kandidaten(seiten: list[str], basis: str) -> list[str]:
     host = urlparse(basis).netloc.lower().removeprefix("www.")
-    passend = [u for u in seiten
-               if urlparse(u).netloc.lower().removeprefix("www.") == host
-               and urlparse(u).path.strip("/") and not KEIN_PRODUKT.search(urlparse(u).path)
-               and not DATEI.search(urlparse(u).path)]
+    # Startadresse mit Sprachpfad (/de-de/, /de/) → nur Seiten dieser Sprachversion, sonst landen
+    # italienische Titel und Links im Katalog.
+    sprache = urlparse(basis).path.lower().rstrip("/")
+    passend = []
+    for u in seiten:
+        try:
+            teile = urlparse(u)
+        except ValueError:
+            continue
+        pfad = teile.path
+        if teile.netloc.lower().removeprefix("www.") != host or not pfad.strip("/"):
+            continue
+        if sprache and not pfad.lower().startswith(sprache + "/"):
+            continue
+        if KEIN_PRODUKT.search(pfad) or DATEI.search(pfad):
+            continue
+        passend.append(u)
     random.Random(42).shuffle(passend)
     # Seiten, deren Pfad nach Produkt aussieht, zuerst
     passend.sort(key=lambda u: 0 if PRODUKT_HINWEIS.search(urlparse(u).path) else 1)
@@ -187,7 +200,10 @@ async def main() -> None:
 
     async def lauf(shop):
         async with grenze:
-            b = await sammle(shop)
+            try:
+                b = await sammle(shop)
+            except Exception as fehler:  # ein kaputter Shop darf die anderen nicht abbrechen
+                b = {"status": f"Fehler: {type(fehler).__name__}", "produkte": []}
         if b["produkte"]:
             datei = ordner / f"shop-{_slug(shop['name'])}.json"
             datei.write_text(json.dumps(b["produkte"], ensure_ascii=False, indent=1) + "\n", encoding="utf-8")

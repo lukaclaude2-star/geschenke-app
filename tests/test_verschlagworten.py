@@ -179,3 +179,39 @@ async def test_alter_eintrag_bleibt_wenn_neu_verschlagworten_scheitert(ki_bau, m
     alt_a = next(p for p in katalog if p.id == "a")
     assert alt_a.inhalts_hash != inhalts_hash(produkt("a"))  # wird beim nächsten Lauf erneut versucht
     assert bericht["noch_offen"] == 1
+
+
+async def test_stoppt_nach_ueberlastung_und_bei_stapelgrenze(monkeypatch):
+    from app.ki import KiUeberlastet
+    aufrufe = 0
+
+    async def ueberlastet(*_, **__):
+        nonlocal aufrufe
+        aufrufe += 1
+        raise KiUeberlastet("Kontingent leer")
+    monkeypatch.setattr(verschlagworten, "frage_json", ueberlastet)
+    ergebnis = await verschlagworte([produkt(str(i)) for i in range(35)])
+    assert ergebnis == [] and aufrufe == 1  # nicht noch 3 weitere Stapel gegen die Wand
+
+    fake = FakeKi()
+    monkeypatch.setattr(verschlagworten, "frage_json", fake)
+    ergebnis = await verschlagworte([produkt(str(i)) for i in range(35)], max_stapel=2)
+    assert len(ergebnis) == 20 and fake.aufrufe == 2
+
+
+async def test_ganz_neue_produkte_zuerst(ki_bau):
+    alt, _ = await baue_katalog([produkt("alt")], [])
+    _, bericht = await baue_katalog([produkt("alt", preis=99.0), produkt("neu")], alt, max_stapel=1)
+    assert bericht["neu_verschlagwortet"] == 2  # beide passen in einen Stapel
+    reihenfolge = []
+
+    async def merke(system, nutzer, **_):
+        reihenfolge.extend(p["id"] for p in json.loads(nutzer)["produkte"])
+        return {"produkte": []}
+    import app.katalog.verschlagworten as v
+    v.frage_json, vorher = merke, v.frage_json
+    try:
+        await baue_katalog([produkt("alt", preis=98.0), produkt("neu2")], alt)
+    finally:
+        v.frage_json = vorher
+    assert reihenfolge == ["neu2", "alt"]

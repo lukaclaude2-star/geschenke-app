@@ -119,3 +119,35 @@ def test_microdata_ohne_preis_nichts_und_kategorieseite_nichts():
     assert produkte_aus_html(ohne_preis, "https://shop.de/a", "S") == []
     kategorie = '<html><meta property="og:title" content="Grills"><meta property="og:image" content="/a.jpg"></html>'
     assert produkte_aus_html(kategorie, "https://shop.de/a", "S") == []
+
+
+def test_kategorieseite_mit_mehreren_produkt_kaesten_nichts():
+    kaesten = "".join(f'<div itemscope itemtype="https://schema.org/Product"><span itemprop="name">Grill {i}</span>'
+                      f'<meta itemprop="price" content="{i}99.00"></div>' for i in (4, 5))
+    seite_ = ('<html><meta property="og:title" content="Gasgrills | Shop">'
+              '<meta property="og:image" content="/k.jpg">' + kaesten + "</html>")
+    assert produkte_aus_html(seite_, "https://shop.de/gasgrills/", "S") == []
+
+
+def test_mehrere_jsonld_produkte_mit_verschiedenen_namen_nichts():
+    zwei = seite(PRODUKT, dict(PRODUKT, name="Grillbürste"))
+    assert produkte_aus_html(zwei, "https://shop.de/zubehoer/", "S") == []
+    gleiche = seite(PRODUKT, dict(PRODUKT))  # z. B. Varianten desselben Produkts
+    assert len(produkte_aus_html(gleiche, "https://shop.de/p/zange", "S")) == 1
+
+
+def test_microdata_name_nicht_von_der_marke():
+    marke = ('<html><meta property="og:image" content="/t.jpg"><h1 class="x">Schreibtisch Tojo Stand</h1>'
+             '<div itemscope itemtype="https://schema.org/Product">'
+             '<div itemprop="brand" itemscope itemtype="https://schema.org/Brand"><meta itemprop="name" content="Tojo"></div>'
+             '<meta itemprop="price" content="309.00"></div></html>')
+    [p] = produkte_aus_html(marke, "https://shop.de/p/1", "S")
+    assert p.titel == "Schreibtisch Tojo Stand"
+
+
+def test_tausenderpunkt_ohne_nachkommastellen():
+    def preis(wert):
+        [p] = produkte_aus_html(seite(dict(PRODUKT, offers={"@type": "Offer", "price": wert})), "https://s.de/a", "S")
+        return p.preis
+    assert preis("12.500") == 12500.0
+    assert preis("19.99") == 19.99

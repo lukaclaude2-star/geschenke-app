@@ -47,6 +47,8 @@ def _zahl(wert) -> float | None:
         return None
     if "," in text and "." in text:
         text = text.replace(".", "").replace(",", ".") if text.rfind(",") > text.rfind(".") else text.replace(",", "")
+    elif re.fullmatch(r"\d{1,3}(\.\d{3})+", text):
+        text = text.replace(".", "")  # deutscher Tausenderpunkt ohne Cent: „12.500“
     else:
         text = text.replace(",", ".")
     try:
@@ -101,7 +103,10 @@ def produkte_aus_html(text: str, url: str, shop: str) -> list[QuellProdukt]:
         except (json.JSONDecodeError, ValueError):
             continue
     ergebnis: list[QuellProdukt] = []
-    for o in (o for o in objekte if _ist_produkt(o)):
+    produkte = [o for o in objekte if _ist_produkt(o)]
+    if len({_text(o.get("name")) for o in produkte} - {""}) > 1:
+        return []  # mehrere verschiedene Produkte → Kategorie- oder Listenseite, keine Produktseite
+    for o in produkte:
         angebote = o.get("offers")
         if angebote is None and isinstance(o.get("hasVariant"), list) and o["hasVariant"]:
             angebote = o["hasVariant"][0].get("offers") if isinstance(o["hasVariant"][0], dict) else None
@@ -141,14 +146,25 @@ def _itemprop(text: str, name: str) -> str | None:
     return None
 
 
+def _einziger_preis(text: str) -> str | None:
+    """itemprop="price" nur, wenn die Seite genau einen Preis nennt – sonst gehört er evtl. zu Zubehör."""
+    werte = set(re.findall(r"""itemprop=["']price["'][^>]*content=["']([^"']+)""", text, re.I))
+    werte |= set(re.findall(r"""content=["']([^"']+)["'][^>]*itemprop=["']price["']""", text, re.I))
+    return html.unescape(werte.pop()) if len(werte) == 1 else None
+
+
 def _aus_microdata(text: str, url: str, shop: str) -> QuellProdukt | None:
     """Ersatz für Shops ohne JSON-LD: schema.org-Microdata plus Open-Graph-Angaben.
     Nur Seiten, die sich selbst als Produkt auszeichnen – sonst wären Kategorieseiten dabei."""
-    if not re.search(r"""itemtype=["']https?://schema\.org/Product["']""", text, re.I) \
-            and (_meta(text, "og:type") or "").lower() != "product":
+    kaesten = len(re.findall(r"""itemtype=["']https?://schema\.org/Product["']""", text, re.I))
+    if kaesten > 1:
+        return None  # Produktkästen einer Kategorieseite
+    if kaesten == 0 and (_meta(text, "og:type") or "").lower() != "product":
         return None
-    preis = _zahl(_itemprop(text, "price") or _meta(text, "product:price:amount") or _meta(text, "og:price:amount"))
-    titel = _text(_meta(text, "og:title") or _itemprop(text, "name"))
+    preis = _zahl(_meta(text, "product:price:amount") or _meta(text, "og:price:amount") or _einziger_preis(text))
+    # Kein itemprop="name": das erste ist oft die Marke („Tojo“ statt „Schreibtisch Tojo Stand“).
+    ueberschrift = re.search(r"<h1[^>]*>(.*?)</h1>", text, re.I | re.S)
+    titel = _text(_meta(text, "og:title") or (ueberschrift.group(1) if ueberschrift else ""))
     bild = _bild(_meta(text, "og:image") or _itemprop(text, "image"), url)
     if preis is None or not titel or bild is None:
         return None

@@ -195,7 +195,8 @@ struct GeburtstagZeile: View {
                     get: { g.tag },
                     set: { aendern(Geburtstag(tag: $0, monat: g.monat)) }
                 )) {
-                    ForEach(1...Self.tageImMonat[g.monat - 1], id: \.self) { Text("\($0).").tag($0) }
+                    // Monat abgesichert, damit kaputte gespeicherte Daten nicht abstürzen lassen.
+                    ForEach(1...Self.tageImMonat[min(max(g.monat, 1), 12) - 1], id: \.self) { Text("\($0).").tag($0) }
                 }
                 Picker("Monat", selection: Binding(
                     get: { g.monat },
