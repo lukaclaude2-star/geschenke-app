@@ -6,19 +6,29 @@ name: iOS-App bauen
 
 on:
   workflow_dispatch:
+    inputs:
+      runner:
+        description: "macOS-Rechner (bei Engpass z. B. macos-15 oder macos-15-intel)"
+        default: macos-26
   push:
     branches: [main, "app/**"]
     paths: [ios/**, .github/workflows/ios-build.yml]
 
 jobs:
   build:
-    runs-on: macos-26
+    runs-on: ${{ inputs.runner || 'macos-26' }}
     timeout-minutes: 25
     defaults:
       run:
         working-directory: ios
     steps:
       - uses: actions/checkout@v4
+
+      - name: Xcode 26 wählen
+        run: |
+          neuestes=$(ls -d /Applications/Xcode_26*.app 2>/dev/null | sort -V | tail -1)
+          if [ -n "$neuestes" ]; then sudo xcode-select -s "$neuestes"; fi
+          xcodebuild -version
 
       - name: Projekt erzeugen
         run: |
