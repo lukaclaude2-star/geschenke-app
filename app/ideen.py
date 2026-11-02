@@ -18,7 +18,9 @@ bei Amazon findet. Antworte nur mit JSON:
 {{"ideen": [{{"titel": "...", "emoji": "ein Emoji", "preis_von": Zahl, "preis_bis": Zahl,
             "suchbegriff": "2–4 Wörter für die Amazon-Suche", "themen": [...],
             "lebenslagen": [...], "farben": [...], "eigenschaften": [...]}}]}}
-Regeln: passend zu den Wünschen; NIE etwas, das einen Ausschluss trifft; Preisspanne innerhalb
+Regeln: passend zu den Wünschen; die Wünsche in "schwerpunkt" haben im Shop kaum Produkte –
+zu jedem davon mindestens eine Idee, und mindestens die Hälfte der Ideen dazu;
+NIE etwas, das einen Ausschluss trifft; Preisspanne innerhalb
 von budget_min bis budget_max (null = keine Grenze); keine Ideen aus der Liste "schon_gezeigt".
 themen nur aus (nach Oberbereich gruppiert):
 {vokabular_text()}
@@ -59,13 +61,15 @@ def spanne_im_budget(von: float | None, bis: float | None, profil: Profil) -> bo
     return profil.budget_min is None or bis >= profil.budget_min
 
 
-async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str]) -> list[Karte]:
+async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str],
+                       schwerpunkt: list[str] | None = None) -> list[Karte]:
     anfrage = {
         "wuensche": [{"tag": w.tag, "gewicht": w.gewicht} for w in profil.wuensche],
         "ausschluesse": [a.schluessel for a in profil.ausschluesse],
         "budget_min": profil.budget_min,
         "budget_max": profil.budget_max,
         "anzahl": anzahl,
+        "schwerpunkt": schwerpunkt or [],
         "schon_gezeigt": sorted(i.removeprefix("idee:") for i in gesehen if i.startswith("idee:")),
     }
     try:
