@@ -48,3 +48,12 @@ def test_aenderung_setzt_budget_min():
 def test_gespraech_fragt_nicht_nach_budget():
     assert "Wenn das Budget noch fehlt" not in SYSTEM
     assert "Nach dem Budget fragst du nie" in SYSTEM
+
+
+def test_vertauschtes_budget_wird_getauscht():
+    from app.profil import bereinige_profil
+    p = bereinige_profil({"zusammenfassung": "x", "budget_min": 80, "budget_max": 30})
+    assert (p.budget_min, p.budget_max) == (30, 80)
+    alt = Profil(zusammenfassung="x", wuensche=[], ausschluesse=[], budget_max=30)
+    neu = wende_aenderung_an(alt, {"budget_min": 50})
+    assert (neu.budget_min, neu.budget_max) == (30, 50)

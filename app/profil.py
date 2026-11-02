@@ -100,6 +100,8 @@ def _budget(wert) -> float | None:
 
 def _profil(zusammenfassung: str, wuensche: dict[str, float], ausschluesse: list[str],
             budget: float | None, budget_min: float | None = None) -> Profil:
+    if budget is not None and budget_min is not None and budget_min > budget:
+        budget, budget_min = budget_min, budget  # KI hat die Grenzen vertauscht
     return Profil(
         zusammenfassung=zusammenfassung,
         wuensche=[Wunsch(tag=t, label=tag_label(t), gewicht=g) for t, g in wuensche.items()],

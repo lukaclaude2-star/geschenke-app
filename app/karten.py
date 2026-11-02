@@ -1,3 +1,4 @@
+import asyncio
 import math
 
 from app.ideen import ideen_karten
@@ -41,16 +42,21 @@ async def sammel_karten_fuer(katalog: list[KatalogProdukt], anfrage: KartenSamme
     anteil = math.ceil(anfrage.anzahl / len(personen))
     stapel: list[list[Karte]] = []
     duenn_fuer: list[str] = []
+    ideen_auftraege = []
     for i, (person, pool) in enumerate(zip(personen, pools)):
         eigene = [(punkte, p) for punkte, p in pool if beste[p.id][1] == i]
         produkte, duenn = waehle_aus(eigene, anteil)
-        karten = [produkt_zu_karte(p) for p in produkte]
+        stapel.append([produkt_zu_karte(p) for p in produkte])
         if duenn:
             duenn_fuer.append(person.id)
-            fehlend = anteil - len(karten)
+            fehlend = anteil - len(produkte)
             if fehlend > 0:
-                karten += await ideen_karten(person.profil, fehlend, set(person.gesehen))
-        stapel.append([k for k in karten if k.link])  # Grundbaustein 2
+                ideen_auftraege.append((i, ideen_karten(person.profil, fehlend, set(person.gesehen))))
+    # Gleichzeitig statt nacheinander: jede KI-Abfrage kann bis zu 45 s dauern, die App wartet 90 s.
+    ergebnisse = await asyncio.gather(*(auftrag for _, auftrag in ideen_auftraege))
+    for (i, _), ideen in zip(ideen_auftraege, ergebnisse):
+        stapel[i] += ideen
+    stapel = [[k for k in karten if k.link] for karten in stapel]  # Grundbaustein 2
 
     ergebnis: list[SammelKarte] = []
     vergeben: set[str] = set()

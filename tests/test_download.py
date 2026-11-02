@@ -84,3 +84,17 @@ def test_kein_release_503(client, konfiguriert):
 def test_release_ohne_ipa_503(client, konfiguriert):
     respx.get(LATEST).mock(return_value=httpx.Response(200, json={**RELEASE, "assets": []}))
     assert client.get("/dl/geheim/source.json").status_code == 503
+
+
+@respx.mock
+def test_source_json_hat_icon(client, konfiguriert):
+    respx.get(LATEST).mock(return_value=httpx.Response(200, json=RELEASE))
+    app = client.get("/dl/geheim/source.json").json()["apps"][0]
+    assert app["iconURL"] == "https://geschenke.onrender.com/dl/geheim/icon.png"
+
+
+def test_icon_wird_ausgeliefert(client, konfiguriert):
+    r = client.get("/dl/geheim/icon.png")
+    assert r.status_code == 200 and r.headers["content-type"] == "image/png"
+    assert r.content.startswith(b"\x89PNG")
+    assert client.get("/dl/falsch/icon.png").status_code == 404

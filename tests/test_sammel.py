@@ -89,3 +89,17 @@ def test_route_braucht_token_und_zwei_personen(client, auth):
     eine = {"personen": [{"id": "a", "profil": {"zusammenfassung": "x", "wuensche": [], "ausschluesse": []}}]}
     assert client.post("/karten/sammel", json=eine).status_code == 401
     assert client.post("/karten/sammel", json=eine, headers=auth).status_code == 422
+
+
+async def test_ideen_fuer_mehrere_personen_laufen_gleichzeitig(katalog, monkeypatch):
+    import asyncio
+    import time
+
+    async def langsam(*_, **__):
+        await asyncio.sleep(0.2)
+        return []
+    monkeypatch.setattr(karten_modul, "ideen_karten", langsam)
+    personen = [SammelPerson(id=str(i), profil=profil({"angeln": 1.5})) for i in range(3)]
+    start = time.perf_counter()
+    await sammel_karten_fuer(katalog, KartenSammelAnfrage(personen=personen, anzahl=6))
+    assert time.perf_counter() - start < 0.4

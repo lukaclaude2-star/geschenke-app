@@ -9,6 +9,7 @@ fehlendes Geheimnis → 404, damit niemand erfährt, dass es den Pfad gibt.
 import hmac
 import logging
 import re
+from pathlib import Path
 
 import httpx
 from fastapi import APIRouter, HTTPException, Response
@@ -21,6 +22,7 @@ router = APIRouter()
 GITHUB_API = "https://api.github.com"
 ASSET_NAME = "Geschenke.ipa"
 TAG_MUSTER = re.compile(r"^app-(\d+)$")
+ICON = Path(__file__).parent / "static" / "icon.png"
 
 
 class GithubFehler(RuntimeError):
@@ -75,7 +77,7 @@ async def quelle(geheimnis: str) -> dict:
                 "bundleIdentifier": "de.luka.geschenke",
                 "developerName": "Luka",
                 "localizedDescription": "Geschenke per Chat und Wischen finden.",
-                "iconURL": "",
+                "iconURL": f"{settings.oeffentliche_url}/dl/{geheimnis}/icon.png",
                 "versions": [{
                     "version": f"1.0.{nummer}",
                     "buildVersion": nummer,
@@ -107,3 +109,9 @@ async def ipa(geheimnis: str) -> Response:
                         headers={"Content-Disposition": f'attachment; filename="{ASSET_NAME}"'})
 
     return await _mit_github(arbeit)
+
+
+@router.get("/dl/{geheimnis}/icon.png")
+async def icon(geheimnis: str) -> Response:
+    _pruefe(geheimnis)
+    return Response(content=ICON.read_bytes(), media_type="image/png")
