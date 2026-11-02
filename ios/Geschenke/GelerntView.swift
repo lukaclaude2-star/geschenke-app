@@ -5,12 +5,20 @@ import SwiftUI
 struct GelerntView: View {
     @ObservedObject var modell: KartenStapelModell
     @Environment(\.dismiss) private var schliessen
+    /// Reihenfolge beim Öffnen einfrieren – sonst springen Zeilen beim Ziehen unter dem Finger weg.
+    @State private var reihenfolge: [String] = []
+
+    private var eintraege: [GewichtEintrag] {
+        let alle = modell.gewichtung.eintraege
+        let platz = Dictionary(uniqueKeysWithValues: reihenfolge.enumerated().map { ($1, $0) })
+        return alle.sorted { (platz[$0.tag] ?? Int.max, $0.tag) < (platz[$1.tag] ?? Int.max, $1.tag) }
+    }
 
     var body: some View {
         NavigationStack {
             List {
                 Section {
-                    ForEach(modell.gewichtung.eintraege) { eintrag in
+                    ForEach(eintraege) { eintrag in
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
                                 Text(eintrag.label)
@@ -44,6 +52,7 @@ struct GelerntView: View {
                 Section {
                     Button {
                         modell.zuruecksetzen()
+                        reihenfolge = modell.gewichtung.eintraege.map(\.tag)
                     } label: {
                         Label("Alles zurücksetzen", systemImage: "arrow.counterclockwise")
                             .foregroundStyle(Look.gold)
@@ -59,5 +68,6 @@ struct GelerntView: View {
             }
         }
         .presentationBackground(Look.hintergrund)
+        .onAppear { reihenfolge = modell.gewichtung.eintraege.map(\.tag) }
     }
 }

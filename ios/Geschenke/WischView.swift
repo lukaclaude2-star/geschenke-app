@@ -6,6 +6,7 @@ struct WischView: View {
     @StateObject private var modell: KartenStapelModell
     @State private var versatz: CGSize = .zero
     @State private var zeigeGelernt = false
+    @State private var wischt: String?
     private let schwelle: CGFloat = 100
 
     init(ziel: WischZiel) {
@@ -56,7 +57,10 @@ struct WischView: View {
                 Button { zeigeGelernt = true } label: { Image(systemName: "slider.horizontal.3") }
             }
         }
-        .sheet(isPresented: $zeigeGelernt, onDismiss: { Task { await modell.neuSortieren() } }) {
+        .sheet(isPresented: $zeigeGelernt, onDismiss: {
+            modell.sichernJetzt()
+            Task { await modell.neuSortieren() }
+        }) {
             GelerntView(modell: modell)
         }
         .task {
@@ -69,7 +73,8 @@ struct WischView: View {
         VStack(spacing: 12) {
             if modell.laedt {
                 ProgressView().tint(Look.gold)
-                Text("Suche passende Geschenke …").foregroundStyle(Look.leise)
+                Text(modell.wachtAuf ? "Server wacht auf …" : "Suche passende Geschenke …")
+                    .foregroundStyle(Look.leise)
             } else if let fehler = modell.fehler {
                 Text(fehler).foregroundStyle(Look.leise).multilineTextAlignment(.center)
                 Button("Nochmal") { Task { await modell.nachladen() } }.buttonStyle(RandKnopf())
@@ -106,12 +111,15 @@ struct WischView: View {
     }
 
     private func weg(_ karte: Karte, ja: Bool) {
+        guard wischt == nil else { return }
+        wischt = karte.id
         withAnimation(.easeOut(duration: 0.2)) {
             versatz = CGSize(width: ja ? 600 : -600, height: 0)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
             if ja { modell.ja(karte) } else { modell.nein(karte) }
             versatz = .zero
+            wischt = nil
         }
     }
 

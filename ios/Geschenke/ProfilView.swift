@@ -8,6 +8,7 @@ struct ProfilView: View {
     @State private var anweisung = ""
     @State private var verlauf: [ChatNachricht] = []
     @State private var denkt = false
+    @State private var wachtAuf = false
     @State private var ziel: WischZiel?
 
     var body: some View {
@@ -43,7 +44,12 @@ struct ProfilView: View {
                     Divider().overlay(Look.rand)
                     Text("Was hat sich geändert?").font(.headline)
                     ForEach(verlauf) { Blase(nachricht: $0) }
-                    if denkt { ProgressView().tint(Look.gold) }
+                    if denkt {
+                        HStack(spacing: 8) {
+                            ProgressView().tint(Look.gold)
+                            if wachtAuf { Text("Server wacht auf …").foregroundStyle(Look.leise) }
+                        }
+                    }
                 }
                 .padding()
             }
@@ -74,6 +80,14 @@ struct ProfilView: View {
         anweisung = ""
         verlauf.append(ChatNachricht(rolle: "nutzer", text: text))
         denkt = true
+        let hinweis = Task {
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+            if !Task.isCancelled { wachtAuf = true }
+        }
+        defer {
+            hinweis.cancel()
+            wachtAuf = false
+        }
         do {
             let neu = try await zustand.api.profilAendern(eintrag.profil, anweisung: text)
             var gewichtung = eintrag.gewichtung
@@ -81,7 +95,8 @@ struct ProfilView: View {
             zustand.aktualisiere(eintrag.id, profil: neu, gewichtung: gewichtung)
             verlauf.append(ChatNachricht(rolle: "app", text: "Erledigt! \(neu.zusammenfassung)"))
         } catch {
-            verlauf.append(ChatNachricht(rolle: "app", text: fehlerText(error)))
+            verlauf.append(ChatNachricht(rolle: "app", text: fehlerText(error) + " Deine Nachricht steht wieder im Feld."))
+            anweisung = text
         }
         denkt = false
     }

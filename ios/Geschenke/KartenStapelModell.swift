@@ -11,6 +11,7 @@ final class KartenStapelModell: ObservableObject {
     @Published private(set) var gewichtung: Gewichtung
     @Published private(set) var wirdDuenn = false
     @Published private(set) var laedt = false
+    @Published private(set) var wachtAuf = false
     @Published private(set) var fehler: String?
     @Published private(set) var nichtsMehr = false
 
@@ -18,6 +19,7 @@ final class KartenStapelModell: ObservableObject {
     private(set) var profil: Profil
     private let profilID: UUID?
     private var gesehen: [String] = []
+    private var entschieden: Set<String> = []
     private let api: GeschenkeAPI
     private weak var zustand: AppZustand?
 
@@ -41,6 +43,14 @@ final class KartenStapelModell: ObservableObject {
         guard !laedt else { return }
         laedt = true
         fehler = nil
+        let hinweis = Task { [weak self] in
+            try? await Task.sleep(nanoseconds: 5_000_000_000)
+            if !Task.isCancelled { self?.wachtAuf = true }
+        }
+        defer {
+            hinweis.cancel()
+            wachtAuf = false
+        }
         do {
             let antwort = try await api.karten(profil: gewichtung.angewendet(auf: profil),
                                                gesehen: gesehen, anzahl: Self.anzahl)
@@ -57,18 +67,25 @@ final class KartenStapelModell: ObservableObject {
     }
 
     func ja(_ karte: Karte) {
+        // Doppeltipp/Wischen während der Animation: jede Karte lernt nur einmal.
+        guard entschieden.insert(karte.id).inserted else { return }
         gewichtung.ja(tags: karte.tags)
         zustand?.merke(karte, fuer: name ?? "Ohne Namen")
         weg(karte)
     }
 
     func nein(_ karte: Karte) {
+        guard entschieden.insert(karte.id).inserted else { return }
         gewichtung.nein(tags: karte.tags)
         weg(karte)
     }
 
+    /// Während des Ziehens nur im Speicher ändern; gesichert wird beim Schließen (sichernJetzt).
     func setze(_ tag: String, auf wert: Double) {
         gewichtung.setze(tag, auf: wert)
+    }
+
+    func sichernJetzt() {
         sichern()
     }
 
