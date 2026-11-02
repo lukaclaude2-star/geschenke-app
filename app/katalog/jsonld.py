@@ -124,7 +124,42 @@ def produkte_aus_html(text: str, url: str, shop: str) -> list[QuellProdukt]:
             lieferbar="OutOfStock" not in json.dumps(angebote or {}) and "SoldOut" not in json.dumps(angebote or {}),
         ))
         break  # eine Seite = ein Produkt; weitere Einträge sind meist Zubehör oder Varianten
+    if not ergebnis:
+        ersatz = _aus_microdata(text, url, shop)
+        if ersatz is not None:
+            ergebnis.append(ersatz)
     return ergebnis
+
+
+def _itemprop(text: str, name: str) -> str | None:
+    """content="…" eines itemprop – die Form, die Shopware und Co. für Preise nutzen."""
+    for muster in (r"""itemprop=["']""" + name + r"""["'][^>]*content=["']([^"']+)""",
+                   r"""content=["']([^"']+)["'][^>]*itemprop=["']""" + name + r"""["']"""):
+        treffer = re.search(muster, text, re.I)
+        if treffer:
+            return html.unescape(treffer.group(1))
+    return None
+
+
+def _aus_microdata(text: str, url: str, shop: str) -> QuellProdukt | None:
+    """Ersatz für Shops ohne JSON-LD: schema.org-Microdata plus Open-Graph-Angaben.
+    Nur Seiten, die sich selbst als Produkt auszeichnen – sonst wären Kategorieseiten dabei."""
+    if not re.search(r"""itemtype=["']https?://schema\.org/Product["']""", text, re.I) \
+            and (_meta(text, "og:type") or "").lower() != "product":
+        return None
+    preis = _zahl(_itemprop(text, "price") or _meta(text, "product:price:amount") or _meta(text, "og:price:amount"))
+    titel = _text(_meta(text, "og:title") or _itemprop(text, "name"))
+    bild = _bild(_meta(text, "og:image") or _itemprop(text, "image"), url)
+    if preis is None or not titel or bild is None:
+        return None
+    beschreibung = _text(_meta(text, "og:description") or _meta(text, "description") or _itemprop(text, "description"))
+    verfuegbar = re.search(r"""itemprop=["']availability["'][^>]*(?:href|content)=["']([^"']+)""", text, re.I)
+    return QuellProdukt(
+        id=f"{_slug(shop)}-{hashlib.sha1(url.encode()).hexdigest()[:10]}",
+        titel=titel, beschreibung=beschreibung, preis=round(preis, 2), bild_url=bild, link=url, shop=shop,
+        kategorie=shop,
+        lieferbar=not (verfuegbar and re.search(r"OutOfStock|SoldOut", verfuegbar.group(1))),
+    )
 
 
 def ist_shopify(text: str, kopfzeilen) -> bool:

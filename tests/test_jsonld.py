@@ -91,3 +91,31 @@ def test_sitemap_index_und_urlset():
       <url><loc>https://s.de/a</loc></url><url><loc>https://s.de/b</loc></url></urlset>"""
     assert urls_aus_sitemap(urlset) == (["https://s.de/a", "https://s.de/b"], [])
     assert urls_aus_sitemap("kein xml <<<") == ([], [])
+
+
+MICRODATA = """<html><head>
+<meta property="og:title" content="Grillhandschuh Leder &amp; Kevlar">
+<meta property="og:image" content="https://shop.de/handschuh.jpg">
+<meta property="og:description" content="Hitzefest bis 300 Grad">
+<meta property="product:price:amount" content="24.90">
+</head><body><div itemscope itemtype="https://schema.org/Product">
+<span itemprop="name">Grillhandschuh</span>
+<meta itemprop="price" content="24.90"><link itemprop="availability" href="https://schema.org/InStock">
+</div></body></html>"""
+
+
+def test_microdata_und_meta_als_ersatz():
+    [p] = produkte_aus_html(MICRODATA, "https://shop.de/detail/1", "Grillshop")
+    assert p.titel == "Grillhandschuh Leder & Kevlar"
+    assert p.preis == 24.9
+    assert p.bild_url == "https://shop.de/handschuh.jpg"
+    assert p.beschreibung == "Hitzefest bis 300 Grad"
+    assert p.lieferbar
+
+
+def test_microdata_ohne_preis_nichts_und_kategorieseite_nichts():
+    ohne_preis = MICRODATA.replace('<meta property="product:price:amount" content="24.90">', "") \
+                          .replace('<meta itemprop="price" content="24.90">', "")
+    assert produkte_aus_html(ohne_preis, "https://shop.de/a", "S") == []
+    kategorie = '<html><meta property="og:title" content="Grills"><meta property="og:image" content="/a.jpg"></html>'
+    assert produkte_aus_html(kategorie, "https://shop.de/a", "S") == []
