@@ -5,10 +5,11 @@ from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.gespraech import naechster_schritt
-from app.karten import karten_fuer
+from app.karten import karten_fuer, sammel_karten_fuer
 from app.katalog.laden import lade_katalog
 from app.ki import KiUeberlastet
-from app.modelle import (ChatAnfrage, ChatAntwort, KartenAnfrage, KartenAntwort, Profil,
+from app.modelle import (ChatAnfrage, ChatAntwort, KartenAnfrage, KartenAntwort, KartenSammelAnfrage,
+                         KartenSammelAntwort, Profil,
                          ProfilAendernAnfrage, ProfilAusGespraechAnfrage)
 from app.profil import profil_aendern, profil_aus_gespraech
 
@@ -56,3 +57,8 @@ async def route_profil_aendern(anfrage: ProfilAendernAnfrage) -> Profil:
 @app.post("/karten", dependencies=geschuetzt)
 async def route_karten(anfrage: KartenAnfrage) -> KartenAntwort:
     return await karten_fuer(KATALOG, anfrage)
+
+
+@app.post("/karten/sammel", dependencies=geschuetzt)
+async def route_karten_sammel(anfrage: KartenSammelAnfrage) -> KartenSammelAntwort:
+    return await sammel_karten_fuer(KATALOG, anfrage)

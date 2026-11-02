@@ -76,10 +76,10 @@ def im_budget(preis: float, profil: Profil) -> bool:
     return profil.budget_max is None or preis <= profil.budget_max
 
 
-def waehle_karten(katalog: list[KatalogProdukt], profil: Profil, gesehen: set[str],
-                  anzahl: int) -> tuple[list[KatalogProdukt], bool]:
-    gut: list[tuple[float, KatalogProdukt]] = []
-    schwach: list[tuple[float, KatalogProdukt]] = []
+def kandidaten(katalog: list[KatalogProdukt], profil: Profil,
+               gesehen: set[str]) -> list[tuple[float, KatalogProdukt]]:
+    """Alle Produkte, die diese Person sehen darf und die zu ihr passen – Katalogreihenfolge."""
+    ergebnis: list[tuple[float, KatalogProdukt]] = []
     for p in katalog:
         if p.note < settings.min_note:  # Grundbaustein 4, auch wenn der Katalog es schon filtert
             continue
@@ -88,11 +88,21 @@ def waehle_karten(katalog: list[KatalogProdukt], profil: Profil, gesehen: set[st
         if not im_budget(p.preis, profil):
             continue
         punkte = bewerte(p, profil)
-        if punkte >= GUT_AB:
-            gut.append((punkte, p))
-        elif punkte > 0:
-            schwach.append((punkte, p))
+        if punkte > 0:
+            ergebnis.append((punkte, p))
+    return ergebnis
+
+
+def waehle_aus(pool: list[tuple[float, KatalogProdukt]], anzahl: int) -> tuple[list[KatalogProdukt], bool]:
+    """Erst gute, dann schwache Treffer, jeweils mit Abwechslung; True = es wird dünn."""
+    gut = [e for e in pool if e[0] >= GUT_AB]
+    schwach = [e for e in pool if e[0] < GUT_AB]
     gewaehlt: list[KatalogProdukt] = []
     _gierig(gut, gewaehlt, anzahl)
     _gierig(schwach, gewaehlt, anzahl)
     return gewaehlt, len(gut) < anzahl
+
+
+def waehle_karten(katalog: list[KatalogProdukt], profil: Profil, gesehen: set[str],
+                  anzahl: int) -> tuple[list[KatalogProdukt], bool]:
+    return waehle_aus(kandidaten(katalog, profil, gesehen), anzahl)

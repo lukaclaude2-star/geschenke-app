@@ -93,6 +93,28 @@ class KartenAntwort(BaseModel):
     tag_labels: dict[str, str]
 
 
+class SammelPerson(BaseModel):
+    id: str
+    profil: Profil
+    gesehen: list[str] = []
+
+
+class KartenSammelAnfrage(BaseModel):
+    personen: list[SammelPerson] = Field(min_length=2, max_length=12)
+    anzahl: int = Field(default=12, ge=2, le=30)
+
+
+class SammelKarte(BaseModel):
+    fuer: str
+    karte: Karte
+
+
+class KartenSammelAntwort(BaseModel):
+    karten: list[SammelKarte]
+    duenn_fuer: list[str]
+    tag_labels: dict[str, str]
+
+
 class ProfilAusGespraechAnfrage(BaseModel):
     nachrichten: list[ChatNachricht]
 
