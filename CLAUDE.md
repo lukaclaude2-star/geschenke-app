@@ -31,6 +31,7 @@ anpassen.
    „Was ich gelernt habe“ sichtbar, per Schieberegler änderbar und zurücksetzbar.
 7. **Gespräch statt Formular.** Die Person wird im Chat beschrieben; Länge wählbar
    und an den Kunden angepasst; letzte Frage immer „Gibt es sonst noch etwas?“.
+   Ausnahme: Das Budget wird per Regler mit Spanne (von–bis) abgefragt.
 8. **Profile sind freiwillig.** Niemand muss ein Profil anlegen, um Vorschläge zu
    bekommen. Profile lassen sich per Chat ändern.
 9. **Geheimnisse bleiben auf dem Server.** KI- und Partner-Schlüssel stehen nie im
@@ -38,4 +39,5 @@ anpassen.
 10. **Datensparsam.** Kein Login. Profile, Merkliste und Gewichtung liegen nur auf
     dem Handy. An die KI geht nur der Gesprächstext, keine Gerätekennung.
 11. **Kostenlos im Betrieb**, solange Luka nichts anderes entscheidet.
-12. **Aussehen:** Stil C – Nachtblau mit Gold-Akzenten.
+12. **Aussehen:** Standard ist Stil C – Nachtblau mit Gold-Akzenten. Weitere Designs
+    sind in den Einstellungen wählbar.
