@@ -20,6 +20,8 @@ wackelnde Bilder) und mehr Persönlichkeit durch wählbare Designs.
 8. **Schon Gesehenes nicht wiederholen**, auch nach versehentlichem Verlassen.
 9. **Rückgängig-Knopf** für Verwischer.
 10. **Offene Kleinpunkte aus der v1-Prüfung** beheben.
+11. **Update per Fingertipp:** neue App-Versionen in SideStore mit einem Tipp installieren,
+    ohne Umweg über den PC (Luka, 02.11.2026: „dann las uns das per Fingertipp machen“).
 
 ## Nicht-Ziele
 
@@ -151,6 +153,20 @@ mit dem Suchbegriff statt Emoji. Gruppiert nach Person („für Mama“).
   aus dem Wischen. *(meine Entscheidung)*
 - M10 `uebernimm` ignoriert geänderte Wunsch-Gewichte → übernehmen.
 - M11 HTML-Reste in Beschreibungen → beim Katalogbau entfernen.
+
+### 11 · Update per Fingertipp (SideStore-Quelle)
+
+- Jeder erfolgreiche App-Build auf `main` legt die `.ipa` als GitHub-Release mit fortlaufender
+  Versionsnummer ab (Build-Nummer = Lauf-Nummer).
+- Der Render-Server liefert unter einem geheimen, langen Pfad `/dl/<geheim>/source.json`
+  (SideStore-Quellformat) und `/dl/<geheim>/Geschenke.ipa`. Er holt die neueste Release-Datei
+  per GitHub-API mit einem eigenen Lese-Token und reicht sie durch – nichts liegt dauerhaft auf
+  Render (Render-Speicher ist flüchtig). *(meine Entscheidung)*
+- Geheimnisse (Pfad-Geheimnis, GitHub-Lese-Token) nur als Render-Umgebungsvariablen (Grundbaustein 9).
+- Luka fügt die Quelle einmal in SideStore hinzu; danach erscheint bei neuen Versionen „Update“.
+- Einmalige Handgriffe bei Luka: GitHub-Lese-Token anlegen (nur dieses Repo, nur Inhalte lesen)
+  und in Render eintragen; Quelle in SideStore hinzufügen.
+- Bewusst **nicht** gebaut: automatische Bildschirmfotos im Simulator (Mac-Minuten sind knapp).
 
 ## Was dem Bauer überlassen ist
 
