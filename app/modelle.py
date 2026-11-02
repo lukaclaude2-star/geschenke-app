@@ -1,6 +1,15 @@
+import html
+import re
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
+
+
+def ohne_html(text: str) -> str:
+    """Feeds liefern Beschreibungen oft mit HTML-Resten (<p>, &nbsp;)."""
+    text = re.sub(r"<[^>]+>", " ", text)
+    text = html.unescape(text).replace(" ", " ")
+    return re.sub(r"\s+", " ", text).strip()
 
 
 class QuellProdukt(BaseModel):
@@ -18,6 +27,11 @@ class QuellProdukt(BaseModel):
     lieferbar: bool = True
     farbe: str | None = None
     varianten_gruppe: str | None = None
+
+    @field_validator("beschreibung", mode="before")
+    @classmethod
+    def _beschreibung_ohne_html(cls, wert):
+        return ohne_html(wert) if isinstance(wert, str) else wert
 
 
 class KatalogProdukt(QuellProdukt):

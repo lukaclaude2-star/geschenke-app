@@ -172,3 +172,34 @@ async def test_verschlagworten_id_als_liste(monkeypatch):
 def test_prompt_geruest_ohne_echte_beispielwerte():
     geruest = SYSTEM_AUS_GESPRAECH.split("Erlaubte")[0]
     assert "farbe:schwarz" not in geruest and "eigenschaft:alkohol" not in geruest
+
+
+# --- Runde 2: M5 Gesamt-Zeitlimit, M11 HTML in Beschreibungen ---
+
+import asyncio as _asyncio
+
+import httpx as _httpx
+import pytest as _pytest
+import respx as _respx
+
+import app.ki as _ki
+from app.modelle import QuellProdukt as _QuellProdukt
+
+
+@_respx.mock
+async def test_frage_json_gibt_nach_gesamtzeit_auf(monkeypatch):
+    monkeypatch.setattr(_ki, "GESAMT_ZEITLIMIT", 0.05)
+
+    async def langsam(_anfrage):
+        await _asyncio.sleep(0.2)
+        return _httpx.Response(200, json={"choices": [{"message": {"content": "{}"}}]})
+
+    _respx.post(_ki.GROQ_URL).mock(side_effect=langsam)
+    with _pytest.raises(_ki.KiUeberlastet):
+        await _ki.frage_json("s", "n")
+
+
+def test_beschreibung_ohne_html():
+    p = _QuellProdukt(id="a", titel="t", beschreibung="<p>Schöner&nbsp;Kurs<br/>mit &amp; ohne</p>",
+                      preis=20, bild_url=None, link="x", shop="s")
+    assert p.beschreibung == "Schöner Kurs mit & ohne"

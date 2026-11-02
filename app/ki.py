@@ -7,6 +7,7 @@ An Groq geht nur Text – keine Gerätekennung (Grundbaustein 10).
 
 from __future__ import annotations
 
+import asyncio
 import json
 import logging
 
@@ -20,6 +21,8 @@ GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
 NAECHSTES_MODELL_STATUS = {404, 429, 500, 502, 503, 504}
 VERSUCHE_PRO_MODELL = 2
 TIMEOUT_SEKUNDEN = 30.0
+# Obergrenze über die ganze Kette – sonst wartet die App bei Störungen mehrere Minuten.
+GESAMT_ZEITLIMIT = 45.0
 
 
 class KiUeberlastet(RuntimeError):
@@ -55,6 +58,15 @@ def _json_aus(antwort: httpx.Response) -> dict | None:
 
 async def frage_json(system: str, nutzer: str, *, client: httpx.AsyncClient | None = None,
                      max_tokens: int = 1500) -> dict:
+    try:
+        async with asyncio.timeout(GESAMT_ZEITLIMIT):
+            return await _kette(system, nutzer, client, max_tokens)
+    except TimeoutError:
+        logger.warning("Groq: Gesamt-Zeitlimit von %s s überschritten", GESAMT_ZEITLIMIT)
+        raise KiUeberlastet("Zeitlimit") from None
+
+
+async def _kette(system: str, nutzer: str, client: httpx.AsyncClient | None, max_tokens: int) -> dict:
     eigener_client = client is None
     client = client or httpx.AsyncClient(timeout=TIMEOUT_SEKUNDEN)
     try:
