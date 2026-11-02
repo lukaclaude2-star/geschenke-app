@@ -5,6 +5,7 @@ Nur Schlagwörter aus dem Vokabular überleben – so passen Katalog und Profil 
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import json
 import logging
@@ -31,7 +32,8 @@ Regeln:
 - themen: 1–4 Interessen, zu denen das Produkt als Geschenk passt. Erlebnisse (Kurse,
   Tickets, Ausflüge) bekommen zusätzlich "erlebnis".
 - lebenslagen: nur, wenn das Produkt klar dazu passt (z. B. Einweihung → umzug).
-- farben: die sichtbaren Hauptfarben des Produkts.
+- farben: die sichtbaren Hauptfarben eines Gegenstands. Bei Erlebnissen, Kursen,
+  Gutscheinen und Reisen IMMER leer.
 - eigenschaften: alles, was jemand ausschließen könnte (enthält Alkohol, ist Süßigkeit,
   Lebensmittel, aus Leder, Plastik, duftet, Tierprodukt, braucht Strom/Elektronik).
 - persoenlich: true bei Gravur, Personalisierung, Handgemachtem oder Erlebnissen.
@@ -67,14 +69,14 @@ def _note(wert) -> int:
 
 
 def _fuer_ki(p: QuellProdukt) -> dict:
-    return {"id": p.id, "titel": p.titel, "beschreibung": p.beschreibung[:600],
+    return {"id": p.id, "titel": p.titel, "beschreibung": p.beschreibung[:300],
             "preis": p.preis, "kategorie": p.kategorie, "shop": p.shop}
 
 
 async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
     try:
         antwort = await frage_json(SYSTEM, json.dumps({"produkte": [_fuer_ki(p) for p in ps]},
-                                                      ensure_ascii=False), max_tokens=4000)
+                                                      ensure_ascii=False), max_tokens=2500)
     except KiUeberlastet:
         logger.warning("KI überlastet – %d Produkte beim nächsten Lauf", len(ps))
         return []
@@ -103,8 +105,11 @@ async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
     return ergebnis
 
 
-async def verschlagworte(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
+async def verschlagworte(ps: list[QuellProdukt], pause_sekunden: float = 0) -> list[KatalogProdukt]:
+    """pause_sekunden zwischen Stapeln: Groq erlaubt im Gratis-Tarif nur ~8.000 Token pro Minute."""
     ergebnis: list[KatalogProdukt] = []
     for start in range(0, len(ps), STAPELGROESSE):
+        if start and pause_sekunden:
+            await asyncio.sleep(pause_sekunden)
         ergebnis.extend(await _stapel(ps[start:start + STAPELGROESSE]))
     return ergebnis

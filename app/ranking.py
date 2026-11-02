@@ -6,6 +6,7 @@ zur Person werden nie gezeigt (Grundbaustein 5). Provision spielt keine Rolle (G
 
 import re
 
+from app.config import settings
 from app.modelle import Ausschluss, KatalogProdukt, Profil
 from app.vokabular import FARB_LABELS
 
@@ -67,6 +68,8 @@ def waehle_karten(katalog: list[KatalogProdukt], profil: Profil, gesehen: set[st
     gut: list[tuple[float, KatalogProdukt]] = []
     schwach: list[tuple[float, KatalogProdukt]] = []
     for p in katalog:
+        if p.note < settings.min_note:  # Grundbaustein 4, auch wenn der Katalog es schon filtert
+            continue
         if p.id in gesehen or ist_ausgeschlossen(p, profil.ausschluesse):
             continue
         if profil.budget_max is not None and p.preis > profil.budget_max:

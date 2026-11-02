@@ -89,10 +89,19 @@ def ki_bau(monkeypatch):
     return fake
 
 
-async def test_note_unter_6_fliegt_raus(ki_bau):
+async def test_note_unter_6_wird_nicht_zeigbar(ki_bau):
+    from app.katalog.laden import zeigbar
     ki_bau.je_id = {"schlecht": {**ki_bau.standard, "note": 5}}
     katalog, _ = await baue_katalog([produkt("gut"), produkt("schlecht")], [])
-    assert [p.id for p in katalog] == ["gut"]
+    assert [p.id for p in zeigbar(katalog)] == ["gut"]
+
+
+async def test_abgelehntes_produkt_wird_nicht_neu_bewertet(ki_bau):
+    ki_bau.je_id = {"schlecht": {**ki_bau.standard, "note": 2}}
+    alt, _ = await baue_katalog([produkt("schlecht")], [])
+    ki_bau.aufrufe = 0
+    _, bericht = await baue_katalog([produkt("schlecht")], alt)
+    assert ki_bau.aufrufe == 0 and bericht["note_raus"] == 1 and bericht["katalog"] == 0
 
 
 async def test_unveraendertes_produkt_wird_nicht_neu_verschlagwortet(ki_bau):
@@ -123,6 +132,18 @@ async def test_bericht_zaehlt_richtig(ki_bau):
                        "neu_verschlagwortet": 2, "note_raus": 1, "katalog": 2}
 
 
+def test_lade_katalog_filtert_niedrige_noten(tmp_path):
+    import json as _json
+    from app.katalog.laden import lade_katalog
+    from app.katalog.verschlagworten import inhalts_hash
+    basis = produkt("a").model_dump()
+    eintraege = [{**basis, "id": i, "themen": [], "lebenslagen": [], "farben": [], "eigenschaften": [],
+                  "persoenlich": False, "note": n, "inhalts_hash": "h"} for i, n in (("gut", 7), ("mies", 3))]
+    datei = tmp_path / "k.json"
+    datei.write_text(_json.dumps(eintraege), encoding="utf-8")
+    assert [p.id for p in lade_katalog(str(datei))] == ["gut"]
+
+
 def test_inhalts_hash_aendert_sich_mit_preis():
     assert inhalts_hash(produkt("a")) != inhalts_hash(produkt("a", preis=99.0))
 
@@ -130,3 +151,13 @@ def test_inhalts_hash_aendert_sich_mit_preis():
 def test_lade_katalog_ohne_datei_ist_leer(tmp_path):
     from app.katalog.laden import lade_katalog
     assert lade_katalog(str(tmp_path / "fehlt.json")) == []
+
+
+async def test_pause_zwischen_stapeln(ki, monkeypatch):
+    pausen = []
+
+    async def schlafen(sekunden):
+        pausen.append(sekunden)
+    monkeypatch.setattr(verschlagworten.asyncio, "sleep", schlafen)
+    await verschlagworte([produkt(str(i)) for i in range(23)], pause_sekunden=7)
+    assert pausen == [7, 7]

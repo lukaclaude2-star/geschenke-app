@@ -126,3 +126,8 @@ def test_alle_gewichte_null_liefert_leer_und_wird_duenn():
 
 def test_ranking_kennt_kein_provisionsfeld():
     assert not [f for f in KatalogProdukt.model_fields if "provision" in f]
+
+
+def test_note_unter_minimum_wird_nie_gezeigt():
+    karten, _ = waehle_karten([produkt("mies", note=3)], profil(), set(), 10)
+    assert karten == []

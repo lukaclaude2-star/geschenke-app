@@ -5,8 +5,11 @@ from app.modelle import KatalogProdukt, QuellProdukt
 
 
 async def baue_katalog(quellen: list[QuellProdukt],
-                       alt: list[KatalogProdukt]) -> tuple[list[KatalogProdukt], dict[str, int]]:
-    """Regeln → Varianten → Unverändertes wiederverwenden → Rest verschlagworten → Note filtern."""
+                       alt: list[KatalogProdukt],
+                       pause_sekunden: float = 0) -> tuple[list[KatalogProdukt], dict[str, int]]:
+    """Regeln → Varianten → Unverändertes wiederverwenden → Rest verschlagworten.
+
+    Liefert alle verschlagworteten Produkte; gezeigt wird nur, was zeigbar() durchlässt."""
     bestanden = [p for p in quellen if pruefe_regeln(p) is None]
     bestanden = fasse_varianten_zusammen(bestanden)
 
@@ -20,15 +23,18 @@ async def baue_katalog(quellen: list[QuellProdukt],
         else:
             neu.append(p)
 
-    verschlagwortet = await verschlagworte(neu)
+    verschlagwortet = await verschlagworte(neu, pause_sekunden)
     alle = wiederverwendet + verschlagwortet
-    katalog = sorted((p for p in alle if p.note >= settings.min_note), key=lambda p: p.id)
+    # Auch abgelehnte Produkte bleiben mit ihrer Note gespeichert: So werden sie nicht jeden
+    # Tag neu bewertet (spart Kontingent) und rutschen nicht durch eine zufällig bessere Note durch.
+    katalog = sorted(alle, key=lambda p: p.id)
+    zeigbar = [p for p in katalog if p.note >= settings.min_note]
     bericht = {
         "quellen": len(quellen),
         "regel_raus": len(quellen) - len([p for p in quellen if pruefe_regeln(p) is None]),
         "wiederverwendet": len(wiederverwendet),
         "neu_verschlagwortet": len(verschlagwortet),
-        "note_raus": len(alle) - len(katalog),
-        "katalog": len(katalog),
+        "note_raus": len(katalog) - len(zeigbar),
+        "katalog": len(zeigbar),
     }
     return katalog, bericht

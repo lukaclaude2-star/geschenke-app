@@ -12,7 +12,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from app.config import settings  # noqa: E402
 from app.katalog.bauen import baue_katalog  # noqa: E402
-from app.katalog.laden import lade_katalog  # noqa: E402
+from app.katalog.laden import lade_alle  # noqa: E402
 from app.modelle import QuellProdukt  # noqa: E402
 
 WURZEL = Path(__file__).resolve().parent.parent
@@ -27,7 +27,8 @@ def lade_quellen() -> list[QuellProdukt]:
 
 async def main() -> None:
     ziel = WURZEL / settings.katalog_pfad
-    katalog, bericht = await baue_katalog(lade_quellen(), lade_katalog(str(ziel)))
+    katalog, bericht = await baue_katalog(lade_quellen(), lade_alle(str(ziel)),
+                                     pause_sekunden=20)
     ziel.parent.mkdir(parents=True, exist_ok=True)
     ziel.write_text(
         json.dumps([p.model_dump() for p in katalog], ensure_ascii=False, indent=1) + "\n",
