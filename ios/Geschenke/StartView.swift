@@ -20,7 +20,7 @@ struct StartView: View {
                 } label: {
                     Label("Neue Suche", systemImage: "sparkles")
                         .font(.headline)
-                        .foregroundStyle(Look.gold)
+                        .foregroundStyle(Look.akzent)
                 }
             }
             .listRowBackground(Look.karte)
@@ -45,6 +45,14 @@ struct StartView: View {
                 }
                 .onDelete { indizes in
                     zustand.loescheProfile(indizes.map { zustand.daten.profile[$0].id })
+                }
+                if zustand.daten.profile.count >= 2 {
+                    NavigationLink {
+                        SammelAuswahlView()
+                    } label: {
+                        Label("Für mehrere suchen", systemImage: "person.3")
+                            .foregroundStyle(Look.akzent)
+                    }
                 }
             }
             .listRowBackground(Look.karte)
@@ -74,12 +82,37 @@ struct StartView: View {
 }
 
 struct EinstellungenView: View {
+    @EnvironmentObject private var zustand: AppZustand
     @Environment(\.dismiss) private var schliessen
     @AppStorage(Konfiguration.tokenSchluessel) private var token = ""
 
     var body: some View {
         NavigationStack {
             Form {
+                Section("Design") {
+                    ForEach(Designs.alle) { palette in
+                        Button {
+                            zustand.setzeDesign(palette.id)
+                        } label: {
+                            HStack(spacing: 12) {
+                                HStack(spacing: -6) {
+                                    ForEach([palette.hintergrund, palette.karte, palette.akzent], id: \.self) { farbe in
+                                        Circle().fill(Color(hex: farbe))
+                                            .overlay(Circle().stroke(Color.gray.opacity(0.4), lineWidth: 1))
+                                            .frame(width: 22, height: 22)
+                                    }
+                                }
+                                Text(palette.name).foregroundStyle(Look.text)
+                                Spacer()
+                                if zustand.daten.design == palette.id {
+                                    Image(systemName: "checkmark").foregroundStyle(Look.akzent)
+                                }
+                            }
+                        }
+                    }
+                }
+                .listRowBackground(Look.karte)
+
                 Section {
                     SecureField("Server-Token", text: $token)
                 } footer: {

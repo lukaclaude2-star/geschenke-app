@@ -10,8 +10,11 @@ struct GeschenkeApp: App {
                 StartView()
             }
             .environmentObject(zustand)
-            .tint(Look.gold)
-            .preferredColorScheme(.dark)
+            .tint(Look.akzent)
+            .fontDesign(Look.stil == .deco ? .serif : .default)
+            .preferredColorScheme(Look.palette.hell ? .light : .dark)
+            // Design gewechselt → alles neu zeichnen (Look liest die Farben statisch).
+            .id(zustand.daten.design)
         }
     }
 }

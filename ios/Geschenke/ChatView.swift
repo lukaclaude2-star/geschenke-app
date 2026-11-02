@@ -1,24 +1,16 @@
 import GeschenkeCore
 import SwiftUI
 
-/// Wohin es nach dem Gespräch oder aus einem Profil zum Wischen geht.
-struct WischZiel: Hashable, Identifiable {
-    let id = UUID()
-    let name: String?
-    let profil: Profil
-    let profilID: UUID?
-    let gewichtung: Gewichtung
-
-    static func == (a: WischZiel, b: WischZiel) -> Bool { a.id == b.id }
-    func hash(into hasher: inout Hasher) { hasher.combine(id) }
-}
-
 struct ChatView: View {
     @EnvironmentObject private var zustand: AppZustand
     @StateObject private var modell: ChatModell
     @State private var eingabe = ""
     @State private var zeigeSpeichern = false
-    @State private var ziel: WischZiel?
+    /// Der Stapel gehört zur Suche, nicht zur Wisch-Ansicht: versehentliches Zurück verliert nichts.
+    @State private var stapel: KartenStapelModell?
+    @State private var zeigeWischen = false
+    @State private var budgetVon = BudgetSkala.minimum
+    @State private var budgetBis: Double = 50
     @FocusState private var fokus: Bool
 
     init(laenge: String) {
@@ -35,7 +27,7 @@ struct ChatView: View {
                         }
                         if modell.denkt {
                             HStack(spacing: 8) {
-                                ProgressView().tint(Look.gold)
+                                ProgressView().tint(Look.akzent)
                                 Text(modell.wachtAuf ? "Server wacht auf …" : "…")
                                     .foregroundStyle(Look.leise)
                             }
@@ -59,6 +51,58 @@ struct ChatView: View {
                 }
             }
 
+            unten
+        }
+        .nachtblau()
+        .navigationTitle("Erzähl mal")
+        .navigationBarTitleDisplayMode(.inline)
+        .task { await modell.start() }
+        .onChange(of: modell.profil) {
+            if modell.profil != nil, stapel == nil { zeigeSpeichern = true }
+        }
+        .sheet(isPresented: $zeigeSpeichern, onDismiss: {
+            // Erst nach dem Schließen des Blatts weiter – sonst verschluckt SwiftUI den Wechsel.
+            if stapel != nil { zeigeWischen = true }
+        }) {
+            if let profil = modell.profil {
+                ProfilSpeichernView(profil: profil) { name in
+                    let gewichtung = Gewichtung(profil: profil)
+                    var id: UUID?
+                    if let name { id = zustand.speichereProfil(name: name, profil: profil, gewichtung: gewichtung) }
+                    stapel = KartenStapelModell(
+                        personen: [WischPerson(name: name, profil: profil, profilID: id, gewichtung: gewichtung)],
+                        api: AppZustand.apiOhneZustand())
+                    zeigeSpeichern = false
+                }
+                .interactiveDismissDisabled()
+            }
+        }
+        .navigationDestination(isPresented: $zeigeWischen) {
+            if let stapel { WischView(modell: stapel) }
+        }
+    }
+
+    @ViewBuilder private var unten: some View {
+        if stapel != nil {
+            Button("Weiter wischen") { zeigeWischen = true }
+                .buttonStyle(GoldKnopf())
+                .padding()
+        } else if modell.budgetOffen {
+            VStack(spacing: 14) {
+                BudgetRegler(von: $budgetVon, bis: $budgetBis)
+                HStack(spacing: 10) {
+                    Button("Egal") { Task { await modell.budgetGewaehlt(von: nil, bis: nil) } }
+                        .buttonStyle(RandKnopf())
+                    Button("Passt") {
+                        let grenzen = BudgetSkala.grenzen(von: budgetVon, bis: budgetBis)
+                        Task { await modell.budgetGewaehlt(von: grenzen.min, bis: grenzen.max) }
+                    }
+                    .buttonStyle(GoldKnopf())
+                }
+            }
+            .padding()
+            .background(Look.karte)
+        } else {
             HStack(spacing: 8) {
                 TextField("", text: $eingabe, prompt: Text(modell.platzhalter).foregroundStyle(Look.leise),
                           axis: .vertical)
@@ -79,33 +123,11 @@ struct ChatView: View {
             }
             .padding()
         }
-        .nachtblau()
-        .navigationTitle("Erzähl mal")
-        .navigationBarTitleDisplayMode(.inline)
-        .task { await modell.start() }
-        .onChange(of: modell.profil) {
-            if modell.profil != nil { zeigeSpeichern = true }
-        }
-        .sheet(isPresented: $zeigeSpeichern) {
-            if let profil = modell.profil {
-                ProfilSpeichernView(profil: profil) { name in
-                    zeigeSpeichern = false
-                    let gewichtung = Gewichtung(profil: profil)
-                    var id: UUID?
-                    if let name { id = zustand.speichereProfil(name: name, profil: profil, gewichtung: gewichtung) }
-                    ziel = WischZiel(name: name, profil: profil, profilID: id, gewichtung: gewichtung)
-                }
-                .interactiveDismissDisabled()
-            }
-        }
-        .navigationDestination(item: $ziel) { ziel in
-            WischView(ziel: ziel)
-        }
     }
 }
 
 extension AppZustand {
-    /// Der Chat braucht nur die Server-Verbindung, nicht den gespeicherten Zustand.
+    /// Chat und Stapel brauchen nur die Server-Verbindung, nicht den gespeicherten Zustand.
     nonisolated static func apiOhneZustand() -> GeschenkeAPI {
         GeschenkeAPI(basis: Konfiguration.serverURL, token: Konfiguration.token, transport: URLSessionTransport())
     }
@@ -121,8 +143,8 @@ struct Blase: View {
             Text(nachricht.text)
                 .padding(.horizontal, 12)
                 .padding(.vertical, 9)
-                .foregroundStyle(vonApp ? Look.text : Look.hintergrund)
-                .background(vonApp ? Look.karte : Look.gold)
+                .foregroundStyle(vonApp ? Look.text : Look.aufAkzent)
+                .background(vonApp ? Look.karte : Look.akzent)
                 .clipShape(RoundedRectangle(cornerRadius: 14))
             if vonApp { Spacer(minLength: 40) }
         }
@@ -133,6 +155,8 @@ struct ProfilSpeichernView: View {
     let profil: Profil
     let fertig: (String?) -> Void
     @State private var name = ""
+    /// Doppeltipp würde sonst zwei Profile anlegen.
+    @State private var speichert = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -143,12 +167,19 @@ struct ProfilSpeichernView: View {
                 .background(Look.karte)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
             Button("Speichern und los") {
+                guard !speichert else { return }
+                speichert = true
                 fertig(name.trimmingCharacters(in: .whitespaces))
             }
             .buttonStyle(GoldKnopf())
-            .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
-            Button("Nicht speichern, einfach los") { fertig(nil) }
-                .buttonStyle(RandKnopf())
+            .disabled(speichert || name.trimmingCharacters(in: .whitespaces).isEmpty)
+            Button("Nicht speichern, einfach los") {
+                guard !speichert else { return }
+                speichert = true
+                fertig(nil)
+            }
+            .buttonStyle(RandKnopf())
+            .disabled(speichert)
         }
         .padding(24)
         .presentationDetents([.medium])

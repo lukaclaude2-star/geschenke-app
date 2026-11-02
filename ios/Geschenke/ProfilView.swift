@@ -10,6 +10,9 @@ struct ProfilView: View {
     @State private var denkt = false
     @State private var wachtAuf = false
     @State private var ziel: WischZiel?
+    @State private var budgetVon = BudgetSkala.minimum
+    @State private var budgetBis = BudgetSkala.maximum
+    @State private var budgetGeaendert = false
 
     var body: some View {
         if let eintrag = zustand.profil(profilID) {
@@ -32,21 +35,34 @@ struct ProfilView: View {
                             .font(.footnote)
                             .foregroundStyle(Look.leise)
                     }
-                    if let budget = eintrag.profil.budgetMax {
-                        Text("Budget: bis \(Int(budget)) €").font(.footnote).foregroundStyle(Look.leise)
-                    }
                     Button("Geschenke wischen") {
-                        ziel = WischZiel(name: eintrag.name, profil: eintrag.profil, profilID: eintrag.id,
-                                         gewichtung: eintrag.gewichtung)
+                        // Immer die aktuelle Fassung aus dem Speicher nehmen (inkl. Gesehen-Liste).
+                        if let aktuell = zustand.profil(profilID) {
+                            ziel = WischZiel(personen: [WischPerson(aktuell)])
+                        }
                     }
                     .buttonStyle(GoldKnopf())
+
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text("Budget").font(.headline)
+                        BudgetRegler(von: $budgetVon, bis: $budgetBis)
+                            .onChange(of: budgetVon) { budgetGeaendert = true }
+                            .onChange(of: budgetBis) { budgetGeaendert = true }
+                        if budgetGeaendert {
+                            Button("Budget übernehmen") { budgetUebernehmen() }
+                                .buttonStyle(RandKnopf())
+                        }
+                    }
+                    .padding(12)
+                    .background(Look.karte)
+                    .clipShape(RoundedRectangle(cornerRadius: 14))
 
                     Divider().overlay(Look.rand)
                     Text("Was hat sich geändert?").font(.headline)
                     ForEach(verlauf) { Blase(nachricht: $0) }
                     if denkt {
                         HStack(spacing: 8) {
-                            ProgressView().tint(Look.gold)
+                            ProgressView().tint(Look.akzent)
                             if wachtAuf { Text("Server wacht auf …").foregroundStyle(Look.leise) }
                         }
                     }
@@ -72,7 +88,24 @@ struct ProfilView: View {
         .nachtblau()
         .navigationTitle(eintrag.name)
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(item: $ziel) { WischView(ziel: $0) }
+        .navigationDestination(item: $ziel) { WischZielView(ziel: $0) }
+        .onAppear { budgetLaden() }
+    }
+
+    private func budgetLaden() {
+        guard let profil = zustand.profil(profilID)?.profil else { return }
+        budgetVon = profil.budgetMin ?? BudgetSkala.minimum
+        budgetBis = profil.budgetMax ?? BudgetSkala.maximum
+        DispatchQueue.main.async { budgetGeaendert = false }
+    }
+
+    private func budgetUebernehmen() {
+        guard var profil = zustand.profil(profilID)?.profil else { return }
+        let grenzen = BudgetSkala.grenzen(von: budgetVon, bis: budgetBis)
+        profil.budgetMin = grenzen.min
+        profil.budgetMax = grenzen.max
+        zustand.aktualisiere(profilID, profil: profil)
+        budgetGeaendert = false
     }
 
     private func aendern(_ eintrag: GespeichertesProfil) async {
@@ -89,10 +122,13 @@ struct ProfilView: View {
             wachtAuf = false
         }
         do {
-            let neu = try await zustand.api.profilAendern(eintrag.profil, anweisung: text)
-            var gewichtung = eintrag.gewichtung
+            // Aktuelle Fassung lesen: das Wischen kann Gelerntes gespeichert haben, seit die Ansicht offen ist.
+            let aktuell = zustand.profil(eintrag.id) ?? eintrag
+            let neu = try await zustand.api.profilAendern(aktuell.profil, anweisung: text)
+            var gewichtung = zustand.profil(eintrag.id)?.gewichtung ?? aktuell.gewichtung
             gewichtung.uebernimm(profil: neu)
             zustand.aktualisiere(eintrag.id, profil: neu, gewichtung: gewichtung)
+            budgetLaden()
             verlauf.append(ChatNachricht(rolle: "app", text: "Erledigt! \(neu.zusammenfassung)"))
         } catch {
             verlauf.append(ChatNachricht(rolle: "app", text: fehlerText(error) + " Deine Nachricht steht wieder im Feld."))

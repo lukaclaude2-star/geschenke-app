@@ -21,7 +21,6 @@ targets:
         CFBundleDisplayName: Geschenke
         CFBundleDevelopmentRegion: de
         UILaunchScreen: {}
-        UIUserInterfaceStyle: Dark
         # Kommt beim CI-Build aus dem GitHub-Secret APP_TOKEN, steht nie im Repo.
         AppToken: $(APP_TOKEN)
     settings:

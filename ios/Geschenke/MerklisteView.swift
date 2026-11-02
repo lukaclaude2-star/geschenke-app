@@ -35,16 +35,19 @@ struct MerklisteView: View {
                             if let url = URL(string: eintrag.karte.link) { oeffnen(url) }
                         } label: {
                             HStack(spacing: 12) {
-                                Text(eintrag.karte.emoji ?? (eintrag.karte.istIdee ? "💡" : "🎁"))
-                                    .font(.title2)
+                                KartenBild(karte: eintrag.karte, ecken: 8, klein: true)
+                                    .frame(width: 76)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(eintrag.karte.titel).foregroundStyle(Look.text).lineLimit(2)
-                                    Text("\(eintrag.karte.preisText) · \(eintrag.karte.shop)")
+                                    Text(eintrag.karte.preisText)
+                                        .font(.caption.bold())
+                                        .foregroundStyle(Look.preis)
+                                    Text(eintrag.karte.shop)
                                         .font(.caption)
                                         .foregroundStyle(Look.leise)
                                 }
                                 Spacer()
-                                Image(systemName: "arrow.up.right.square").foregroundStyle(Look.gold)
+                                Image(systemName: "arrow.up.right.square").foregroundStyle(Look.akzent)
                             }
                         }
                     }
