@@ -31,7 +31,7 @@ Antworte nur mit JSON: {"genug": true/false, "frage": "...", "platzhalter": "...
 - genug: true, wenn du genug weißt, um passende Geschenke zu finden."""
 
 
-def _verlauf_text(nachrichten: list[ChatNachricht]) -> str:
+def verlauf_text(nachrichten: list[ChatNachricht]) -> str:
     return "\n".join(
         f"{'App' if n.rolle == 'app' else 'Kunde'}: {n.text.strip() or '(keine Antwort)'}"
         for n in nachrichten
@@ -62,7 +62,7 @@ async def naechster_schritt(a: ChatAnfrage) -> ChatAntwort:
         return schluss
 
     try:
-        antwort = await frage_json(SYSTEM, _verlauf_text(a.nachrichten), max_tokens=600)
+        antwort = await frage_json(SYSTEM, verlauf_text(a.nachrichten), max_tokens=600)
     except KiUeberlastet:
         return schluss
 
