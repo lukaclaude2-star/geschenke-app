@@ -47,6 +47,9 @@ final class KartenStapelModell: ObservableObject {
     @Published private(set) var kannZurueck = false
 
     private var verlauf = WischVerlauf()
+    /// Zählt hoch, wenn neu sortiert wird – eine noch laufende Anfrage mit alter Gewichtung
+    /// wird dann verworfen statt in den Stapel zu kommen.
+    private var generation = 0
     private var entschieden: Set<String> = []
     private let api: GeschenkeAPI
     private weak var zustand: AppZustand?
@@ -78,6 +81,7 @@ final class KartenStapelModell: ObservableObject {
 
     func nachladen() async {
         guard !laedt else { return }
+        let meine = generation
         laedt = true
         fehler = nil
         let hinweis = Task { [weak self] in
@@ -113,12 +117,18 @@ final class KartenStapelModell: ObservableObject {
                 neu = antwort.karten.map { StapelKarte(karte: $0, person: 0) }
                 duenn = antwort.wirdDuenn ? [0] : []
             }
-            neu = neu.filter { karte in !stapel.contains { $0.id == karte.id } && !entschieden.contains(karte.id) }
-            stapel += neu
+            if meine == generation {
+                neu = neu.filter { karte in !stapel.contains { $0.id == karte.id } && !entschieden.contains(karte.id) }
+                stapel += neu
+            }
         } catch {
-            fehler = fehlerText(error)
+            if meine == generation { fehler = fehlerText(error) }
         }
         laedt = false
+        if meine != generation {
+            // Während des Ladens wurde neu sortiert: mit der neuen Gewichtung nochmal.
+            await nachladen()
+        }
     }
 
     func ja(_ karte: StapelKarte) {
@@ -158,6 +168,7 @@ final class KartenStapelModell: ObservableObject {
     /// Während des Ziehens nur im Speicher ändern; gesichert wird beim Schließen (sichernJetzt).
     func setze(_ tag: String, auf wert: Double, person: Int) {
         personen[person].gewichtung.setze(tag, auf: wert)
+        vergissVerlauf(person)
     }
 
     func sichernJetzt() {
@@ -166,11 +177,19 @@ final class KartenStapelModell: ObservableObject {
 
     func zuruecksetzen(person: Int) {
         personen[person].gewichtung.zuruecksetzen()
+        vergissVerlauf(person)
         sichern(person)
+    }
+
+    /// Handänderungen gehen vor: Zurücknehmen darf sie nicht stillschweigend überschreiben.
+    private func vergissVerlauf(_ person: Int) {
+        verlauf.vergiss(person: person)
+        kannZurueck = verlauf.kannZurueck
     }
 
     /// „Gesehene wieder zeigen“: alle bisher gewischten Karten dürfen wiederkommen.
     func gesehenZuruecksetzen() async {
+        generation += 1
         for i in personen.indices { personen[i].gesehen = [] }
         entschieden = []
         verlauf = WischVerlauf()
@@ -182,6 +201,7 @@ final class KartenStapelModell: ObservableObject {
 
     /// Nach einer Änderung der Gewichtung: noch nicht gezeigte Karten verwerfen und neu holen.
     func neuSortieren() async {
+        generation += 1
         stapel = []
         await nachladen()
     }

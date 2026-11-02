@@ -38,4 +38,10 @@ public struct WischVerlauf {
     public mutating func zurueck() -> WischSchritt? {
         schritte.popLast()
     }
+
+    /// Nach einer Handänderung der Gewichtung (Regler, Zurücksetzen): Zurücknehmen dürfte diese
+    /// Änderung sonst stillschweigend überschreiben (Grundbaustein 6).
+    public mutating func vergiss(person: Int) {
+        schritte.removeAll { $0.person == person }
+    }
 }

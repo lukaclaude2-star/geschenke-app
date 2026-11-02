@@ -17,7 +17,7 @@ struct BudgetRegler: View {
                 .foregroundStyle(Look.preis)
             GeometryReader { geo in
                 let breite = max(1, geo.size.width - griff)
-                let iv = index(von), ib = index(bis)
+                let iv = BudgetSkala.index(nahe: von), ib = BudgetSkala.index(nahe: bis)
                 ZStack(alignment: .leading) {
                     Capsule().fill(Look.rand).frame(height: 4)
                         .padding(.horizontal, griff / 2)
@@ -25,9 +25,16 @@ struct BudgetRegler: View {
                         .frame(width: x(ib, breite) - x(iv, breite), height: 4)
                         .offset(x: griff / 2 + x(iv, breite))
                     knopf.offset(x: x(iv, breite))
-                        .gesture(ziehen(breite) { neu in von = stufen[min(neu, index(bis) - 1)] })
+                        // Liegen beide Griffe rechts übereinander, muss „von“ oben liegen –
+                        // sonst lässt sich keiner mehr nach links ziehen.
+                        .zIndex(iv > stufen.count / 2 ? 1 : 0)
+                        .gesture(ziehen(breite) { neu in
+                            von = stufen[BudgetSkala.vonIndex(gezogen: neu, bisIndex: BudgetSkala.index(nahe: bis))]
+                        })
                     knopf.offset(x: x(ib, breite))
-                        .gesture(ziehen(breite) { neu in bis = stufen[max(neu, index(von) + 1)] })
+                        .gesture(ziehen(breite) { neu in
+                            bis = stufen[BudgetSkala.bisIndex(gezogen: neu, vonIndex: BudgetSkala.index(nahe: von))]
+                        })
                 }
                 .coordinateSpace(.named("budget"))
             }
@@ -52,11 +59,6 @@ struct BudgetRegler: View {
 
     private func x(_ i: Int, _ breite: CGFloat) -> CGFloat {
         CGFloat(i) / CGFloat(stufen.count - 1) * breite
-    }
-
-    /// Nächstgelegene Stufe – auch für Werte, die nicht genau auf einer Stufe liegen (z. B. von der KI).
-    private func index(_ wert: Double) -> Int {
-        stufen.indices.min { abs(stufen[$0] - wert) < abs(stufen[$1] - wert) } ?? 0
     }
 
     private func ziehen(_ breite: CGFloat, setze: @escaping (Int) -> Void) -> some Gesture {

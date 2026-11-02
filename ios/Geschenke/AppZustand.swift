@@ -5,6 +5,7 @@ import GeschenkeCore
 @MainActor
 final class AppZustand: ObservableObject {
     @Published private(set) var daten: AppDaten
+    @Published var zeigeEinstellungen = false
     private let speicher: AppDatenSpeicher
 
     init() {

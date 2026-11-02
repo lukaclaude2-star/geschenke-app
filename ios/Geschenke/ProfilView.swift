@@ -94,8 +94,10 @@ struct ProfilView: View {
 
     private func budgetLaden() {
         guard let profil = zustand.profil(profilID)?.profil else { return }
-        budgetVon = profil.budgetMin ?? BudgetSkala.minimum
-        budgetBis = profil.budgetMax ?? BudgetSkala.maximum
+        // Geklemmt: z. B. „ab 500 €“ würde sonst beide Griffe übereinanderlegen.
+        let start = BudgetSkala.startwerte(min: profil.budgetMin, max: profil.budgetMax)
+        budgetVon = start.von
+        budgetBis = start.bis
         DispatchQueue.main.async { budgetGeaendert = false }
     }
 

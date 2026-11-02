@@ -3,7 +3,6 @@ import SwiftUI
 
 struct StartView: View {
     @EnvironmentObject private var zustand: AppZustand
-    @State private var zeigeEinstellungen = false
 
     var body: some View {
         List {
@@ -69,14 +68,11 @@ struct StartView: View {
             }
             ToolbarItem(placement: .topBarLeading) {
                 Button {
-                    zeigeEinstellungen = true
+                    zustand.zeigeEinstellungen = true
                 } label: {
                     Image(systemName: "gearshape")
                 }
             }
-        }
-        .sheet(isPresented: $zeigeEinstellungen) {
-            EinstellungenView()
         }
     }
 }
