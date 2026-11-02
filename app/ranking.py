@@ -48,15 +48,15 @@ def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> boo
 
 
 def bewerte(p: KatalogProdukt, profil: Profil) -> float:
-    """Direkter Treffer zählt voll, ein Thema aus demselben Oberbereich nur BEREICH_ANTEIL."""
+    """Direkte Treffer zählen voll. Nur ohne jeden direkten Treffer zählt der Oberbereich – und
+    dann nur der stärkste Wunsch mal BEREICH_ANTEIL, damit sich verwandte Wünsche (grillen,
+    kochen, backen) nicht zu einem Wert über echten Treffern aufsummieren."""
     tags = set(p.themen) | set(p.lebenslagen)
-    bereiche = {THEMA_BEREICH[t] for t in p.themen if t in THEMA_BEREICH}
-    punkte = 0.0
-    for w in profil.wuensche:
-        if w.tag in tags:
-            punkte += w.gewicht
-        elif THEMA_BEREICH.get(w.tag) in bereiche:
-            punkte += w.gewicht * BEREICH_ANTEIL
+    punkte = sum(w.gewicht for w in profil.wuensche if w.tag in tags)
+    if punkte == 0:
+        bereiche = {THEMA_BEREICH[t] for t in p.themen if t in THEMA_BEREICH}
+        punkte = max((w.gewicht * BEREICH_ANTEIL for w in profil.wuensche
+                      if THEMA_BEREICH.get(w.tag) in bereiche), default=0.0)
     if punkte > 0 and p.persoenlich:
         punkte += PERSOENLICH_BONUS
     return round(punkte, 6)
