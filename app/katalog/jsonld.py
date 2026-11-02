@@ -19,6 +19,9 @@ _LD_SKRIPT = re.compile(r'<script[^>]+type=["\']application/ld\+json["\'][^>]*>(
 
 
 def _slug(text: str) -> str:
+    text = text.lower()
+    for umlaut, ersatz in (("ä", "ae"), ("ö", "oe"), ("ü", "ue"), ("ß", "ss")):
+        text = text.replace(umlaut, ersatz)
     return re.sub(r"[^a-z0-9]+", "-", text.lower()).strip("-")
 
 

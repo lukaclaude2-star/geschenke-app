@@ -151,3 +151,11 @@ def test_tausenderpunkt_ohne_nachkommastellen():
         return p.preis
     assert preis("12.500") == 12500.0
     assert preis("19.99") == 19.99
+
+
+def test_slug_mit_umlauten():
+    from app.katalog.jsonld import _slug
+    assert _slug("Grillfürst") == "grillfuerst"
+    assert _slug("Krämer Pferdesport") == "kraemer-pferdesport"
+    assert _slug("Wolle Rödel") == "wolle-roedel"
+    assert _slug("Fuß") == "fuss"
