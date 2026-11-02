@@ -5,8 +5,13 @@ import SwiftUI
 /// Die Auswahl wird bewusst nicht gespeichert.
 struct SammelAuswahlView: View {
     @EnvironmentObject private var zustand: AppZustand
-    @State private var gewaehlt: Set<UUID> = []
+    @State private var gewaehlt: Set<UUID>
     @State private var ziel: WischZiel?
+
+    /// Vom Weihnachts-Countdown kommen alle Profile vorausgewählt.
+    init(vorauswahl: Set<UUID> = []) {
+        _gewaehlt = State(initialValue: vorauswahl)
+    }
 
     var body: some View {
         VStack(spacing: 0) {

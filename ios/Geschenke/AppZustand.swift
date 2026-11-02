@@ -25,6 +25,17 @@ final class AppZustand: ObservableObject {
         sichern()
     }
 
+    func setzeSchrift(_ stufe: Schriftstufe) {
+        daten.schriftgroesse = stufe.rawValue
+        sichern()
+    }
+
+    func setzeGeburtstag(_ id: UUID, _ geburtstag: Geburtstag?) {
+        guard let i = daten.profile.firstIndex(where: { $0.id == id }) else { return }
+        daten.profile[i].geburtstag = geburtstag
+        sichern()
+    }
+
     func profil(_ id: UUID) -> GespeichertesProfil? {
         daten.profile.first { $0.id == id }
     }

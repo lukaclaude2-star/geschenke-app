@@ -75,6 +75,8 @@ struct WischView: View {
             }
         }
         .padding()
+        // Immer bildschirmfüllend – sonst blitzen beim Laden schwarze Ränder an den Seiten auf.
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .nachtblau()
         .navigationTitle(modell.titel)
         .navigationBarTitleDisplayMode(.inline)

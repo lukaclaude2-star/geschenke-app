@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
     inputs:
       runner:
-        description: "macOS-Rechner (bei Engpass z. B. macos-15 oder macos-15-intel)"
-        default: macos-26
+        description: "macOS-Rechner (macos-26 hing oft in der Warteschlange, daher macos-15)"
+        default: macos-15
   push:
     # Auf Arbeits-Branches nur auf Knopfdruck – jeder Push dort würde Mac-Minuten kosten.
     branches: [main]
@@ -17,7 +17,7 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ inputs.runner || 'macos-26' }}
+    runs-on: ${{ inputs.runner || 'macos-15' }}
     timeout-minutes: 25
     permissions:
       contents: write  # Release für das Update per Fingertipp anlegen
