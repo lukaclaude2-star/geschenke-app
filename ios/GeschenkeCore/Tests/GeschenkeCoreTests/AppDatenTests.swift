@@ -26,6 +26,21 @@ final class AppDatenTests: XCTestCase {
         XCTAssertTrue(daten.profile.isEmpty && daten.merkliste.isEmpty)
     }
 
+    func testKaputteDateiWirdVorDemUeberschreibenGesichert() throws {
+        let ordner = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
+        try FileManager.default.createDirectory(at: ordner, withIntermediateDirectories: true)
+        let datei = ordner.appendingPathComponent("appdaten.json")
+        try "alte, unlesbare Daten".data(using: .utf8)!.write(to: datei)
+        let speicher = AppDatenSpeicher(datei: datei)
+        _ = speicher.laden()
+        try speicher.speichern(AppDaten())
+        let gesichert = try FileManager.default.contentsOfDirectory(atPath: ordner.path)
+            .filter { $0.hasPrefix("appdaten.kaputt-") }
+        XCTAssertEqual(gesichert.count, 1)
+        let inhalt = try String(contentsOf: ordner.appendingPathComponent(gesichert[0]), encoding: .utf8)
+        XCTAssertEqual(inhalt, "alte, unlesbare Daten")
+    }
+
     func testKaputteDateiGibtLeereDaten() throws {
         let datei = tempDatei()
         try "kaputt".data(using: .utf8)!.write(to: datei)
