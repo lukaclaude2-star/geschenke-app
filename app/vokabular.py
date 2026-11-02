@@ -112,3 +112,17 @@ def label_fuer(schluessel: str) -> str:
 def tag_label(tag: str) -> str:
     """Label eines Wunsch-Tags (Thema oder Lebenslage)."""
     return THEMEN.get(tag) or LEBENSLAGEN.get(tag, tag)
+
+
+# Wörter, an denen eine Eigenschaft im Text erkannt wird – zusätzlich zum KI-Tag, damit ein
+# Ausschluss nicht allein an der Verschlagwortung hängt (Grundbaustein 3).
+# Regex, geprüft am Wortanfang (\b davor); \b am Ende nur, wo kurze Wörter sonst zu viel treffen.
+EIGENSCHAFT_MUSTER: dict[str, tuple[str, ...]] = {
+    "alkohol": (r"alkohol", r"wein(?!acht)", r"sekt\b", r"bier", r"gin\b", r"whisk", r"cocktail",
+                r"aperitif", r"aperol", r"lik[öo]r", r"schnaps", r"prosecco", r"champagner", r"rum\b",
+                r"wodka", r"vodka", r"spirituose", r"cider", r"tasting", r"brauerei", r"weingut"),
+    "suessigkeiten": (r"s[üu](ß|ss)igkeit", r"schoko", r"praline", r"bonbon", r"fruchtgummi",
+                      r"lakritz", r"nasch", r"marzipan", r"tr[üu]ffel"),
+    "leder": (r"leder",),
+    "duft": (r"duft", r"parf[üu]m", r"eau de"),
+}

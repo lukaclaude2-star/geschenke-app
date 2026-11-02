@@ -11,14 +11,19 @@ from app.config import settings
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import Karte, KatalogProdukt, Profil
 from app.ranking import ist_ausgeschlossen
-from app.vokabular import THEMEN
+from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN
 
-SYSTEM = """Du schlägst in einer Geschenke-App konkrete, kaufbare Geschenkideen vor, die man
+SYSTEM = f"""Du schlägst in einer Geschenke-App konkrete, kaufbare Geschenkideen vor, die man
 bei Amazon findet. Antworte nur mit JSON:
-{"ideen": [{"titel": "...", "emoji": "ein Emoji", "preis_von": Zahl, "preis_bis": Zahl,
-            "suchbegriff": "2–4 Wörter für die Amazon-Suche", "themen": ["..."]}]}
+{{"ideen": [{{"titel": "...", "emoji": "ein Emoji", "preis_von": Zahl, "preis_bis": Zahl,
+            "suchbegriff": "2–4 Wörter für die Amazon-Suche", "themen": [...],
+            "lebenslagen": [...], "farben": [...], "eigenschaften": [...]}}]}}
 Regeln: passend zu den Wünschen; NIE etwas, das einen Ausschluss trifft; preis_bis höchstens
-das Budget; keine Ideen aus der Liste "schon_gezeigt"; themen nur aus: """ + ", ".join(THEMEN)
+das Budget; keine Ideen aus der Liste "schon_gezeigt".
+themen nur aus: {", ".join(THEMEN)}
+lebenslagen nur aus: {", ".join(LEBENSLAGEN)}
+farben (Hauptfarben, falls festgelegt) nur aus: {", ".join(FARBEN)}
+eigenschaften (alles, was jemand ausschließen könnte) nur aus: {", ".join(EIGENSCHAFTEN)}"""
 
 
 def _link(suchbegriff: str) -> str:
@@ -34,6 +39,12 @@ def _zahl(wert) -> float | None:
     return float(wert)
 
 
+def _nur(werte, erlaubt) -> list[str]:
+    if not isinstance(werte, list):
+        return []
+    return [w for w in werte if isinstance(w, str) and w in erlaubt]
+
+
 async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str]) -> list[Karte]:
     anfrage = {
         "wuensche": [{"tag": w.tag, "gewicht": w.gewicht} for w in profil.wuensche],
@@ -47,31 +58,42 @@ async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str]) -> list[K
     except KiUeberlastet:
         return []
 
+    ideen = antwort.get("ideen")
+    if not isinstance(ideen, list):
+        return []
     karten: list[Karte] = []
-    for idee in antwort.get("ideen") or []:
+    for idee in ideen:
         if not isinstance(idee, dict):
             continue
-        titel = str(idee.get("titel") or "").strip()
-        suchbegriff = str(idee.get("suchbegriff") or "").strip()
+        titel = idee.get("titel")
+        suchbegriff = idee.get("suchbegriff")
+        if not isinstance(titel, str) or not isinstance(suchbegriff, str):
+            continue
+        titel, suchbegriff = titel.strip(), suchbegriff.strip()
         if not titel or not suchbegriff:
             continue
         karten_id = "idee:" + suchbegriff.lower()
         if karten_id in gesehen or karten_id in [k.id for k in karten]:
             continue
-        themen = [t for t in idee.get("themen") or [] if t in THEMEN]
+        themen = _nur(idee.get("themen"), THEMEN)
         preis_von, preis_bis = _zahl(idee.get("preis_von")), _zahl(idee.get("preis_bis"))
         if profil.budget_max is not None and (preis_bis is None or preis_bis > profil.budget_max):
             continue
         pruefling = KatalogProdukt(
             id=karten_id, titel=f"{titel} {suchbegriff}", beschreibung="", preis=preis_bis or 0,
-            bild_url=None, link="", shop="Amazon", themen=themen, lebenslagen=[], farben=[],
-            eigenschaften=[], persoenlich=False, note=0, inhalts_hash="",
+            bild_url=None, link="", shop="Amazon", themen=themen,
+            lebenslagen=_nur(idee.get("lebenslagen"), LEBENSLAGEN),
+            farben=_nur(idee.get("farben"), FARBEN),
+            eigenschaften=_nur(idee.get("eigenschaften"), EIGENSCHAFTEN),
+            persoenlich=False, note=10, inhalts_hash="",
         )
         if ist_ausgeschlossen(pruefling, profil.ausschluesse):
             continue
+        emoji = idee.get("emoji")
         karten.append(Karte(
             id=karten_id, art="idee", titel=titel, preis=None, preis_von=preis_von,
-            preis_bis=preis_bis, bild_url=None, emoji=str(idee.get("emoji") or "🎁")[:4],
+            preis_bis=preis_bis, bild_url=None,
+            emoji=emoji[:4] if isinstance(emoji, str) and emoji.strip() else "🎁",
             shop="Amazon", link=_link(suchbegriff), tags=themen,
         ))
         if len(karten) >= anzahl:

@@ -8,7 +8,7 @@ import re
 
 from app.config import settings
 from app.modelle import Ausschluss, KatalogProdukt, Profil
-from app.vokabular import FARB_LABELS
+from app.vokabular import EIGENSCHAFT_MUSTER, FARB_LABELS
 
 GUT_AB = 1.0
 PERSOENLICH_BONUS = 0.2
@@ -20,7 +20,12 @@ def _farbe_im_text(farbe: str, text: str) -> bool:
     return any(re.search(r"\b" + re.escape(w), text) for w in woerter)
 
 
+def _wort_im_text(muster: str, text: str) -> bool:
+    return re.search(r"\b" + muster, text) is not None
+
+
 def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> bool:
+    """Hart: Tags UND Text werden geprüft, damit ein Ausschluss nicht allein an der KI hängt."""
     titel = p.titel.lower()
     text = f"{titel} {p.beschreibung.lower()}"
     for a in ausschluesse:
@@ -28,11 +33,13 @@ def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> boo
         wert = wert.strip().lower()
         if not wert:
             continue
-        if art == "thema" and (wert in p.themen or wert in p.lebenslagen):
+        if art == "thema" and (wert in p.themen or wert in p.lebenslagen
+                               or _wort_im_text(re.escape(wert.replace("_", " ")), text)):
             return True
         if art == "farbe" and (wert in p.farben or _farbe_im_text(wert, titel)):
             return True
-        if art == "eigenschaft" and wert in p.eigenschaften:
+        if art == "eigenschaft" and (wert in p.eigenschaften or any(
+                _wort_im_text(m, text) for m in EIGENSCHAFT_MUSTER.get(wert, ()))):
             return True
         if art == "wort" and wert in text:
             return True

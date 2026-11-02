@@ -81,7 +81,11 @@ async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
         logger.warning("KI überlastet – %d Produkte beim nächsten Lauf", len(ps))
         return []
     eintraege = antwort.get("produkte")
-    nach_id = {e.get("id"): e for e in eintraege if isinstance(e, dict)} if isinstance(eintraege, list) else {}
+    nach_id: dict[str, dict] = {}
+    if isinstance(eintraege, list):
+        for e in eintraege:
+            if isinstance(e, dict) and isinstance(e.get("id"), str):
+                nach_id.setdefault(e["id"], e)
     ergebnis: list[KatalogProdukt] = []
     for p in ps:
         e = nach_id.get(p.id)

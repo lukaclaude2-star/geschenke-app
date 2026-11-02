@@ -74,7 +74,7 @@ async def test_aendern_schickt_altes_profil_und_anweisung_mit(monkeypatch):
 
     async def ki(system, nutzer, **_):
         gesehen["nutzer"] = nutzer
-        return roh(wuensche=[{"tag": "garten", "gewicht": 1}, {"tag": "hund", "gewicht": 1}])
+        return {"neue_wuensche": [{"tag": "hund", "gewicht": 1}]}
     monkeypatch.setattr(profil_modul, "frage_json", ki)
     alt = Profil(zusammenfassung="Oma", wuensche=[Wunsch(tag="garten", label="x", gewicht=1.0)],
                  ausschluesse=[], budget_max=None)
