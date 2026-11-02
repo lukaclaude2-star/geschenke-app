@@ -19,6 +19,8 @@ jobs:
   build:
     runs-on: ${{ inputs.runner || 'macos-26' }}
     timeout-minutes: 25
+    permissions:
+      contents: write  # Release für das Update per Fingertipp anlegen
     defaults:
       run:
         working-directory: ios
@@ -45,6 +47,8 @@ jobs:
             -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" \
             APP_TOKEN="$APP_TOKEN" \
+            MARKETING_VERSION="1.0.${{ github.run_number }}" \
+            CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
             build 2>&1 | grep -E "error:|warning: .*Geschenke|BUILD" || true
           test -d build/Build/Products/Release-iphoneos/Geschenke.app
 
@@ -59,3 +63,15 @@ jobs:
           name: Geschenke-ipa
           path: ios/Geschenke.ipa
           retention-days: 14
+
+      # SideStore-Quelle (Server: /dl/<geheimnis>/source.json) liest immer das neueste Release.
+      # Nur von main – Arbeits-Branches landen nie auf dem Handy.
+      - name: Release für Update per Fingertipp
+        if: github.ref == 'refs/heads/main'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          NOTIZ: ${{ github.event.head_commit.message || 'manuell gebaut' }}
+        run: |
+          gh release create "app-${{ github.run_number }}" Geschenke.ipa \
+            --repo "${{ github.repository }}" \
+            --title "App 1.0.${{ github.run_number }}" --notes "$NOTIZ"
