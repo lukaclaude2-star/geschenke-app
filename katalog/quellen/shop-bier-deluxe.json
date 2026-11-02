@@ -1,0 +1,68 @@
+[
+ {
+  "id": "bier-deluxe-ad0ce90390",
+  "titel": "Steamworks Shirt in Größe L",
+  "beschreibung": "Das Steamworks T-Shirts aus bequemen Mischgewebe, sind super weich auf der Haut und angenehm, leicht zu tragen. Die grau melierten T-Shirts zeigen…",
+  "preis": 25.99,
+  "bild_url": "https://www.bier-deluxe.de/media/image/56/16/45/20160810-Steamworks-Shirt599d92566fc35.jpg",
+  "link": "https://www.bier-deluxe.de/steamworks-shirt-in-groesse-l-bd211129",
+  "shop": "Bier-Deluxe",
+  "kategorie": "Bier-Deluxe",
+  "lieferbar": true
+ },
+ {
+  "id": "bier-deluxe-cc77edfaa6",
+  "titel": "Individuelle Holzbox (1x 0,75l)",
+  "beschreibung": "Wähle dir selber eine Flasche aus unserem Sortiment aus, die du in unserer hochwertigen Holzbox geliefert haben möchtest und lege sie…",
+  "preis": 9.99,
+  "bild_url": "https://www.bier-deluxe.de/media/image/cb/85/57/BD211200.jpg",
+  "link": "https://www.bier-deluxe.de/individuelle-holzbox-1x-0-75l-bd211200",
+  "shop": "Bier-Deluxe",
+  "kategorie": "Bier-Deluxe",
+  "lieferbar": true
+ },
+ {
+  "id": "bier-deluxe-289cbb3644",
+  "titel": "Bier-Deluxe-Club Abo (6 Monate)",
+  "beschreibung": "Werde Mitglied in unserem Bier-Deluxe Club und du bekommst um den 24. des Monats ein von unserem Biersommelier kuratiertes Craft Beer Paket…",
+  "preis": 37.95,
+  "bild_url": "https://www.bier-deluxe.de/media/image/c7/57/e8/Bier-Deluxe_Logo_Weis.png",
+  "link": "https://www.bier-deluxe.de/bier-deluxe-club-abo-6-monate-bd500360",
+  "shop": "Bier-Deluxe",
+  "kategorie": "Bier-Deluxe",
+  "lieferbar": true
+ },
+ {
+  "id": "bier-deluxe-bea5c04526",
+  "titel": "Craft-Beer-Kennenlern-Paket",
+  "beschreibung": "Der Klassiker: Das Bier-Deluxe Craft-Beer-Kennenlernpaket Unser Biersommelier Markus Raupach hat ein ganz besonderes…",
+  "preis": 32.9,
+  "bild_url": "https://www.bier-deluxe.de/media/image/a9/77/1f/20210127-bier-deluxe-kennenlernpaket-12-flaschen.jpg",
+  "link": "https://www.bier-deluxe.de/craft-beer-kennenlern-paket-bd500013",
+  "shop": "Bier-Deluxe",
+  "kategorie": "Bier-Deluxe",
+  "lieferbar": true
+ },
+ {
+  "id": "bier-deluxe-ae4a27bae4",
+  "titel": "Bier-Deluxe-Club Abo (3 Monate)",
+  "beschreibung": "Werde Mitglied in unserem Bier-Deluxe Club und du bekommst um den 24. jeden Monats ein von unserem Biersommelier kuratiertes Craft Beer Paket…",
+  "preis": 37.95,
+  "bild_url": "https://www.bier-deluxe.de/media/image/60/a4/36/20170222_3Monate_Bier-DeluxeClub_Produktbilder.png",
+  "link": "https://www.bier-deluxe.de/bier-deluxe-club-abo-3-monate-bd500347",
+  "shop": "Bier-Deluxe",
+  "kategorie": "Bier-Deluxe",
+  "lieferbar": true
+ },
+ {
+  "id": "bier-deluxe-99cc5c11b3",
+  "titel": "Individuelle Holzbox (5x0,33l)",
+  "beschreibung": "Wähle dir selber fünf Flaschen aus unserem Sortiment aus, die du in der Holzbox geliefert haben möchtest und lege sie zusammen mit der…",
+  "preis": 14.99,
+  "bild_url": "https://www.bier-deluxe.de/media/image/52/e3/d5/BD211201.jpg",
+  "link": "https://www.bier-deluxe.de/individuelle-holzbox-5x0-33l-bd211203",
+  "shop": "Bier-Deluxe",
+  "kategorie": "Bier-Deluxe",
+  "lieferbar": true
+ }
+]

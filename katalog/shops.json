@@ -1,0 +1,237 @@
+[
+ {
+  "name": "Grillfürst",
+  "url": "https://www.grillfuerst.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "Santos Grills",
+  "url": "https://www.santosgrills.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "ofen.de",
+  "url": "https://www.ofen.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "KochForm",
+  "url": "https://www.kochform.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "Küchenprofi",
+  "url": "https://www.kuechenprofi.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "Messerkontor",
+  "url": "https://www.messerkontor.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "roastmarket",
+  "url": "https://www.roastmarket.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "TeeGschwendner",
+  "url": "https://www.teegschwendner.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Whiskyworld",
+  "url": "https://www.whiskyworld.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Spirituosenworld",
+  "url": "https://www.spirituosenworld.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Bier-Deluxe",
+  "url": "https://www.bier-deluxe.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Weinfreunde",
+  "url": "https://www.weinfreunde.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "11teamsports",
+  "url": "https://www.11teamsports.com/de-de/",
+  "bereich": "sport"
+ },
+ {
+  "name": "Fitshop",
+  "url": "https://www.fitshop.de/",
+  "bereich": "sport"
+ },
+ {
+  "name": "Bergfreunde",
+  "url": "https://www.bergfreunde.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Angel-Domäne",
+  "url": "https://www.angel-domaene.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Bike-Discount",
+  "url": "https://www.bike-discount.de/",
+  "bereich": "fahrzeuge"
+ },
+ {
+  "name": "Caseking",
+  "url": "https://www.caseking.de/",
+  "bereich": "gaming"
+ },
+ {
+  "name": "tink",
+  "url": "https://www.tink.de/",
+  "bereich": "gaming"
+ },
+ {
+  "name": "3DJake",
+  "url": "https://www.3djake.de/",
+  "bereich": "handwerk"
+ },
+ {
+  "name": "parfumdreams",
+  "url": "https://www.parfumdreams.de/",
+  "bereich": "beauty"
+ },
+ {
+  "name": "Uhrcenter",
+  "url": "https://www.uhrcenter.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Valmano",
+  "url": "https://www.valmano.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "engelhorn",
+  "url": "https://www.engelhorn.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Lampenwelt",
+  "url": "https://www.lampenwelt.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Engels Kerzen",
+  "url": "https://www.engels-kerzen.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "AmbienteDirect",
+  "url": "https://www.ambientedirect.com/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Bilderwelten",
+  "url": "https://www.bilderwelten.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Baldur-Garten",
+  "url": "https://www.baldur-garten.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Lubera",
+  "url": "https://www.lubera.com/de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Samen.de",
+  "url": "https://www.samen.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "modulor",
+  "url": "https://www.modulor.de/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "boesner",
+  "url": "https://www.boesner.com/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "Wolle Rödel",
+  "url": "https://www.wolle-roedel.com/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "stoffe.de",
+  "url": "https://www.stoffe.de/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "EMP",
+  "url": "https://www.emp.de/",
+  "bereich": "musik"
+ },
+ {
+  "name": "Manga Mafia",
+  "url": "https://www.manga-mafia.de/",
+  "bereich": "popkultur"
+ },
+ {
+  "name": "Brettspielversand",
+  "url": "https://www.brettspielversand.de/",
+  "bereich": "spiele"
+ },
+ {
+  "name": "Ravensburger",
+  "url": "https://www.ravensburger.de/de-DE",
+  "bereich": "spiele"
+ },
+ {
+  "name": "Hugendubel",
+  "url": "https://www.hugendubel.de/",
+  "bereich": "wissen"
+ },
+ {
+  "name": "Krämer Pferdesport",
+  "url": "https://www.kraemer.de/",
+  "bereich": "tiere"
+ },
+ {
+  "name": "Toolineo",
+  "url": "https://www.toolineo.de/",
+  "bereich": "handwerk"
+ },
+ {
+  "name": "Monsterzeug",
+  "url": "https://www.monsterzeug.de/",
+  "bereich": "lebensstil"
+ },
+ {
+  "name": "Geschenke24",
+  "url": "https://www.geschenke24.de/",
+  "bereich": "lebensstil"
+ },
+ {
+  "name": "Leuchtturm1917",
+  "url": "https://www.leuchtturm1917.de/",
+  "bereich": "alltag"
+ },
+ {
+  "name": "zooplus",
+  "url": "https://www.zooplus.de/",
+  "bereich": "tiere"
+ },
+ {
+  "name": "Fotoimpex",
+  "url": "https://www.fotoimpex.com/",
+  "bereich": "kreativ"
+ }
+]

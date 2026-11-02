@@ -146,6 +146,11 @@ async def sammle(shop: dict, ziel: int = PRODUKTE_JE_SHOP, max_seiten: int = MAX
         regeln, sitemaps = await robots(client, basis)
         sitemaps = shop.get("sitemaps") or sitemaps or [urljoin(basis, "/sitemap.xml"),
                                                        urljoin(basis, "/sitemap_index.xml")]
+        # Mehrsprachige Shops: nur die Sitemaps der gewählten Sprachversion, sonst ist die Grenze
+        # schon mit fremdsprachigen Seiten voll.
+        sprache = urlparse(basis).path.lower().rstrip("/")
+        if sprache:
+            sitemaps = [s for s in sitemaps if sprache + "/" in s.lower()] or sitemaps
         seiten = await seiten_aus_sitemaps(client, sitemaps)
         kandidaten = [u for u in _kandidaten(seiten, basis) if regeln.can_fetch(KOPF["User-Agent"], u)]
         if not kandidaten:
