@@ -5,9 +5,11 @@ from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.gespraech import naechster_schritt
+from app.karten import karten_fuer
+from app.katalog.laden import lade_katalog
 from app.ki import KiUeberlastet
-from app.modelle import (ChatAnfrage, ChatAntwort, Profil, ProfilAendernAnfrage,
-                         ProfilAusGespraechAnfrage)
+from app.modelle import (ChatAnfrage, ChatAntwort, KartenAnfrage, KartenAntwort, Profil,
+                         ProfilAendernAnfrage, ProfilAusGespraechAnfrage)
 from app.profil import profil_aendern, profil_aus_gespraech
 
 
@@ -20,6 +22,10 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
 
 app = FastAPI(title="Geschenke")
 geschuetzt = [Depends(pruefe_token)]
+
+# Der Katalog wird einmal beim Start geladen; der tägliche Lauf committet eine neue
+# Datei, Render baut daraufhin neu und lädt sie.
+KATALOG = lade_katalog(settings.katalog_pfad)
 
 
 @app.exception_handler(KiUeberlastet)
@@ -45,3 +51,8 @@ async def route_profil_aus_gespraech(anfrage: ProfilAusGespraechAnfrage) -> Prof
 @app.post("/profil/aendern", dependencies=geschuetzt)
 async def route_profil_aendern(anfrage: ProfilAendernAnfrage) -> Profil:
     return await profil_aendern(anfrage.profil, anfrage.anweisung)
+
+
+@app.post("/karten", dependencies=geschuetzt)
+async def route_karten(anfrage: KartenAnfrage) -> KartenAntwort:
+    return await karten_fuer(KATALOG, anfrage)

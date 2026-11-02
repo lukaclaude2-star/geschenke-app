@@ -1,6 +1,6 @@
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class QuellProdukt(BaseModel):
@@ -83,7 +83,7 @@ class ChatAntwort(BaseModel):
 class KartenAnfrage(BaseModel):
     profil: Profil
     gesehen: list[str] = []
-    anzahl: int = 10
+    anzahl: int = Field(default=10, ge=1, le=30)
 
 
 class KartenAntwort(BaseModel):
