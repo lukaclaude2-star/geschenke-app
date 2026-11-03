@@ -29,22 +29,14 @@ def lade_quellen() -> list[QuellProdukt]:
 
 # Groq: 8.000 Token pro Minute je Modell, ein 20er-Stapel braucht ~6.500 → knapp eine Minute Abstand.
 PAUSE_GROQ = 55
-# GitHub Models (Gratis-Stufe): wenige Anfragen pro Minute, dafür ohne Token-Minutengrenze von Groq.
-PAUSE_GITHUB = 5
-GITHUB_MODELLE = "openai/gpt-4.1-mini,openai/gpt-4o-mini"
 
 
 def arbeiter() -> dict[str, float]:
     """Jedes Modell mit eigenem Gratis-Kontingent bekommt einen Arbeiter; alle laufen gleichzeitig.
 
-    Das erste Groq-Modell bleibt für Chat, Profil und Ideen der App reserviert. GitHub Models gibt
-    es nur in der Action (GITHUB_TOKEN mit models: read)."""
-    liste = {m: PAUSE_GROQ for m in settings.ki_modelle[1:]}
-    if settings.github_models_token:
-        for m in os.environ.get("KATALOG_GITHUB_MODELLE", GITHUB_MODELLE).split(","):
-            if m.strip():
-                liste[f"github:{m.strip()}"] = PAUSE_GITHUB
-    return liste
+    Das erste Groq-Modell bleibt für Chat, Profil und Ideen der App reserviert. (GitHub Models war
+    als dritte Quelle geplant, ist aber seit 30.07.2026 eingestellt.)"""
+    return {m: PAUSE_GROQ for m in settings.ki_modelle[1:]}
 
 
 async def main() -> None:
