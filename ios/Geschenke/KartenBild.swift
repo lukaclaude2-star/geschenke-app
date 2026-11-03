@@ -15,7 +15,7 @@ struct KartenBild: View {
             .overlay(alignment: .bottomLeading) {
                 // Ideenkarten zeigen nur ein passendes Beispiel, nicht das exakte Produkt.
                 if karte.istBeispielbild && !klein {
-                    Text("Beispielbild · Pexels")
+                    Text("Beispielbild")
                         .font(.caption2.weight(.semibold))
                         .foregroundStyle(.white)
                         .padding(.horizontal, 7)

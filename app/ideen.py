@@ -4,7 +4,6 @@ Die KI nennt Geschenkideen; daraus werden Amazon-Suchlinks. Ausschlüsse und Bud
 gelten auch hier (Grundbaustein 3), und jede Karte ist als „Idee“ gekennzeichnet (Grundbaustein 1).
 """
 
-import asyncio
 import json
 from urllib.parse import quote_plus
 
@@ -111,15 +110,13 @@ async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str],
         if ist_ausgeschlossen(pruefling, profil.ausschluesse):
             continue
         emoji = idee.get("emoji")
+        bild = beispielbild(themen)
         karten.append(Karte(
             id=karten_id, art="idee", titel=titel, preis=None, preis_von=preis_von,
-            preis_bis=preis_bis, bild_url=None,
+            preis_bis=preis_bis, bild_url=bild, beispielbild=bild is not None,
             emoji=emoji[:4] if isinstance(emoji, str) and emoji.strip() else "🎁",
             shop="Amazon", link=_link(suchbegriff), tags=themen,
         ))
         if len(karten) >= anzahl:
             break
-    # Gleichzeitig: jede Bildsuche darf bis zu 5 s dauern.
-    bilder = await asyncio.gather(*(beispielbild(k.id.removeprefix("idee:")) for k in karten))
-    return [k.model_copy(update={"bild_url": bild, "beispielbild": True}) if bild else k
-            for k, bild in zip(karten, bilder)]
+    return karten

@@ -2,7 +2,9 @@ import hmac
 
 from fastapi import Depends, FastAPI, Header, HTTPException, Request
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 
+from app.bilder import ORDNER as BILDER_ORDNER
 from app.config import settings
 from app.download import router as download_router
 from app.gespraech import naechster_schritt
@@ -25,6 +27,8 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
 app = FastAPI(title="Geschenke")
 geschuetzt = [Depends(pruefe_token)]
 app.include_router(download_router)
+# Fotos sind nicht geheim; die App lädt sie wie fremde Produktbilder ohne Token.
+app.mount("/beispielbilder", StaticFiles(directory=BILDER_ORDNER, check_dir=False), name="beispielbilder")
 
 # Der Katalog wird einmal beim Start geladen; der tägliche Lauf committet eine neue
 # Datei, Render baut daraufhin neu und lädt sie.

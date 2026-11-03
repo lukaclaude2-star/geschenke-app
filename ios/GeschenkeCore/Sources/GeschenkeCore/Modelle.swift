@@ -80,7 +80,7 @@ public struct Karte: Codable, Equatable, Identifiable {
     public let shop: String
     public let link: String
     public let tags: [String]
-    /// Ideenkarte mit Foto von Pexels, das nur ein Beispiel zeigt.
+    /// Ideenkarte mit festem Foto zum Stichwort, das nur ein Beispiel zeigt.
     public let beispielbild: Bool?
 
     public init(id: String, art: String, titel: String, preis: Double?, preisVon: Double?, preisBis: Double?,

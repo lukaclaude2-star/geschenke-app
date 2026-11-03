@@ -2,3 +2,4 @@
 pytest
 pytest-asyncio
 respx
+pillow  # nur für scripts/hole_beispielbilder.py
