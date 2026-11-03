@@ -1,0 +1,145 @@
+[
+ {
+  "id": "tafelgut-d787704fdc",
+  "titel": "Hauptprodukt mit Eigenschaften | XL | SWDEMO10007.4",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/ae/db/36/1788689274/hemd_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Hauptprodukt-mit-Eigenschaften/SWDEMO10007.4",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-0692f24231",
+  "titel": "Variantenprodukt | Weiß | M | SWDEMO10005.5",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/fe/13/69/1788689274/shirt_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Variantenprodukt/SWDEMO10005.5",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-c55b79a435",
+  "titel": "Hauptprodukt, versandkostenfrei mit Hervorhebung | SWDEMO10006",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 20.0,
+  "bild_url": "https://www.tafelgut.de/media/62/6c/cf/1788689274/handschuh_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Hauptprodukt-versandkostenfrei-mit-Hervorhebung/SWDEMO10006",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-ebc1bef646",
+  "titel": "Variantenprodukt | Rot | XL | SWDEMO10005.4",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/fe/13/69/1788689274/shirt_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Variantenprodukt/SWDEMO10005.4",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-b3f0226ea0",
+  "titel": "Variantenprodukt | Weiß | XL | SWDEMO10005.6",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/fe/13/69/1788689274/shirt_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Variantenprodukt/SWDEMO10005.6",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-dafd4a8a1d",
+  "titel": "Hauptprodukt mit Eigenschaften | M | SWDEMO10007.3",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/ae/db/36/1788689274/hemd_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Hauptprodukt-mit-Eigenschaften/SWDEMO10007.3",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-c846772483",
+  "titel": "Variantenprodukt | Rot | M | SWDEMO10005.3",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/fe/13/69/1788689274/shirt_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Variantenprodukt/SWDEMO10005.3",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-278240b29b",
+  "titel": "Hauptprodukt mit Eigenschaften | L | SWDEMO10007.2",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/ae/db/36/1788689274/hemd_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Hauptprodukt-mit-Eigenschaften/SWDEMO10007.2",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-f5b405f9df",
+  "titel": "Variantenprodukt | Blau | M | SWDEMO10005.1",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/fe/13/69/1788689274/shirt_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Variantenprodukt/SWDEMO10005.1",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-7fa232d824",
+  "titel": "Variantenprodukt | Blau | XL | SWDEMO10005.2",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/fe/13/69/1788689274/shirt_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Variantenprodukt/SWDEMO10005.2",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-fc49879720",
+  "titel": "Hauptprodukt mit Eigenschaften | S | SWDEMO10007.1",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 19.99,
+  "bild_url": "https://www.tafelgut.de/media/ae/db/36/1788689274/hemd_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Hauptprodukt-mit-Eigenschaften/SWDEMO10007.1",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-a70e02ab22",
+  "titel": "Hauptprodukt mit erweiterten Preisen | SWDEMO10002",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 750.0,
+  "bild_url": "https://www.tafelgut.de/media/a9/a5/78/1788689274/waschmaschine_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Hauptprodukt-mit-erweiterten-Preisen/SWDEMO10002",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ },
+ {
+  "id": "tafelgut-476ae8e111",
+  "titel": "Hauptartikel | SWDEMO10001",
+  "beschreibung": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimat…",
+  "preis": 495.95,
+  "bild_url": "https://www.tafelgut.de/media/13/f0/6f/1788689274/mobile_600x600.jpg?ts=1788689274",
+  "link": "https://www.tafelgut.de/Hauptartikel/SWDEMO10001",
+  "shop": "Tafelgut",
+  "kategorie": "Tafelgut",
+  "lieferbar": true
+ }
+]

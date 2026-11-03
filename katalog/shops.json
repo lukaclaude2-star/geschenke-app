@@ -233,5 +233,410 @@
   "name": "Fotoimpex",
   "url": "https://www.fotoimpex.com/",
   "bereich": "kreativ"
+ },
+ {
+  "name": "Alles für Selbermacher",
+  "url": "https://www.alles-fuer-selbermacher.de/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "Angelplatz",
+  "url": "https://www.angelplatz.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "angelsport.de",
+  "url": "https://www.angelsport.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "BabyOne",
+  "url": "https://www.babyone.de/",
+  "bereich": "baby_kind"
+ },
+ {
+  "name": "Bader",
+  "url": "https://www.bader.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Badminton-Shop",
+  "url": "https://www.badminton-shop.de/",
+  "bereich": "sport"
+ },
+ {
+  "name": "Basislager",
+  "url": "https://www.basislager.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Bierlinie",
+  "url": "https://www.bierlinie-shop.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Bierothek",
+  "url": "https://www.bierothek.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "bike-components",
+  "url": "https://www.bike-components.de/",
+  "bereich": "fahrzeuge"
+ },
+ {
+  "name": "Bitiba",
+  "url": "https://www.bitiba.de/",
+  "bereich": "tiere"
+ },
+ {
+  "name": "buecher.de",
+  "url": "https://www.buecher.de/",
+  "bereich": "wissen"
+ },
+ {
+  "name": "Calida",
+  "url": "https://www.calida.com/de-DE",
+  "bereich": "mode"
+ },
+ {
+  "name": "CK Modelcars",
+  "url": "https://www.ck-modelcars.de/",
+  "bereich": "sammeln"
+ },
+ {
+  "name": "Conalco",
+  "url": "https://www.conalco.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Creativ Discount",
+  "url": "https://www.creativ-discount.de/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "Dehner",
+  "url": "https://www.dehner.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Desenio",
+  "url": "https://www.desenio.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Emil die Flasche",
+  "url": "https://www.emil-die-flasche.de/",
+  "bereich": "alltag"
+ },
+ {
+  "name": "EMK",
+  "url": "https://www.emk.com/",
+  "bereich": "sammeln"
+ },
+ {
+  "name": "Fahrrad XXL",
+  "url": "https://www.fahrrad-xxl.de/",
+  "bereich": "fahrzeuge"
+ },
+ {
+  "name": "Falke",
+  "url": "https://www.falke.com/de_de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Fressnapf",
+  "url": "https://www.fressnapf.de/",
+  "bereich": "tiere"
+ },
+ {
+  "name": "Fritz Berger",
+  "url": "https://www.fritz-berger.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "gartenmoebel.de",
+  "url": "https://www.gartenmoebel.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Gourmetfleisch",
+  "url": "https://www.gourmetfleisch.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Handball-Store",
+  "url": "https://www.handball-store.de/",
+  "bereich": "sport"
+ },
+ {
+  "name": "Heine",
+  "url": "https://www.heine.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Idee Creativmarkt",
+  "url": "https://www.idee-shop.com/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "Intersport",
+  "url": "https://www.intersport.de/",
+  "bereich": "sport"
+ },
+ {
+  "name": "Jochen Schweizer",
+  "url": "https://www.jochen-schweizer.de/",
+  "bereich": "kultur"
+ },
+ {
+  "name": "Käthe Wohlfahrt",
+  "url": "https://www.kaethe-wohlfahrt.com/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Kaffeezentrale",
+  "url": "https://www.kaffeezentrale.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Kirstein",
+  "url": "https://www.kirstein.de/",
+  "bereich": "musik"
+ },
+ {
+  "name": "Klingel",
+  "url": "https://www.klingel.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "koffer.de",
+  "url": "https://www.koffer.de/",
+  "bereich": "alltag"
+ },
+ {
+  "name": "Lehrerwelt",
+  "url": "https://www.lehrerwelt.de/",
+  "bereich": "alltag"
+ },
+ {
+  "name": "Loberon",
+  "url": "https://www.loberon.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Loesdau",
+  "url": "https://www.loesdau.de/",
+  "bereich": "tiere"
+ },
+ {
+  "name": "Lucky Bike",
+  "url": "https://www.lucky-bike.de/",
+  "bereich": "fahrzeuge"
+ },
+ {
+  "name": "Magic Garden Seeds",
+  "url": "https://www.magicgardenseeds.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Mahlwerck",
+  "url": "https://www.mahlwerck.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Manufactum",
+  "url": "https://www.manufactum.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Medimops",
+  "url": "https://www.medimops.de/",
+  "bereich": "wissen"
+ },
+ {
+  "name": "Mindfactory",
+  "url": "https://www.mindfactory.de/",
+  "bereich": "gaming"
+ },
+ {
+  "name": "Müller",
+  "url": "https://www.mueller.de/",
+  "bereich": "spiele"
+ },
+ {
+  "name": "mydays",
+  "url": "https://www.mydays.de/",
+  "bereich": "kultur"
+ },
+ {
+  "name": "NaturaGart",
+  "url": "https://www.naturagart.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "NICI",
+  "url": "https://www.nici.de/",
+  "bereich": "baby_kind"
+ },
+ {
+  "name": "Nubert",
+  "url": "https://www.nubert.de/",
+  "bereich": "musik"
+ },
+ {
+  "name": "Otto Gourmet",
+  "url": "https://www.otto-gourmet.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Outdoor Renner",
+  "url": "https://www.outdoor-renner.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Outdoortrends",
+  "url": "https://www.outdoortrends.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Pflanzen-Kölle",
+  "url": "https://www.pflanzen-koelle.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Pieper",
+  "url": "https://www.pieper.de/",
+  "bereich": "beauty"
+ },
+ {
+  "name": "Pollin",
+  "url": "https://www.pollin.de/",
+  "bereich": "handwerk"
+ },
+ {
+  "name": "Radwelt",
+  "url": "https://www.radwelt-shop.de/",
+  "bereich": "fahrzeuge"
+ },
+ {
+  "name": "Reppa",
+  "url": "https://www.reppa.de/",
+  "bereich": "sammeln"
+ },
+ {
+  "name": "Riedel",
+  "url": "https://www.riedel.com/de-de",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Rose Bikes",
+  "url": "https://www.rosebikes.de/",
+  "bereich": "fahrzeuge"
+ },
+ {
+  "name": "Rosen Tantau",
+  "url": "https://www.rosen-tantau.com/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Rum-Depot",
+  "url": "https://www.rum-depot.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Rum & Co",
+  "url": "https://www.rumundco.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "schuhe.de",
+  "url": "https://www.schuhe.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Session",
+  "url": "https://www.session.de/",
+  "bereich": "musik"
+ },
+ {
+  "name": "skatedeluxe",
+  "url": "https://www.skatedeluxe.com/de",
+  "bereich": "fahrzeuge"
+ },
+ {
+  "name": "Spielemax",
+  "url": "https://www.spielemax.de/",
+  "bereich": "spiele"
+ },
+ {
+  "name": "Spirituosen Superbillig",
+  "url": "https://www.spirituosen-superbillig.com/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Sport Conrad",
+  "url": "https://www.sport-conrad.com/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Sport Schuster",
+  "url": "https://www.sport-schuster.de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Sport-Thieme",
+  "url": "https://www.sport-thieme.de/",
+  "bereich": "sport"
+ },
+ {
+  "name": "Tafelgut",
+  "url": "https://www.tafelgut.de/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Tchibo",
+  "url": "https://www.tchibo.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Trachten Angermaier",
+  "url": "https://www.trachten-angermaier.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "VBS Hobby",
+  "url": "https://www.vbs-hobby.com/",
+  "bereich": "kreativ"
+ },
+ {
+  "name": "VEDES",
+  "url": "https://www.vedes.com/",
+  "bereich": "spiele"
+ },
+ {
+  "name": "Viking",
+  "url": "https://www.viking.de/",
+  "bereich": "alltag"
+ },
+ {
+  "name": "Villeroy & Boch",
+  "url": "https://www.villeroy-boch.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Vivara",
+  "url": "https://www.vivara.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Zotter",
+  "url": "https://www.zotter.at/",
+  "bereich": "genuss"
+ },
+ {
+  "name": "Zwilling",
+  "url": "https://www.zwilling.com/de/",
+  "bereich": "kueche"
  }
 ]

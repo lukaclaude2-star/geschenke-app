@@ -2,7 +2,8 @@
 
 Aufrufe:
   python scripts/sammle_shops.py                 alle Shops → katalog/quellen/shop-<name>.json
-  python scripts/sammle_shops.py --nur "Name"    nur diesen Shop
+  python scripts/sammle_shops.py --nur "A" "B"   nur diese Shops
+  python scripts/sammle_shops.py --ziel 50       bis zu 50 Produkte je Shop (Standard 30)
   python scripts/sammle_shops.py --pruefe URL…   nur prüfen: lesbar / Shopify / blockiert
 
 Weg: robots.txt → Sitemaps → Produktseiten als Stichprobe → schema.org-Daten (JSON-LD).
@@ -41,6 +42,8 @@ MAX_SITEMAPS = 25
 PAUSE = 0.5
 DATEI = re.compile(r"\.(jpe?g|png|gif|webp|svg|pdf|xml|mp4)$", re.I)
 MEDIEN_SITEMAP = re.compile(r"image|bild|video|media", re.I)
+# Startadresse ohne Sprachpfad: Deutsch liegt dann meist ohne Präfix, andere Sprachen unter /en/, /fr/ …
+FREMDSPRACHE = re.compile(r"/(en|fr|it|es|nl|pl|cs|da|sv|fi|no|pt|hu|ro|sk|sl|hr|el|tr|ru|ja|zh|ko)([-_][a-z]{2})?(/|$)", re.I)
 PRODUKT_HINWEIS = re.compile(r"product|produkt|artikel|item|detail", re.I)
 KEIN_PRODUKT = re.compile(r"/(blog|magazin|ratgeber|news|hilfe|service|kontakt|impressum|agb|datenschutz|"
                           r"karriere|jobs|filiale|marken?|brands?|kategorie|category|cms|faq|account|"
@@ -123,6 +126,8 @@ def _kandidaten(seiten: list[str], basis: str) -> list[str]:
             continue
         if sprache and not pfad.lower().startswith(sprache + "/"):
             continue
+        if not sprache and FREMDSPRACHE.match(pfad):
+            continue
         if KEIN_PRODUKT.search(pfad) or DATEI.search(pfad):
             continue
         passend.append(u)
@@ -181,7 +186,8 @@ async def sammle(shop: dict, ziel: int = PRODUKTE_JE_SHOP, max_seiten: int = MAX
 async def main() -> None:
     argumente = argparse.ArgumentParser()
     argumente.add_argument("--pruefe", nargs="*")
-    argumente.add_argument("--nur")
+    argumente.add_argument("--nur", nargs="+")
+    argumente.add_argument("--ziel", type=int, default=PRODUKTE_JE_SHOP)
     argumente.add_argument("--gleichzeitig", type=int, default=10)
     a = argumente.parse_args()
 
@@ -199,14 +205,15 @@ async def main() -> None:
 
     shops = json.loads((WURZEL / "katalog" / "shops.json").read_text(encoding="utf-8"))
     if a.nur:
-        shops = [s for s in shops if s["name"] == a.nur]
+        shops = [s for s in shops if s["name"] in a.nur]
     grenze = asyncio.Semaphore(a.gleichzeitig)
     ordner = WURZEL / "katalog" / "quellen"
 
     async def lauf(shop):
         async with grenze:
             try:
-                b = await sammle(shop)
+                # Mehr Produkte brauchen mehr Seiten: viele Produktseiten liefern keine Daten.
+                b = await sammle(shop, ziel=a.ziel, max_seiten=max(MAX_SEITEN, a.ziel * 4))
             except Exception as fehler:  # ein kaputter Shop darf die anderen nicht abbrechen
                 b = {"status": f"Fehler: {type(fehler).__name__}", "produkte": []}
         if b["produkte"]:

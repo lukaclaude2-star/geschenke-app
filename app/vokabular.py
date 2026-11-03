@@ -6,7 +6,7 @@ und Gesprächs-Schlagwörter garantiert zusammen.
 
 # Version des Vokabulars: steckt im Inhalts-Hash, damit der Katalog nach einer Änderung
 # einmal komplett neu verschlagwortet wird.
-VOKABULAR_VERSION = 2
+VOKABULAR_VERSION = 3
 
 # Oberbereiche: Gibt es zu einem Stichwort zu wenig, zählen Produkte aus demselben Bereich
 # als schwächere Treffer (Whisky-Fan → auch Wein, Gin, Feinkost).
@@ -32,6 +32,8 @@ BEREICHE: dict[str, str] = {
     "kultur": "🌍 Kultur & Reisen",
     "lebensstil": "💚 Lebensstil & Werte",
     "alltag": "💼 Arbeit & Alltag",
+    "sammeln": "🗃️ Sammeln",
+    "baby_kind": "🍼 Kinder & Baby",
 }
 
 THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
@@ -42,6 +44,11 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "vegan": "🌱 Vegan", "gewuerze": "🧂 Gewürze", "chili": "🌶️ Chili & Scharf",
         "kochmesser": "🔪 Kochmesser", "kuechengeraete": "🥘 Küchengeräte",
         "fermentieren": "🫙 Fermentieren", "brot_backen": "🍞 Brot backen",
+        "fondue_raclette": "🫕 Fondue & Raclette", "dutch_oven": "🍲 Dutch Oven",
+        "nudeln_selbst_machen": "🍝 Nudeln selbst machen", "torten_verzieren": "🎂 Torten verzieren",
+        "eis_machen": "🍦 Eis selbst machen", "einkochen": "🍓 Marmelade & Einkochen",
+        "burger": "🍔 Burger", "mexikanische_kueche": "🌮 Mexikanische Küche",
+        "indische_kueche": "🍛 Indische Küche", "desserts": "🍮 Desserts",
     },
     "genuss": {
         "tee": "🍵 Tee", "kaffee": "☕ Kaffee", "wein": "🍷 Wein", "bier": "🍺 Bier",
@@ -49,6 +56,11 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "likoer": "🍶 Likör", "schokolade": "🍫 Schokolade", "suesses": "🍬 Süßes",
         "feinkost": "🧺 Feinkost", "olivenoel": "🫒 Olivenöl", "kaese": "🧀 Käse",
         "honig": "🍯 Honig", "alkoholfrei": "🧃 Alkoholfrei",
+        "espresso": "☕ Espresso & Siebträger", "matcha": "🍵 Matcha", "rum": "🥃 Rum",
+        "craft_beer": "🍺 Craft Beer", "pralinen": "🍫 Pralinen",
+        "nuesse_trockenobst": "🥜 Nüsse & Trockenobst", "wurst_schinken": "🥓 Wurst & Schinken",
+        "trueffel": "🍄 Trüffel", "lakritz": "🖤 Lakritz", "kakao": "🍫 Kakao & Trinkschokolade",
+        "aperitif": "🍊 Aperitif & Spritz",
     },
     "sport": {
         "sport": "🏅 Sport", "fitness": "💪 Fitness", "laufen": "🏃 Laufen",
@@ -56,6 +68,11 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "tischtennis": "🏓 Tischtennis", "golf": "⛳ Golf", "american_football": "🏈 American Football",
         "boxen": "🥊 Boxen", "kampfsport": "🥋 Kampfsport", "darts": "🎯 Darts",
         "billard": "🎱 Billard", "bowling": "🎳 Bowling", "schwimmen": "🏊 Schwimmen",
+        "volleyball": "🏐 Volleyball", "handball": "🤾 Handball", "eishockey": "🏒 Eishockey",
+        "badminton": "🏸 Badminton", "padel": "🎾 Padel", "triathlon": "🏊 Triathlon",
+        "crossfit": "🏋️ CrossFit", "krafttraining": "💪 Krafttraining",
+        "inlineskaten": "🛼 Inlineskaten", "eislaufen": "⛸️ Eislaufen",
+        "frisbee": "🥏 Frisbee & Disc Golf", "fanartikel": "🏟️ Fanartikel",
     },
     "outdoor": {
         "wandern": "🥾 Wandern", "outdoor": "🏕️ Outdoor", "camping": "⛺ Camping",
@@ -63,42 +80,70 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "ski": "⛷️ Ski", "snowboard": "🏂 Snowboard", "jagd": "🦌 Jagd",
         "vogelbeobachtung": "🐦 Vogelbeobachtung", "bushcraft": "🪓 Bushcraft", "kanu": "🛶 Kanu",
         "segeln": "⛵ Segeln", "surfen": "🏄 Surfen", "tauchen": "🤿 Tauchen",
+        "trailrunning": "🏃 Trailrunning", "bergsteigen": "🏔️ Bergsteigen",
+        "skitouren": "🎿 Skitouren", "sup": "🏄 Stand-up-Paddling", "kitesurfen": "🪁 Kitesurfen",
+        "geocaching": "🧭 Geocaching", "pilze_sammeln": "🍄 Pilze sammeln",
+        "gleitschirm": "🪂 Gleitschirmfliegen", "fliegenfischen": "🎣 Fliegenfischen",
     },
     "fahrzeuge": {
         "fahrrad": "🚲 Fahrrad", "auto": "🚗 Auto", "motorrad": "🏍️ Motorrad",
         "oldtimer": "🚙 Oldtimer", "mountainbike": "🚵 Mountainbike", "rennrad": "🚴 Rennrad",
         "motorsport": "🏁 Motorsport", "wohnmobil": "🚐 Wohnmobil", "luftfahrt": "✈️ Luftfahrt",
         "skateboard": "🛹 Skateboard",
+        "e_bike": "⚡ E-Bike", "traktoren": "🚜 Traktoren", "eisenbahn": "🚆 Eisenbahn",
+        "vespa": "🛵 Vespa & Roller", "autopflege": "🧽 Autopflege", "formel_1": "🏎️ Formel 1",
+        "boote": "🚤 Boote", "gravelbike": "🚴 Gravelbike",
     },
     "wellness": {
         "yoga": "🧘 Yoga", "wellness": "🛁 Wellness", "meditation": "🕉️ Meditation",
         "sauna": "🧖 Sauna", "massage": "💆 Massage", "schlaf": "😴 Schlaf", "pilates": "🤸 Pilates",
         "aromatherapie": "🌿 Aromatherapie", "gesunde_ernaehrung": "🥦 Gesunde Ernährung",
+        "ayurveda": "🪷 Ayurveda", "qigong": "☯️ Qigong & Tai-Chi",
+        "baden": "🛀 Baden & Badezusätze", "entspannung": "😌 Entspannung",
+        "digital_detox": "📵 Digital Detox", "gesundheit": "❤️ Gesundheit",
     },
     "beauty": {
         "beauty": "💄 Beauty", "make_up": "💋 Make-up", "hautpflege": "🧴 Hautpflege",
         "haarpflege": "💇 Haarpflege", "parfum": "🌸 Parfum", "bartpflege": "🧔 Bartpflege",
         "rasur": "🪒 Rasur",
+        "naturkosmetik": "🌿 Naturkosmetik", "naegel": "💅 Nägel & Maniküre",
+        "herrenpflege": "🧴 Herrenpflege", "seife": "🧼 Seife", "haarstyling": "💇 Haarstyling",
+        "k_beauty": "🌸 K-Beauty", "tattoos": "🖋️ Tattoos",
     },
     "mode": {
         "mode": "👗 Mode", "schmuck": "💍 Schmuck", "uhren": "⌚ Uhren", "taschen": "👜 Taschen",
         "rucksaecke": "🎒 Rucksäcke", "sneaker": "👟 Sneaker", "sonnenbrillen": "🕶️ Sonnenbrillen",
         "streetwear": "🧢 Streetwear", "vintage": "🧥 Vintage", "huete": "🎩 Hüte",
+        "socken": "🧦 Socken", "krawatten": "👔 Krawatten & Fliegen",
+        "schals_muetzen": "🧣 Schals & Mützen", "geldboersen": "👛 Geldbörsen",
+        "manschettenknoepfe": "🤵 Manschettenknöpfe", "tracht": "🥨 Tracht", "jacken": "🧥 Jacken",
+        "schuhe": "👞 Schuhe", "pyjamas": "🩳 Pyjamas & Loungewear",
     },
     "wohnen": {
         "deko": "🕯️ Deko", "wohnen": "🛋️ Wohnen", "smart_home": "🏠 Smart Home",
         "kerzen": "🕯️ Kerzen", "lampen": "💡 Lampen", "poster": "🖼️ Poster & Bilder",
         "ordnung": "🗂️ Ordnung", "boho": "🌾 Boho", "kuscheldecken": "🧣 Kuscheldecken",
+        "kissen": "🛏️ Kissen", "bettwaesche": "🛌 Bettwäsche", "vasen": "🏺 Vasen",
+        "geschirr": "🍽️ Geschirr", "glaeser": "🥂 Gläser", "raumduft": "🌸 Raumduft",
+        "skandi": "🤍 Skandi-Stil", "bilderrahmen": "🖼️ Bilderrahmen", "kamin": "🔥 Kamin & Ofen",
+        "weihnachtsdeko": "🎄 Weihnachtsdeko",
     },
     "garten": {
         "garten": "🌱 Garten", "pflanzen": "🪴 Pflanzen", "kraeuter": "🌿 Kräuter",
         "gemuesegarten": "🥕 Gemüsegarten", "kakteen": "🌵 Kakteen", "bonsai": "🌳 Bonsai",
         "balkon": "🌼 Balkon", "hochbeet": "🪵 Hochbeet", "insekten": "🐝 Insekten",
+        "rosen": "🌹 Rosen", "obstbaeume": "🍎 Obstbäume", "gartenteich": "💧 Gartenteich",
+        "gartenmoebel": "🪑 Gartenmöbel", "orchideen": "🌸 Orchideen",
+        "gartengeraete": "🧑‍🌾 Gartengeräte", "vogelfutter": "🐦 Vogelhäuser & Futter",
+        "tomaten": "🍅 Tomaten", "saatgut": "🌱 Saatgut",
     },
     "handwerk": {
         "technik": "🔧 Technik", "heimwerken": "🔨 Heimwerken", "werkzeug": "🧰 Werkzeug",
         "holzarbeiten": "🪚 Holzarbeiten", "druck_3d": "🖨️ 3D-Druck",
         "elektronik_basteln": "🔌 Elektronik basteln", "upcycling": "♻️ Upcycling",
+        "schweissen": "🔥 Schweißen", "lasergravur": "🔆 Lasern & Gravieren",
+        "schmieden": "⚒️ Schmieden", "drechseln": "🪵 Drechseln", "renovieren": "🖌️ Renovieren",
+        "lederhandwerk": "👜 Lederhandwerk", "raspberry_pi": "🍓 Raspberry Pi & Arduino",
     },
     "kreativ": {
         "kunst": "🎨 Kunst", "basteln": "✂️ Basteln", "handarbeit": "🧶 Handarbeit",
@@ -108,6 +153,11 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "stricken": "🧶 Stricken", "haekeln": "🪡 Häkeln", "sticken": "🪢 Sticken",
         "journaling": "📓 Journaling", "schreiben": "📝 Schreiben",
         "analogfotografie": "🎞️ Analogfotografie",
+        "acrylmalerei": "🎨 Acrylmalerei", "makramee": "🪢 Makramee",
+        "kerzen_giessen": "🕯️ Kerzen gießen", "schmuck_basteln": "📿 Schmuck basteln",
+        "scrapbooking": "📒 Scrapbooking", "linoldruck": "🖨️ Linoldruck & Stempel",
+        "resin": "💎 Resin & Epoxid", "origami": "📄 Origami & Papier",
+        "video_drehen": "🎥 Videos drehen", "digitale_kunst": "🖊️ Digitale Kunst",
     },
     "musik": {
         "musik": "🎵 Musik", "gitarre": "🎸 Gitarre", "klavier": "🎹 Klavier",
@@ -115,6 +165,9 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "konzerte": "🎫 Konzerte", "klassik": "🎻 Klassik", "rock": "🤘 Rock",
         "hip_hop": "🎧 Hip-Hop", "metal": "⚡ Metal", "jazz": "🎷 Jazz", "schlager": "🪗 Schlager",
         "musik_produzieren": "🎛️ Musik produzieren", "kopfhoerer": "🎧 Kopfhörer",
+        "ukulele": "🪕 Ukulele", "geige": "🎻 Geige", "blasinstrumente": "🎺 Blasinstrumente",
+        "dj": "🎚️ DJ", "bass": "🎸 Bass", "chor": "🎶 Chor", "elektro": "🎛️ Elektro & Techno",
+        "pop": "🎤 Pop", "hifi": "📻 HiFi",
     },
     "gaming": {
         "gaming": "🎮 Gaming", "playstation": "🎮 PlayStation", "xbox": "🟩 Xbox",
@@ -122,12 +175,20 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "virtual_reality": "🥽 Virtual Reality", "e_sport": "🏆 E-Sport", "gadgets": "🔋 Gadgets",
         "drohnen": "🚁 Drohnen", "programmieren": "💻 Programmieren", "smartphone": "📱 Smartphone",
         "smartwatch": "⌚ Smartwatch", "lautsprecher": "🔊 Lautsprecher",
+        "minecraft": "⛏️ Minecraft", "pokemon": "⚡ Pokémon", "gaming_setup": "🪑 Gaming-Setup",
+        "streaming": "📹 Streaming", "simracing": "🏎️ Sim-Racing",
+        "tastaturen": "⌨️ Mechanische Tastaturen", "robotik": "🤖 Robotik & KI",
+        "e_reader": "📖 E-Reader",
     },
     "popkultur": {
         "film": "🎬 Film & Serien", "anime": "🎌 Anime", "manga": "📖 Manga", "comics": "💥 Comics",
         "superhelden": "🦸 Superhelden", "fantasy": "🐉 Fantasy", "science_fiction": "🚀 Science-Fiction",
         "horror": "👻 Horror", "true_crime": "🕵️ True Crime", "podcasts": "🎙️ Podcasts",
         "k_pop": "💜 K-Pop", "cosplay": "🎭 Cosplay", "achtziger_neunziger": "📼 80er & 90er",
+        "harry_potter": "🪄 Harry Potter", "star_wars": "🌌 Star Wars",
+        "herr_der_ringe": "💍 Herr der Ringe", "disney": "🏰 Disney", "star_trek": "🖖 Star Trek",
+        "kultfilme": "🎞️ Kultfilme", "sammelfiguren": "🗿 Sammelfiguren", "gothic": "🖤 Gothic",
+        "steampunk": "⚙️ Steampunk", "wrestling": "🤼 Wrestling",
     },
     "spiele": {
         "spiele": "🎲 Spiele", "puzzle": "🧩 Puzzle", "kinder": "🧸 Kinder",
@@ -136,6 +197,10 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "schach": "♞ Schach", "raetsel": "🧠 Rätsel", "zaubertricks": "🎩 Zaubertricks",
         "lego": "🧱 Lego", "modellbau": "✈️ Modellbau", "modelleisenbahn": "🚂 Modelleisenbahn",
         "tabletop": "⚔️ Tabletop",
+        "sammelkarten": "🎴 Sammelkartenspiele", "partyspiele": "🎉 Partyspiele",
+        "kooperative_spiele": "🤝 Kooperative Spiele", "strategiespiele": "♜ Strategiespiele",
+        "rc_modelle": "🏎️ RC-Modelle", "playmobil": "🧍 Playmobil",
+        "holzspielzeug": "🪀 Holzspielzeug", "experimentierkaesten": "🧪 Experimentierkästen",
     },
     "wissen": {
         "lesen": "📚 Lesen", "krimis": "🔍 Krimis", "sprachen": "🗣️ Sprachen",
@@ -144,12 +209,19 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "finanzen": "📈 Finanzen & Börse", "mittelalter": "🏰 Mittelalter",
         "landkarten": "🗺️ Landkarten", "gedichte": "📜 Gedichte", "biografien": "👤 Biografien",
         "persoenlichkeitsentwicklung": "🌟 Persönlichkeitsentwicklung", "dinosaurier": "🦕 Dinosaurier",
+        "kinderbuecher": "🧒 Kinderbücher", "sachbuecher": "📘 Sachbücher", "biologie": "🧬 Biologie",
+        "mathematik": "➗ Mathematik", "geografie": "🌍 Geografie",
+        "religion": "🙏 Religion & Spiritualität", "archaeologie": "⛏️ Archäologie",
+        "hoerbuecher": "🎧 Hörbücher", "liebesromane": "💕 Liebesromane", "thriller": "🔪 Thriller",
     },
     "tiere": {
         "tiere": "🐾 Tiere", "hund": "🐶 Hund", "katze": "🐱 Katze", "pferde": "🐴 Pferde",
         "reiten": "🏇 Reiten", "aquaristik": "🐠 Aquaristik", "voegel": "🦜 Vögel",
         "kleintiere": "🐹 Kleintiere", "reptilien": "🦎 Reptilien", "imkern": "🐝 Imkern",
         "huehner": "🐔 Hühner",
+        "hundetraining": "🦮 Hundetraining", "bauernhof": "🐄 Bauernhof",
+        "alpakas": "🦙 Alpakas & Lamas", "meerestiere": "🐋 Meerestiere", "eulen": "🦉 Eulen",
+        "einhoerner": "🦄 Einhörner", "tierschutz": "🐾 Tierschutz",
     },
     "kultur": {
         "reisen": "✈️ Reisen", "erlebnis": "🎟️ Erlebnisse", "staedtereisen": "🏙️ Städtereisen",
@@ -157,16 +229,38 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "museen": "🖼️ Museen", "musicals": "🎶 Musicals", "oper_ballett": "🩰 Oper & Ballett",
         "tanzen": "💃 Tanzen", "festivals": "🎪 Festivals", "japan": "🗾 Japan",
         "italien": "🇮🇹 Italien", "frankreich": "🇫🇷 Frankreich", "skandinavien": "❄️ Skandinavien",
+        "usa": "🇺🇸 USA", "spanien": "🇪🇸 Spanien", "griechenland": "🇬🇷 Griechenland",
+        "england": "🇬🇧 England", "schottland": "🏴 Schottland", "alpen": "🏔️ Alpen",
+        "strand_meer": "🏖️ Strand & Meer", "kino": "🍿 Kino", "comedy": "🎤 Comedy & Kabarett",
+        "architektur": "🏛️ Architektur",
     },
     "lebensstil": {
         "nachhaltigkeit": "♻️ Nachhaltigkeit", "fair_trade": "🤝 Fair Trade", "regional": "🏡 Regional",
         "handgemacht": "🤲 Handgemacht", "personalisiert": "✍️ Personalisiert", "luxus": "💎 Luxus",
         "humor": "😂 Humor", "romantik": "❤️ Romantik", "achtsamkeit": "🌙 Achtsamkeit",
         "astrologie": "🔮 Astrologie",
+        "zero_waste": "🫙 Zero Waste", "selbstversorgung": "🧺 Selbstversorgung", "retro": "📻 Retro",
+        "nerd": "🤓 Nerd", "familie": "👨‍👩‍👧 Familie", "party": "🎉 Party", "queer": "🏳️‍🌈 Queer",
+        "abenteuer": "🧗 Abenteuer",
     },
     "alltag": {
         "homeoffice": "💻 Homeoffice", "schreibwaren": "🖊️ Schreibwaren", "fueller": "🖋️ Füller",
         "planer": "📅 Planer",
+        "notizbuecher": "📔 Notizbücher", "pendeln": "🚆 Pendeln", "lernen": "🎓 Lernen",
+        "reisezubehoer": "🧳 Reisezubehör", "lunchbox": "🍱 Lunchbox & Trinkflaschen",
+        "lehrkraefte": "🧑‍🏫 Lehrkräfte", "pflegeberufe": "🩺 Pflege & Medizinberufe",
+        "feuerwehr": "🚒 Feuerwehr & Polizei",
+    },
+    "sammeln": {
+        "muenzen": "🪙 Münzen", "briefmarken": "📮 Briefmarken",
+        "mineralien": "🪨 Mineralien & Fossilien", "antiquitaeten": "🏺 Antiquitäten",
+        "modellautos": "🚗 Modellautos", "taschenmesser": "🔪 Taschenmesser",
+        "schneekugeln": "❄️ Schneekugeln",
+    },
+    "baby_kind": {
+        "babyspielzeug": "🍼 Babyspielzeug", "kuscheltiere": "🧸 Kuscheltiere",
+        "kinderzimmer": "🛏️ Kinderzimmer", "teenager": "🧑 Teenager", "puppen": "🪆 Puppen",
+        "baby_erinnerungen": "👣 Baby-Erinnerungen", "draussen_spielen": "🪁 Draußen spielen",
     },
 }
 
@@ -199,8 +293,10 @@ LEBENSLAGEN: dict[str, str] = {
 
 def vokabular_text() -> str:
     """Themen nach Oberbereich gruppiert – für die Prompts, damit die KI das genaueste
-    Stichwort leichter findet."""
-    return "\n".join(f"  {bereich}: {', '.join(themen)}" for bereich, themen in THEMEN_NACH_BEREICH.items())
+    Stichwort leichter findet. Vor jeder Gruppe steht der lesbare Bereichsname, nicht der Schlüssel:
+    Sonst hält das Modell „baby_kind“ oder „handwerk“ selbst für ein Stichwort."""
+    return "\n".join(f"  [{BEREICHE[bereich].split(' ', 1)[1]}] {', '.join(themen)}"
+                     for bereich, themen in THEMEN_NACH_BEREICH.items())
 
 
 FARBEN: tuple[str, ...] = (
