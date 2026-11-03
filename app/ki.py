@@ -18,10 +18,6 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 GROQ_URL = "https://api.groq.com/openai/v1/chat/completions"
-# Nur für den Katalog-Bau in der GitHub Action: eigenes Gratis-Kontingent, Schlüssel ist das
-# GITHUB_TOKEN der Action. Modelle dort heißen in der Kette „github:<modell>“.
-GITHUB_MODELS_URL = "https://models.github.ai/inference/chat/completions"
-GITHUB_PRAEFIX = "github:"
 NAECHSTES_MODELL_STATUS = {404, 429, 500, 502, 503, 504}
 VERSUCHE_PRO_MODELL = 2
 TIMEOUT_SEKUNDEN = 30.0
@@ -35,7 +31,7 @@ class KiUeberlastet(RuntimeError):
 
 def _payload(modell: str, system: str, nutzer: str, max_tokens: int) -> dict:
     payload = {
-        "model": modell.removeprefix(GITHUB_PRAEFIX),
+        "model": modell,
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": nutzer},
@@ -44,8 +40,6 @@ def _payload(modell: str, system: str, nutzer: str, max_tokens: int) -> dict:
         "max_tokens": max_tokens,
         "response_format": {"type": "json_object"},
     }
-    if modell.startswith(GITHUB_PRAEFIX):
-        return payload
     if modell.startswith("openai/gpt-oss"):
         payload["reasoning_effort"] = "low"
     else:
@@ -75,25 +69,18 @@ async def frage_json(system: str, nutzer: str, *, client: httpx.AsyncClient | No
         raise KiUeberlastet("Zeitlimit") from None
 
 
-def _ziel(modell: str) -> tuple[str, str]:
-    if modell.startswith(GITHUB_PRAEFIX):
-        return GITHUB_MODELS_URL, settings.github_models_token
-    return GROQ_URL, settings.groq_api_key
-
-
 async def _kette(system: str, nutzer: str, client: httpx.AsyncClient | None, max_tokens: int,
                  modelle: list[str]) -> dict:
     eigener_client = client is None
     client = client or httpx.AsyncClient(timeout=TIMEOUT_SEKUNDEN)
     try:
         for modell in modelle:
-            url, schluessel = _ziel(modell)
             for _ in range(VERSUCHE_PRO_MODELL):
                 try:
                     antwort = await client.post(
-                        url,
+                        GROQ_URL,
                         json=_payload(modell, system, nutzer, max_tokens),
-                        headers={"Authorization": f"Bearer {schluessel}"},
+                        headers={"Authorization": f"Bearer {settings.groq_api_key}"},
                     )
                 except httpx.HTTPError as fehler:
                     logger.warning("Groq %s nicht erreichbar: %s", modell, fehler)
