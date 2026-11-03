@@ -98,7 +98,8 @@ async def test_gesehene_idee_kommt_nicht_wieder(ki):
 async def test_idee_link_mit_und_ohne_amazon_tag(ki, monkeypatch):
     [k] = await ideen_karten(profil(), 5, set())
     assert k.link == "https://www.amazon.de/s?k=Kniekissen+Garten"
-    assert (k.preis, k.preis_von, k.preis_bis, k.emoji, k.bild_url) == (None, 15, 25, "🧤", None)
+    assert (k.preis, k.preis_von, k.preis_bis, k.emoji) == (None, 15, 25, "🧤")
+    assert k.bild_url == f"{settings.oeffentliche_url}/beispielbilder/garten.jpg"
     monkeypatch.setattr(settings, "amazon_tag", "luka-21")
     [k] = await ideen_karten(profil(), 5, set())
     assert k.link == "https://www.amazon.de/s?k=Kniekissen+Garten&tag=luka-21"

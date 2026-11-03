@@ -17,5 +17,3 @@ services:
         sync: false
       - key: DOWNLOAD_GEHEIMNIS
         sync: false
-      - key: PEXELS_KEY
-        sync: false
