@@ -108,7 +108,7 @@ async def _kette(system: str, nutzer: str, client: httpx.AsyncClient | None, max
                 wert = _json_aus(antwort)
                 if wert is not None:
                     return wert
-                logger.warning("Groq %s: leeres oder kaputtes JSON", modell)
+                logger.warning("Groq %s: leeres oder kaputtes JSON: %s", modell, antwort.text[:300])
         raise KiUeberlastet("Kein Modell hat geantwortet")
     finally:
         if eigener_client:
