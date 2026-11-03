@@ -23,7 +23,7 @@ Regeln: passend zu den Wünschen; die Wünsche in "schwerpunkt" haben im Shop ka
 zu jedem davon mindestens eine Idee, und mindestens die Hälfte der Ideen dazu;
 NIE etwas, das einen Ausschluss trifft; Preisspanne innerhalb
 von budget_min bis budget_max (null = keine Grenze); keine Ideen aus der Liste "schon_gezeigt".
-themen nur aus (nach Oberbereich gruppiert):
+themen nur aus (eine Zeile je Bereich, genau so geschrieben):
 {vokabular_text()}
 lebenslagen nur aus: {", ".join(LEBENSLAGEN)}
 farben (Hauptfarben, falls festgelegt) nur aus: {", ".join(FARBEN)}

@@ -292,11 +292,11 @@ LEBENSLAGEN: dict[str, str] = {
 
 
 def vokabular_text() -> str:
-    """Themen nach Oberbereich gruppiert – für die Prompts, damit die KI das genaueste
-    Stichwort leichter findet. Vor jeder Gruppe steht der lesbare Bereichsname, nicht der Schlüssel:
-    Sonst hält das Modell „baby_kind“ oder „handwerk“ selbst für ein Stichwort."""
-    return "\n".join(f"  [{BEREICHE[bereich].split(' ', 1)[1]}] {', '.join(themen)}"
-                     for bereich, themen in THEMEN_NACH_BEREICH.items())
+    """Themen für die Prompts, eine Zeile je Oberbereich – verwandte Stichwörter stehen
+    beieinander, damit die KI das genaueste findet. Bewusst ohne Überschrift: Mit Schlüssel
+    („baby_kind“) oder lesbarem Namen („Handwerk & DIY“) davor haben die gpt-oss-Modelle die
+    Überschrift selbst als Stichwort vergeben (gemessen 03.11.2026)."""
+    return "\n".join(f"  {', '.join(themen)}" for themen in THEMEN_NACH_BEREICH.values())
 
 
 FARBEN: tuple[str, ...] = (

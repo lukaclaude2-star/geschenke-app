@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 import pytest
@@ -49,6 +50,12 @@ async def test_unbekannte_themen_werden_verworfen(ki):
     assert (p.themen, p.farben, p.eigenschaften, p.lebenslagen) == (["garten"], ["rot"], ["alkohol"], ["rente"])
 
 
+async def test_stichwort_mit_umlaut_oder_leerzeichen_wird_erkannt(ki):
+    ki.standard = {**ki.standard, "themen": ["Einhörner", "Craft Beer", "Handwerk & DIY"]}
+    [p] = await verschlagworte([produkt("a")])
+    assert p.themen == ["einhoerner", "craft_beer"]
+
+
 async def test_feed_farbe_landet_immer_in_farben(ki):
     [p] = await verschlagworte([produkt("a", farbe="Schwarz")])
     assert "schwarz" in p.farben
@@ -60,8 +67,8 @@ async def test_fehlendes_produkt_in_ki_antwort_wird_ausgelassen(ki):
     assert [p.id for p in ergebnis] == ["a"]
 
 
-async def test_stapel_zu_zehn(ki):
-    await verschlagworte([produkt(str(i)) for i in range(23)])
+async def test_stapel_zu_zwanzig(ki):
+    await verschlagworte([produkt(str(i)) for i in range(43)])
     assert ki.aufrufe == 3
 
 
@@ -159,7 +166,7 @@ async def test_pause_zwischen_stapeln(ki, monkeypatch):
     async def schlafen(sekunden):
         pausen.append(sekunden)
     monkeypatch.setattr(verschlagworten.asyncio, "sleep", schlafen)
-    await verschlagworte([produkt(str(i)) for i in range(23)], pause_sekunden=7)
+    await verschlagworte([produkt(str(i)) for i in range(43)], pause_sekunden=7)
     assert pausen == [7, 7]
 
 
@@ -190,13 +197,13 @@ async def test_stoppt_nach_ueberlastung_und_bei_stapelgrenze(monkeypatch):
         aufrufe += 1
         raise KiUeberlastet("Kontingent leer")
     monkeypatch.setattr(verschlagworten, "frage_json", ueberlastet)
-    ergebnis = await verschlagworte([produkt(str(i)) for i in range(35)])
+    ergebnis = await verschlagworte([produkt(str(i)) for i in range(65)])
     assert ergebnis == [] and aufrufe == 1  # nicht noch 3 weitere Stapel gegen die Wand
 
     fake = FakeKi()
     monkeypatch.setattr(verschlagworten, "frage_json", fake)
-    ergebnis = await verschlagworte([produkt(str(i)) for i in range(35)], max_stapel=2)
-    assert len(ergebnis) == 20 and fake.aufrufe == 2
+    ergebnis = await verschlagworte([produkt(str(i)) for i in range(65)], max_stapel=2)
+    assert len(ergebnis) == 40 and fake.aufrufe == 2
 
 
 async def test_ganz_neue_produkte_zuerst(ki_bau):
@@ -215,3 +222,40 @@ async def test_ganz_neue_produkte_zuerst(ki_bau):
     finally:
         v.frage_json = vorher
     assert reihenfolge == ["neu2", "alt"]
+
+
+async def test_fehlende_note_bleibt_offen_statt_ramsch(ki):
+    ki.je_id = {"ohne": {k: v for k, v in ki.standard.items() if k != "note"}}
+    ergebnis = await verschlagworte([produkt("mit"), produkt("ohne")])
+    assert [p.id for p in ergebnis] == ["mit"]  # „ohne“ kommt beim nächsten Lauf wieder dran
+
+
+async def test_arbeiter_teilen_sich_die_stapel(monkeypatch):
+    from app.ki import KiUeberlastet
+    monkeypatch.setattr(verschlagworten, "WARTEN_NACH_UEBERLASTUNG", 0)
+    je_modell: dict[str, int] = {}
+    fake = FakeKi()
+
+    async def ki(system, nutzer, modelle=None, **kw):
+        [modell] = modelle
+        if modell == "leer":
+            raise KiUeberlastet()
+        await asyncio.sleep(0)  # wie eine echte Netzanfrage: die anderen Arbeiter kommen dran
+        je_modell[modell] = je_modell.get(modell, 0) + 1
+        return await fake(system, nutzer)
+    monkeypatch.setattr(verschlagworten, "frage_json", ki)
+    ergebnis = await verschlagworte([produkt(str(i)) for i in range(200)],
+                                    arbeiter={"a": 0, "b": 0, "leer": 0})
+    assert len(ergebnis) == 200 and len({p.id for p in ergebnis}) == 200
+    assert set(je_modell) == {"a", "b"} and sum(je_modell.values()) == 10
+
+
+async def test_arbeiter_alle_leer_nichts_geht_verloren(monkeypatch):
+    from app.ki import KiUeberlastet
+    monkeypatch.setattr(verschlagworten, "WARTEN_NACH_UEBERLASTUNG", 0)
+
+    async def leer(*_, **__):
+        raise KiUeberlastet()
+    monkeypatch.setattr(verschlagworten, "frage_json", leer)
+    _, bericht = await baue_katalog([produkt(str(i)) for i in range(30)], [], arbeiter={"x": 0, "y": 0})
+    assert bericht["noch_offen"] == 30

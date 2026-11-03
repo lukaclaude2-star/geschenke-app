@@ -16,14 +16,20 @@ from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, VOKABULAR_
 
 logger = logging.getLogger(__name__)
 
-STAPELGROESSE = 10
+# Gemessen mit Qwen (03.11.2026): 10 Produkte 4.387 Token, 20 → 6.522. Die Stichwortliste im
+# System-Prompt kostet fest ~2.300 Token, größere Stapel teilen sie besser auf. 20 bleibt sicher
+# unter Groqs 8.000 Token pro Minute.
+STAPELGROESSE = 20
+# Ein Arbeiter, dessen Modell überlastet ist, wartet einmal so lange – oft war es nur die
+# Minutengrenze. Klappt es danach wieder nicht, ist das Tageskontingent leer.
+WARTEN_NACH_UEBERLASTUNG = 65
 
 SYSTEM = f"""Du verschlagwortest Produkte für eine Geschenke-App.
 Antworte nur mit JSON: {{"produkte": [{{"id": "...", "themen": [...], "lebenslagen": [...],
 "farben": [...], "eigenschaften": [...], "persoenlich": true/false, "note": 1-10}}]}}
 
 Erlaubte Werte – nichts anderes verwenden:
-- themen (nach Oberbereich gruppiert, nimm die genauesten):
+- themen (eine Zeile je Bereich, nimm die genauesten; genau so geschrieben wie hier):
 {vokabular_text()}
 - lebenslagen: {", ".join(LEBENSLAGEN)}
 - farben: {", ".join(FARBEN)}
@@ -53,12 +59,21 @@ def _normalisiere_farbe(farbe: str) -> str:
     return farbe.strip().lower().replace("ß", "ss").replace("ü", "ue").replace("ä", "ae").replace("ö", "oe")
 
 
+def _schluessel(wert: str) -> str:
+    """„Einhörner“ → einhoerner, „Craft Beer“ → craft_beer: Die Modelle schreiben Stichwörter
+    manchmal mit Umlaut oder Leerzeichen, gemeint ist trotzdem das Wort aus der Liste."""
+    return _normalisiere_farbe(wert).replace(" ", "_").replace("-", "_")
+
+
 def _nur(werte, erlaubt) -> list[str]:
     if not isinstance(werte, list):
         return []
     ergebnis: list[str] = []
     for w in werte:
-        if isinstance(w, str) and w in erlaubt and w not in ergebnis:
+        if not isinstance(w, str):
+            continue
+        w = _schluessel(w)
+        if w in erlaubt and w not in ergebnis:
             ergebnis.append(w)
     return ergebnis
 
@@ -75,9 +90,18 @@ def _fuer_ki(p: QuellProdukt) -> dict:
             "preis": p.preis, "kategorie": p.kategorie, "shop": p.shop}
 
 
-async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
+def _hat_note(e: dict) -> bool:
+    try:
+        int(e.get("note"))
+    except (TypeError, ValueError):
+        return False
+    return True
+
+
+async def _stapel(ps: list[QuellProdukt], modell: str | None = None) -> list[KatalogProdukt]:
     antwort = await frage_json(SYSTEM, json.dumps({"produkte": [_fuer_ki(p) for p in ps]},
-                                                  ensure_ascii=False), max_tokens=2500)
+                                                  ensure_ascii=False), max_tokens=4000,
+                               modelle=[modell] if modell else None, zeitlimit=120)
     eintraege = antwort.get("produkte")
     nach_id: dict[str, dict] = {}
     if isinstance(eintraege, list):
@@ -87,7 +111,9 @@ async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
     ergebnis: list[KatalogProdukt] = []
     for p in ps:
         e = nach_id.get(p.id)
-        if e is None:
+        # Ohne Note bliebe nur die 1 – das Produkt wäre für immer als Ramsch gespeichert. Qwen lässt
+        # die Note bei langen Stapeln manchmal weg; dann lieber beim nächsten Lauf neu fragen.
+        if e is None or not _hat_note(e):
             continue
         farben = _nur(e.get("farben"), FARBEN)
         if p.farbe:
@@ -108,22 +134,66 @@ async def _stapel(ps: list[QuellProdukt]) -> list[KatalogProdukt]:
 
 
 async def verschlagworte(ps: list[QuellProdukt], pause_sekunden: float = 0,
-                         max_stapel: int | None = None) -> list[KatalogProdukt]:
+                         max_stapel: int | None = None,
+                         arbeiter: dict[str, float] | None = None) -> list[KatalogProdukt]:
     """pause_sekunden zwischen Stapeln: Groq erlaubt im Gratis-Tarif nur ~8.000 Token pro Minute.
 
     max_stapel begrenzt einen Lauf, und nach der ersten Überlastung ist Schluss – sonst verbraucht
     der Katalog das Tageskontingent, das die App für Chat und Ideen braucht. Der Rest kommt beim
-    nächsten Lauf dran."""
+    nächsten Lauf dran.
+
+    arbeiter {modell: pause}: Jedes Modell hat ein eigenes Kontingent. Dann fragen alle Modelle
+    gleichzeitig, jedes mit eigener Pause, und holen sich die Stapel aus einer gemeinsamen Schlange."""
+    stapel = [ps[i:i + STAPELGROESSE] for i in range(0, len(ps), STAPELGROESSE)]
+    if max_stapel is not None and len(stapel) > max_stapel:
+        logger.warning("Stapelgrenze erreicht – %d Produkte beim nächsten Lauf",
+                       sum(len(s) for s in stapel[max_stapel:]))
+        stapel = stapel[:max_stapel]
+    if arbeiter:
+        return await _parallel(stapel, arbeiter)
     ergebnis: list[KatalogProdukt] = []
-    for nummer, start in enumerate(range(0, len(ps), STAPELGROESSE)):
-        if max_stapel is not None and nummer >= max_stapel:
-            logger.warning("Stapelgrenze erreicht – %d Produkte beim nächsten Lauf", len(ps) - start)
-            break
-        if start and pause_sekunden:
+    for nummer, teil in enumerate(stapel):
+        if nummer and pause_sekunden:
             await asyncio.sleep(pause_sekunden)
         try:
-            ergebnis.extend(await _stapel(ps[start:start + STAPELGROESSE]))
+            ergebnis.extend(await _stapel(teil))
         except KiUeberlastet:
-            logger.warning("KI überlastet – %d Produkte beim nächsten Lauf", len(ps) - start)
+            logger.warning("KI überlastet – %d Produkte beim nächsten Lauf",
+                           sum(len(s) for s in stapel[nummer:]))
             break
+    return ergebnis
+
+
+async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float]) -> list[KatalogProdukt]:
+    schlange: asyncio.Queue[list[QuellProdukt]] = asyncio.Queue()
+    for teil in stapel:
+        schlange.put_nowait(teil)
+    ergebnis: list[KatalogProdukt] = []
+
+    async def arbeite(modell: str, pause: float) -> None:
+        geschafft, erster = 0, True
+        while not schlange.empty():
+            teil = schlange.get_nowait()
+            if not erster and pause:
+                await asyncio.sleep(pause)
+            erster = False
+            try:
+                fertig = await _stapel(teil, modell)
+            except KiUeberlastet:
+                await asyncio.sleep(WARTEN_NACH_UEBERLASTUNG)
+                try:
+                    fertig = await _stapel(teil, modell)
+                except KiUeberlastet:
+                    schlange.put_nowait(teil)  # ein anderes Modell kann ihn noch übernehmen
+                    break
+            if not geschafft:  # Stichprobe im Log, damit man die Modelle vergleichen kann
+                for p in fertig[:3]:
+                    logger.warning("  %s: %s → %s, Note %d", modell, p.titel[:50], p.themen, p.note)
+            ergebnis.extend(fertig)
+            geschafft += len(fertig)
+        logger.warning("Katalog: %s hat %d Produkte verschlagwortet", modell, geschafft)
+
+    await asyncio.gather(*(arbeite(m, p) for m, p in arbeiter.items()))
+    if not schlange.empty():
+        logger.warning("Alle Modelle überlastet – %d Stapel beim nächsten Lauf", schlange.qsize())
     return ergebnis

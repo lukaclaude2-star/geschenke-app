@@ -5,6 +5,7 @@ Aufruf: python scripts/build_katalog.py   (braucht GROQ_API_KEY in Umgebung oder
 
 import asyncio
 import json
+import logging
 import os
 import sys
 from pathlib import Path
@@ -26,14 +27,35 @@ def lade_quellen() -> list[QuellProdukt]:
     return quellen
 
 
+# Groq: 8.000 Token pro Minute je Modell, ein 20er-Stapel braucht ~6.500 → knapp eine Minute Abstand.
+PAUSE_GROQ = 55
+# GitHub Models (Gratis-Stufe): wenige Anfragen pro Minute, dafür ohne Token-Minutengrenze von Groq.
+PAUSE_GITHUB = 5
+GITHUB_MODELLE = "openai/gpt-4.1-mini,openai/gpt-4o-mini"
+
+
+def arbeiter() -> dict[str, float]:
+    """Jedes Modell mit eigenem Gratis-Kontingent bekommt einen Arbeiter; alle laufen gleichzeitig.
+
+    Das erste Groq-Modell bleibt für Chat, Profil und Ideen der App reserviert. GitHub Models gibt
+    es nur in der Action (GITHUB_TOKEN mit models: read)."""
+    liste = {m: PAUSE_GROQ for m in settings.ki_modelle[1:]}
+    if settings.github_models_token:
+        for m in os.environ.get("KATALOG_GITHUB_MODELLE", GITHUB_MODELLE).split(","):
+            if m.strip():
+                liste[f"github:{m.strip()}"] = PAUSE_GITHUB
+    return liste
+
+
 async def main() -> None:
+    logging.basicConfig(level=logging.WARNING, format="%(message)s")
     ziel = WURZEL / settings.katalog_pfad
-    # Das erste Modell der Kette bleibt für Chat, Profil und Ideen der App reserviert – der Katalog
-    # nutzt nur die Ersatzmodelle und höchstens KATALOG_MAX_STAPEL Stapel à 10 Produkte pro Lauf.
-    settings.ki_modelle = settings.ki_modelle[1:] or settings.ki_modelle
-    max_stapel = int(os.environ.get("KATALOG_MAX_STAPEL", "60"))
+    # Obergrenze je Lauf in 20er-Stapeln; meist ist vorher das Tageskontingent aller Modelle leer.
+    max_stapel = int(os.environ.get("KATALOG_MAX_STAPEL", "250"))
+    modelle = arbeiter()
+    print("Arbeiter:", ", ".join(modelle))
     katalog, bericht = await baue_katalog(lade_quellen(), lade_alle(str(ziel)),
-                                     pause_sekunden=20, max_stapel=max_stapel)
+                                          max_stapel=max_stapel, arbeiter=modelle)
     ziel.parent.mkdir(parents=True, exist_ok=True)
     ziel.write_text(
         json.dumps([p.model_dump() for p in katalog], ensure_ascii=False, indent=1) + "\n",
