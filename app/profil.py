@@ -13,7 +13,7 @@ from app.modelle import Ausschluss, ChatNachricht, Profil, Wunsch
 from app.vokabular import (EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, ist_gueltiger_ausschluss,
                            label_fuer, tag_label, vokabular_text)
 
-REGELN = f"""Erlaubte Wunsch-Tags – Themen nach Oberbereich:
+REGELN = f"""Erlaubte Wunsch-Tags – Themen, eine Zeile je Bereich, genau so geschrieben:
 {vokabular_text()}
   lebenslagen: {", ".join(LEBENSLAGEN)}
 Nimm immer das genaueste Stichwort (grillt gern → grillen, nicht kochen; zockt → gaming) und

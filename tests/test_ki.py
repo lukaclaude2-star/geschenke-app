@@ -5,7 +5,7 @@ import pytest
 import respx
 
 from app.config import settings
-from app.ki import GROQ_URL, KiUeberlastet, frage_json
+from app.ki import GITHUB_MODELS_URL, GROQ_URL, KiUeberlastet, frage_json
 
 
 def antwort(inhalt: str) -> httpx.Response:
@@ -59,3 +59,16 @@ async def test_schickt_keine_geraetekennung():
                "reasoning_effort", "reasoning_format"}
     assert set(body) <= erlaubt
     assert body["response_format"] == {"type": "json_object"}
+
+
+@respx.mock
+async def test_github_modell_geht_an_github_mit_eigenem_schluessel(monkeypatch):
+    monkeypatch.setattr(settings, "github_models_token", "gh-test")
+    groq = respx.post(GROQ_URL).mock(return_value=httpx.Response(429))
+    github = respx.post(GITHUB_MODELS_URL).mock(return_value=antwort('{"ok": 1}'))
+    assert await frage_json("sys", "n", modelle=["qwen/qwen3.8-27b", "github:openai/gpt-4.1-mini"]) == {"ok": 1}
+    anfrage = github.calls[0].request
+    body = json.loads(anfrage.content)
+    assert body["model"] == "openai/gpt-4.1-mini" and "reasoning_format" not in body
+    assert anfrage.headers["authorization"] == "Bearer gh-test"
+    assert "gh-test" not in groq.calls[0].request.headers["authorization"]

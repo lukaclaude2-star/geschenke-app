@@ -14,6 +14,8 @@ class Settings(BaseSettings):
         "qwen/qwen3.8-27b",
     ]
     katalog_pfad: str = "katalog/katalog.json"
+    # Nur in der Katalog-Action gesetzt (GITHUB_TOKEN mit models: read) – nie im Repo, nie in Render.
+    github_models_token: str = ""
     amazon_tag: str = ""
 
     # Update per Fingertipp (SideStore-Quelle): beide Werte nur in Render, nie im Repo.

@@ -79,8 +79,11 @@ def test_vokabular_text_gruppiert():
     assert VOKABULAR_VERSION >= 3
 
 
-def test_vokabular_text_ohne_bereichsschluessel():
-    """Die KI soll Stichwörter vergeben, nicht Bereichsschlüssel wie „baby_kind“."""
+def test_vokabular_text_ohne_bereichsueberschriften():
+    """Die KI soll Stichwörter vergeben, nicht Bereiche wie „baby_kind“ oder „Handwerk & DIY“."""
     text = vokabular_text()
-    assert "baby_kind" not in text and "[Kinder & Baby]" in text
-    assert "[Küche & Kochen] kochen, backen" in text
+    for name in BEREICHE.values():
+        assert name.split(" ", 1)[1] not in text
+    assert "baby_kind" not in text and "[" not in text
+    assert len(text.splitlines()) == len(BEREICHE)
+    assert text.splitlines()[0].strip().startswith("kochen, backen")
