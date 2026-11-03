@@ -11,3 +11,11 @@ def test_nur_seiten_der_deutschen_sprachversion():
 def test_ohne_sprachpfad_alles_vom_shop():
     seiten = ["https://shop.de/a", "https://andererhost.de/b", "https://shop.de/bild.jpg"]
     assert _kandidaten(seiten, "https://www.shop.de/") == ["https://shop.de/a"]
+
+
+def test_ohne_sprachpfad_keine_fremdsprachigen_seiten():
+    """Deutsch ohne Präfix, andere Sprachen unter /en/, /fr/ … (z. B. VBS Hobby, Rosen Tantau)."""
+    seiten = ["https://shop.de/rose-1", "https://shop.de/en/rose-2", "https://shop.de/fr-fr/rose-3",
+              "https://shop.de/de/rose-4", "https://shop.de/eng/rose-5"]
+    assert sorted(_kandidaten(seiten, "https://www.shop.de/")) == [
+        "https://shop.de/de/rose-4", "https://shop.de/eng/rose-5", "https://shop.de/rose-1"]

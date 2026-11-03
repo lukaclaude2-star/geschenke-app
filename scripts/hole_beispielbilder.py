@@ -57,6 +57,14 @@ def lade_bild(client: httpx.Client, url: str) -> bytes:
     raise RuntimeError(f"Bild nicht ladbar: {url}")
 
 
+def grosse_url(foto: dict) -> str:
+    """Das Foto in 1280 px aus dem offenen CDN – largeImageURL (pixabay.com/get/…) bremst Pixabay nach
+    wenigen Downloads minutenlang (HTTP 429)."""
+    if foto.get("klein", "").endswith("_150.jpg"):
+        return foto["klein"].removesuffix("_150.jpg") + "_1280.jpg"
+    return foto["gross"]
+
+
 def vorschlaege(ordner: Path, ueberschreiben: dict[str, str]) -> None:
     ordner.mkdir(parents=True, exist_ok=True)
     begriffe = json.loads(SUCHBEGRIFFE.read_text(encoding="utf-8"))
@@ -73,9 +81,11 @@ def vorschlaege(ordner: Path, ueberschreiben: dict[str, str]) -> None:
             antwort.raise_for_status()
             fotos = antwort.json().get("hits", [])[:ANZAHL]
             treffer[stichwort] = {"suche": suche, "fotos": [
-                {"id": f["id"], "gross": f["largeImageURL"], "seite": f["pageURL"]} for f in fotos]}
+                {"id": f["id"], "gross": f["largeImageURL"], "klein": f["previewURL"], "seite": f["pageURL"]}
+                for f in fotos]}
+            # Die kleinen Vorschaubilder liegen im offenen CDN und werden nicht gebremst.
             for i, f in enumerate(fotos):
-                (ordner / f"{stichwort}_{i}.jpg").write_bytes(lade_bild(client, f["webformatURL"]))
+                (ordner / f"{stichwort}_{i}.jpg").write_bytes(lade_bild(client, f["previewURL"]))
             print(f"{stichwort}: {len(fotos)} ({suche})")
             time.sleep(0.7)  # Pixabay erlaubt 100 Anfragen pro Minute
     treffer_datei.write_text(json.dumps(treffer, ensure_ascii=False, indent=1), encoding="utf-8")
@@ -115,7 +125,7 @@ def uebernehmen(ordner: Path, auswahl_datei: Path) -> None:
             ziel = ZIEL / f"{stichwort}.jpg"
             if ziel.exists() and quellen.get(stichwort) == foto["seite"]:
                 continue  # schon geladen – nach einem Abbruch einfach neu starten
-            bild = zuschneiden(Image.open(BytesIO(lade_bild(client, foto["gross"]))), BREITE, HOEHE)
+            bild = zuschneiden(Image.open(BytesIO(lade_bild(client, grosse_url(foto)))), BREITE, HOEHE)
             bild.save(ziel, quality=78, optimize=True, progressive=True)
             quellen[stichwort] = foto["seite"]
             quellen_datei.write_text(json.dumps(dict(sorted(quellen.items())), ensure_ascii=False, indent=1),
