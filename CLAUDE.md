@@ -39,5 +39,3 @@ anpassen.
 10. **Datensparsam.** Kein Login. Profile, Merkliste und Gewichtung liegen nur auf
     dem Handy. An die KI geht nur der Gesprächstext, keine Gerätekennung.
 11. **Kostenlos im Betrieb**, solange Luka nichts anderes entscheidet.
-12. **Aussehen:** Standard ist Stil C – Nachtblau mit Gold-Akzenten. Weitere Designs
-    sind in den Einstellungen wählbar.
