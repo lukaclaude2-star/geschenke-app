@@ -36,7 +36,7 @@ struct GelerntView: View {
                                 Text(eintrag.label)
                                 Spacer()
                                 Text(Gewichtung.stufe(eintrag.gewicht))
-                                    .font(.caption.bold())
+                                    .font(.app(.caption, .fett))
                                     .foregroundStyle(Look.akzent)
                             }
                             Slider(value: Binding(

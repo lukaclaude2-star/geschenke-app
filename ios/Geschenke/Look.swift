@@ -20,6 +20,8 @@ enum Look {
         return Color(hex: palette.text).opacity(0.6)
     }
     static var stil: DesignStil { palette.stil }
+    /// Feine Linie um Knöpfe und Chips im Zuhause-Stil
+    static var zuhauseLinie: Color { palette.hell ? Color(hex: 0x23160C).opacity(0.25) : Color(hex: 0x7B5930) }
 
     /// Titel auf Karten: Pinnwand in Handschrift, sonst die normale Überschrift.
     static var titelSchrift: Font {
@@ -43,7 +45,21 @@ extension Color {
 }
 
 struct GoldKnopf: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder func makeBody(configuration: Configuration) -> some View {
+        if Look.stil == .zuhause {
+            configuration.label
+                .font(.zuhause(.headline, .fett))
+                .foregroundStyle(Look.aufAkzent)
+                .frame(maxWidth: .infinity, minHeight: 50)
+                .background(Look.akzent.opacity(configuration.isPressed ? 0.8 : 1), in: Capsule())
+                .scaleEffect(configuration.isPressed ? 0.98 : 1)
+                .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+        } else {
+            klassisch(configuration)
+        }
+    }
+
+    private func klassisch(_ configuration: Configuration) -> some View {
         configuration.label
             .font(.headline)
             .foregroundStyle(Look.aufAkzent)
@@ -55,7 +71,22 @@ struct GoldKnopf: ButtonStyle {
 }
 
 struct RandKnopf: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder func makeBody(configuration: Configuration) -> some View {
+        if Look.stil == .zuhause {
+            configuration.label
+                .font(.zuhause(.headline, .fett))
+                .foregroundStyle(Look.text)
+                .frame(maxWidth: .infinity, minHeight: 50)
+                .background(Look.karte.opacity(configuration.isPressed ? 0.7 : 1), in: Capsule())
+                .overlay(Capsule().stroke(Look.zuhauseLinie, lineWidth: 1))
+                .scaleEffect(configuration.isPressed ? 0.98 : 1)
+                .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+        } else {
+            klassisch(configuration)
+        }
+    }
+
+    private func klassisch(_ configuration: Configuration) -> some View {
         let ecken: CGFloat = Look.stil == .deco ? 2 : 14
         configuration.label
             .font(.headline)
@@ -73,6 +104,21 @@ struct Abzeichen: View {
     var gefuellt = false
 
     var body: some View {
+        if Look.stil == .zuhause {
+            // wie der Grund-Chip auf der Wischkarte
+            Text(text)
+                .font(.zuhause(.caption, .halbfett))
+                .foregroundStyle(gefuellt ? Look.aufAkzent : Look.text)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 3)
+                .background(gefuellt ? Look.akzent : Color(hex: Look.palette.hell ? 0xE6D9C3 : 0x3A2516), in: Capsule())
+                .overlay(Capsule().stroke(gefuellt ? Color.clear : Look.zuhauseLinie, lineWidth: 1))
+        } else {
+            klassisch
+        }
+    }
+
+    private var klassisch: some View {
         Text(text)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(gefuellt ? Look.aufAkzent : Look.akzent)

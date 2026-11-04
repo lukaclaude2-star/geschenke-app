@@ -20,6 +20,15 @@ struct WischZielView: View {
     }
 
     var body: some View {
+        PassendeWischView(modell: modell)
+    }
+}
+
+/// Wählt die Wischansicht passend zum Design (Zuhause: mit Geschenkverpackung).
+struct PassendeWischView: View {
+    @ObservedObject var modell: KartenStapelModell
+
+    var body: some View {
         if Look.stil == .zuhause {
             ZuhauseWischView(modell: modell)
         } else {

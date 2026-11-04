@@ -32,7 +32,7 @@ struct ProfilView: View {
                     }
                     if !eintrag.profil.ausschluesse.isEmpty {
                         Text("Nie: " + eintrag.profil.ausschluesse.map(\.label).joined(separator: ", "))
-                            .font(.footnote)
+                            .font(.app(.footnote))
                             .foregroundStyle(Look.leise)
                     }
                     GeburtstagZeile(geburtstag: eintrag.geburtstag) { zustand.setzeGeburtstag(profilID, $0) }
@@ -45,7 +45,7 @@ struct ProfilView: View {
                     .buttonStyle(GoldKnopf())
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Budget").font(.headline)
+                        Text("Budget").font(.app(.headline, .halbfett))
                         BudgetRegler(von: $budgetVon, bis: $budgetBis)
                             .onChange(of: budgetVon) { budgetGeaendert = true }
                             .onChange(of: budgetBis) { budgetGeaendert = true }
@@ -59,7 +59,7 @@ struct ProfilView: View {
                     .clipShape(RoundedRectangle(cornerRadius: 14))
 
                     Divider().overlay(Look.rand)
-                    Text("Was hat sich geändert?").font(.headline)
+                    Text("Was hat sich geändert?").font(.app(.headline, .halbfett))
                     ForEach(verlauf) { Blase(nachricht: $0) }
                     if denkt {
                         HStack(spacing: 8) {
@@ -188,7 +188,7 @@ struct GeburtstagZeile: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("🎂 Geburtstag").font(.headline)
+            Text("🎂 Geburtstag").font(.app(.headline, .halbfett))
             Spacer()
             if let g = geburtstag {
                 Picker("Tag", selection: Binding(

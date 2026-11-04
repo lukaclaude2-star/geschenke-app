@@ -16,7 +16,7 @@ struct LaengeView: View {
     var body: some View {
         VStack(spacing: 16) {
             Text("Wie viel Zeit hast du?")
-                .font(.title2.bold())
+                .font(.app(.title2, .fett))
             Text("Je mehr du erzählst, desto besser passen die Vorschläge.")
                 .foregroundStyle(Look.leise)
                 .multilineTextAlignment(.center)
@@ -26,7 +26,7 @@ struct LaengeView: View {
                 } label: {
                     VStack(spacing: 2) {
                         Text(laenge.titel)
-                        Text(laenge.untertitel).font(.caption).opacity(0.8)
+                        Text(laenge.untertitel).font(.app(.caption)).opacity(0.8)
                     }
                 }
                 .buttonStyle(laenge.id == "normal" ? AnyButtonStyle(GoldKnopf()) : AnyButtonStyle(RandKnopf()))

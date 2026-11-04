@@ -78,7 +78,7 @@ struct ChatView: View {
             }
         }
         .navigationDestination(isPresented: $zeigeWischen) {
-            if let stapel { WischView(modell: stapel) }
+            if let stapel { PassendeWischView(modell: stapel) }
         }
     }
 
@@ -141,14 +141,22 @@ struct Blase: View {
 
     var body: some View {
         let vonApp = nachricht.rolle == "app"
+        let zuhause = Look.stil == .zuhause
+        let ecken: CGFloat = zuhause ? 18 : 14
         HStack {
             if !vonApp { Spacer(minLength: 40) }
             Text(nachricht.text)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 9)
+                .padding(.horizontal, zuhause ? 14 : 12)
+                .padding(.vertical, zuhause ? 10 : 9)
                 .foregroundStyle(vonApp ? Look.text : Look.aufAkzent)
                 .background(vonApp ? Look.karte : Look.akzent)
-                .clipShape(RoundedRectangle(cornerRadius: 14))
+                .clipShape(RoundedRectangle(cornerRadius: ecken))
+                .overlay {
+                    // Hell: feine Kante wie bei den Karten (DESIGN.md 5)
+                    if zuhause && vonApp && Look.palette.hell {
+                        RoundedRectangle(cornerRadius: ecken).stroke(Look.rand, lineWidth: 1)
+                    }
+                }
             if vonApp { Spacer(minLength: 40) }
         }
     }
@@ -163,7 +171,7 @@ struct ProfilSpeichernView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Als Profil speichern?").font(.title3.bold())
+            Text("Als Profil speichern?").font(.app(.title3, .fett))
             Text(profil.zusammenfassung).foregroundStyle(Look.leise)
             ErkannteStichwoerter(profil: profil)
             TextField("", text: $name, prompt: Text("z. B. Oma Gerda").foregroundStyle(Look.leise))
@@ -197,10 +205,10 @@ struct ErkannteStichwoerter: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Erkannte Stichwörter").font(.subheadline.weight(.semibold))
+            Text("Erkannte Stichwörter").font(.app(.subheadline, .halbfett))
             if profil.wuensche.isEmpty {
                 Text("Keine – erzähl ruhig mehr über Hobbys und Interessen.")
-                    .font(.footnote).foregroundStyle(Look.leise)
+                    .font(.app(.footnote)).foregroundStyle(Look.leise)
             } else {
                 FlussLayout(abstand: 6) {
                     ForEach(profil.wuensche, id: \.tag) { Abzeichen(text: $0.label) }
@@ -208,7 +216,7 @@ struct ErkannteStichwoerter: View {
             }
             if !profil.ausschluesse.isEmpty {
                 Text("Nie: " + profil.ausschluesse.map(\.label).joined(separator: ", "))
-                    .font(.footnote).foregroundStyle(Look.leise)
+                    .font(.app(.footnote)).foregroundStyle(Look.leise)
             }
         }
     }
