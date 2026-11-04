@@ -10,6 +10,7 @@ struct ZuhauseWischView: View {
     @ObservedObject var modell: KartenStapelModell
     @State private var versatz: CGSize = .zero
     @State private var wischt: String?
+    @State private var flugJa = false
     @State private var auspackID: String?
     @State private var auspackFortschritt: Double = 0
     @State private var ausgepackt: Set<String> = []
@@ -38,16 +39,20 @@ struct ZuhauseWischView: View {
                 }
             }
             .frame(maxHeight: .infinity)
-            if let karte = modell.stapel.first {
+            // Die Geste hängt am Stapel: Wer während Flug oder Auspacken zieht, übernimmt sofort
+            // die nächste Karte (am einzelnen Kartenblatt ginge die Geste beim Wechsel verloren).
+            .contentShape(Rectangle())
+            .gesture(ziehen, including: modell.stapel.isEmpty ? .none : .all)
+            if !modell.stapel.isEmpty {
                 HStack(spacing: 14) {
-                    Button { weg(karte, ja: false) } label: {
+                    Button { wegOben(ja: false) } label: {
                         Label("weiter", systemImage: "xmark")
                             .font(.zuhause(.headline, .fett)).foregroundStyle(Look.text)
                             .frame(maxWidth: .infinity, minHeight: 52)
                             .background(Look.karte, in: Capsule())
                             .overlay(Capsule().stroke(Color(hex: Look.palette.hell ? 0x23160C : 0x7B5930).opacity(Look.palette.hell ? 0.25 : 1), lineWidth: 1))
                     }
-                    Button { weg(karte, ja: true) } label: {
+                    Button { wegOben(ja: true) } label: {
                         Label("merken", systemImage: "heart.fill")
                             .font(.zuhause(.headline, .fett)).foregroundStyle(Look.aufAkzent)
                             .frame(maxWidth: .infinity, minHeight: 52)
@@ -124,16 +129,15 @@ struct ZuhauseWischView: View {
             .overlay { verpackung(eintrag, rang: rang, name: person.name) }
             .overlay(alignment: .top) { if istOben { stempel } }
             .scaleEffect(istOben ? 1 : 0.96 + 0.04 * folgt)
-            .offset(y: istOben ? 0 : 10 * (1 - folgt))
+            .offset(y: istOben ? 0 : 20 * (1 - folgt))
             .offset(istOben && !bewegungReduziert ? versatz : .zero)
             .rotationEffect(.degrees(istOben && !bewegungReduziert ? Double(versatz.width / 18) : 0))
             .opacity(deckkraft(rang: rang))
-            .gesture(ziehen(eintrag), including: istOben ? .all : .none)
             .allowsHitTesting(istOben)
             .zIndex(Double(3 - rang))
             .accessibilityElement(children: .combine)
-            .accessibilityAction(named: "Merken") { weg(eintrag, ja: true) }
-            .accessibilityAction(named: "Weiter") { weg(eintrag, ja: false) }
+            .accessibilityAction(named: "Merken") { wegOben(ja: true) }
+            .accessibilityAction(named: "Weiter") { wegOben(ja: false) }
     }
 
     private func deckkraft(rang: Int) -> Double {
@@ -213,14 +217,15 @@ struct ZuhauseWischView: View {
         bewertet.formUnion(neue)
     }
 
-    private func ziehen(_ karte: StapelKarte) -> some Gesture {
+    private var ziehen: some Gesture {
         DragGesture()
             .onChanged {
-                // Wer während des Auspackens zieht, will weiter: Auspacken sofort beenden.
-                if auspackID != nil { auspackenBeenden() }
+                // Wer während Flug oder Auspacken zieht, will weiter: alles sofort zu Ende bringen
+                allesBeenden()
                 versatz = CGSize(width: $0.translation.width, height: $0.translation.height * 0.3)
             }
             .onEnded { wert in
+                guard let karte = modell.stapel.first, wischt == nil else { return }
                 let weit = wert.translation.width
                 let schwung = wert.predictedEndTranslation.width
                 if weit > schwelle || schwung > schwelle * 2.6 {
@@ -236,27 +241,52 @@ struct ZuhauseWischView: View {
 
     /// `fingerTempo`: Fingergeschwindigkeit beim Loslassen (pt/s), damit die Karte mit dem Schwung
     /// weiterfliegt statt abzubremsen. Knöpfe werfen mit einem ruhigen Standardtempo.
+    /// Knöpfe und Bedienungshilfen: Ein zweiter Druck während Flug oder Auspacken wirft gleich
+    /// die nächste Karte, statt verschluckt zu werden.
+    private func wegOben(ja: Bool) {
+        allesBeenden()
+        guard let karte = modell.stapel.first else { return }
+        weg(karte, ja: ja)
+    }
+
+    /// Bringt laufenden Flug und laufendes Auspacken sofort ans Ende; ein Treffer, der oben liegt
+    /// und noch gar nicht angefangen hat, verliert seine Verpackung ohne Ablauf.
+    private func allesBeenden() {
+        flugAbschliessen()
+        auspackenBeenden()
+        if let oben = modell.stapel.first, bleibtVerpackt(oben) { ausgepackt.insert(oben.id) }
+    }
+
     private func weg(_ karte: StapelKarte, ja: Bool, fingerTempo: CGSize = .zero) {
-        if auspackID != nil { auspackenBeenden() }
         guard wischt == nil, modell.stapel.first?.id == karte.id else { return }
+        if bleibtVerpackt(karte) { ausgepackt.insert(karte.id) }
         entscheidungen += 1
         let zielX: CGFloat = ja ? 560 : -560
         let rest = abs(zielX - versatz.width)
         let geschwindigkeit = max(abs(fingerTempo.width), 1300)
-        let dauer = min(0.32, max(0.16, Double(rest / geschwindigkeit)))
+        // Routine höchstens 300 ms (DESIGN.md 6)
+        let dauer = min(0.28, max(0.16, Double(rest / geschwindigkeit)))
         let zielY = versatz.height + 40 + min(120, max(-120, fingerTempo.height * 0.08))
+        flugJa = ja
         withAnimation(.easeOut(duration: dauer)) {
             wischt = karte.id
             versatz = CGSize(width: zielX, height: zielY)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + dauer) {
-            var ohneAnimation = Transaction()
-            ohneAnimation.disablesAnimations = true
-            withTransaction(ohneAnimation) {
-                if ja { modell.ja(karte) } else { modell.nein(karte) }
-                versatz = .zero
-                wischt = nil
+            if wischt == karte.id { flugAbschliessen() }
+        }
+    }
+
+    private func flugAbschliessen() {
+        guard let id = wischt else { return }
+        var ohneAnimation = Transaction()
+        ohneAnimation.disablesAnimations = true
+        withTransaction(ohneAnimation) {
+            if let karte = modell.stapel.first, karte.id == id {
+                if flugJa { modell.ja(karte) } else { modell.nein(karte) }
             }
+            versatz = .zero
+            wischt = nil
         }
     }
 
@@ -264,7 +294,8 @@ struct ZuhauseWischView: View {
     private func obenPruefen(verzoegerung: Double) {
         guard let oben = modell.stapel.first, bleibtVerpackt(oben) else { return }
         DispatchQueue.main.asyncAfter(deadline: .now() + verzoegerung) {
-            guard auspackID == nil, wischt == nil, modell.stapel.first?.id == oben.id, bleibtVerpackt(oben) else { return }
+            guard auspackID == nil, wischt == nil, versatz == .zero, modell.stapel.first?.id == oben.id,
+                  bleibtVerpackt(oben) else { return }
             auspacken(oben)
         }
     }
@@ -272,9 +303,11 @@ struct ZuhauseWischView: View {
     private func auspacken(_ karte: StapelKarte) {
         auspackID = karte.id
         auspackFortschritt = 0
-        let dauer = tempo.dauer
+        // Kurven wie in der Demo über die volle Dauer, aber ab 0,66 ist das Papier schon hinter
+        // dem Kartenrand: dort aufhören statt stillzustehen.
+        let dauer = tempo.dauer * Verpackung.ende
         DispatchQueue.main.async {
-            withAnimation(.linear(duration: dauer)) { auspackFortschritt = 1 }
+            withAnimation(.linear(duration: dauer)) { auspackFortschritt = Verpackung.ende }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + dauer + 0.02) {
             if auspackID == karte.id { auspackenBeenden() }
@@ -288,7 +321,7 @@ struct ZuhauseWischView: View {
         ohneAnimation.disablesAnimations = true
         withTransaction(ohneAnimation) {
             ausgepackt.insert(id)
-            auspackFortschritt = 1
+            auspackFortschritt = Verpackung.ende
             auspackID = nil
         }
     }
@@ -349,12 +382,15 @@ struct Verpackung: View, Animatable {
         set { offen = newValue.first; auspacken = newValue.second }
     }
 
+    /// Ab hier ist das Papier hinter dem Kartenrand verschwunden; das Auspacken endet dort.
+    static let ende = 0.66
+
     private let band: CGFloat = 30
     private let linie: CGFloat = 3.5
     private let ecke: CGFloat = 24
     private var linienFarbe: Color { Color(hex: Look.palette.hell ? 0x23160C : 0x7B5930) }
     private var rot: Color { Color(hex: Look.palette.hell ? 0xBE4A2E : 0xC9573A) }
-    private let creme = Color(hex: 0xEBD9B4)
+    private var creme: Color { Color(hex: Look.palette.hell ? 0xF6E7C8 : 0xEBD9B4) }
     private let schaum = Color(hex: 0xD7BA81)
 
     var body: some View {
@@ -365,10 +401,13 @@ struct Verpackung: View, Animatable {
                 licht.frame(width: w, height: h)
                 tuer(links: true, w: w, h: h)
                 tuer(links: false, w: w, h: h)
-                knoten.position(x: w / 2, y: h / 2)
+                // Anhänger unter dem Knoten: die Schnur verschwindet unter ihm
                 anhaenger.position(x: w / 2, y: h / 2)
+                knoten.position(x: w / 2, y: h / 2)
             }
         }
+        // Weggeklappte und weggeschobene Papierhälften enden am Kartenrand
+        .clipShape(RoundedRectangle(cornerRadius: ecke))
         .opacity(gesamt)
         .allowsHitTesting(false)
         .accessibilityHidden(true)
@@ -381,8 +420,8 @@ struct Verpackung: View, Animatable {
     }
     private var winkel: Double { ruhig ? 0 : 104 * io(seg(auspacken, 0.14, 0.74)) }
     private var gesamt: Double {
-        if ruhig { return 1 - max(offen, auspacken) }
-        if auspacken > 0 { return auspacken >= 1 ? 0 : 1 }
+        if ruhig { return 1 - max(offen, auspacken / Verpackung.ende) }
+        if auspacken > 0 { return auspacken >= Verpackung.ende ? 0 : 1 }
         return offen < 0.8 ? 1 : (1 - offen) / 0.2
     }
 
@@ -435,11 +474,12 @@ struct Verpackung: View, Animatable {
         let k = knotenWeg
         return ZStack {
             Schleifenende().fill(rot).overlay(Schleifenende().stroke(linienFarbe, lineWidth: linie))
-                .frame(width: 13, height: 30).rotationEffect(.degrees(22), anchor: .top).offset(x: -10, y: 19)
+                .frame(width: 13, height: 30).rotationEffect(.degrees(22), anchor: .top).offset(x: -10, y: 23)
             Schleifenende().fill(rot).overlay(Schleifenende().stroke(linienFarbe, lineWidth: linie))
-                .frame(width: 13, height: 30).rotationEffect(.degrees(-22), anchor: .top).offset(x: 10, y: 19)
+                .frame(width: 13, height: 30).rotationEffect(.degrees(-22), anchor: .top).offset(x: 10, y: 23)
+            // höher als das Band, sonst wirkt der Knoten wie ein flaches Siegel
             Ellipse().fill(rot).overlay(Ellipse().strokeBorder(linienFarbe, lineWidth: linie))
-                .frame(width: 46, height: 30)
+                .frame(width: 44, height: 36)
         }
         .scaleEffect(1 - k)
         .rotationEffect(.degrees(auspacken > 0 ? -25 * k : 0))
@@ -448,13 +488,14 @@ struct Verpackung: View, Animatable {
 
     private var anhaenger: some View {
         let k = knotenWeg
-        let dx = auspacken > 0 ? -24 * k : -30 * k
-        let dy = auspacken > 0 ? -46 * k : -40 * k
-        let dreh = auspacken > 0 ? -7 - 55 * k : -7 - 40 * k
+        // Der Anhänger fällt nach unten weg und wird erst in der zweiten Hälfte durchsichtig
+        let dx = 6 * k
+        let dy = 64 * k
+        let dreh = -7 + 18 * k
         return ZStack(alignment: .topLeading) {
             Path { p in
-                p.move(to: CGPoint(x: 0, y: 4))
-                p.addCurve(to: CGPoint(x: 0, y: 50), control1: CGPoint(x: 6, y: 18), control2: CGPoint(x: 2, y: 32))
+                p.move(to: CGPoint(x: 0, y: 12))
+                p.addCurve(to: CGPoint(x: 0, y: 50), control1: CGPoint(x: 6, y: 22), control2: CGPoint(x: 2, y: 34))
             }
             .stroke(linienFarbe, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
             Text("für \(name)")
@@ -477,7 +518,7 @@ struct Verpackung: View, Animatable {
         .frame(width: 0, height: 0, alignment: .topLeading)
         .rotationEffect(.degrees(dreh), anchor: .topLeading)
         .offset(x: dx, y: dy)
-        .opacity(1 - k)
+        .opacity(1 - seg(k, 0.55, 1))
     }
 }
 

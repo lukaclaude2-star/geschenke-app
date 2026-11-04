@@ -211,11 +211,13 @@ struct ZuhauseFoto: View {
 
     var body: some View {
         ZStack {
-            Color(hex: 0xEBD9B4)
+            Color(hex: Look.palette.hell ? 0xF6E7C8 : 0xEBD9B4)
             if let adresse = karte.bildURL, let url = URL(string: adresse) {
                 AsyncImage(url: url) { phase in
                     switch phase {
-                    case .success(let bild): bild.resizable().scaledToFit().blendMode(.multiply).padding(6)
+                    case .success(let bild):
+                        // etwas aufgehellt: fast weiße Fotogründe bilden sonst einen sichtbaren Kasten
+                        bild.resizable().scaledToFit().brightness(0.04).blendMode(.multiply).padding(6)
                     case .failure: platzhalter
                     default: ProgressView().tint(Color(hex: 0x7B5930))
                     }
