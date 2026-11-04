@@ -3,7 +3,7 @@ import Foundation
 /// Wählbare Designs (Grundbaustein 12: Standard Nachtblau & Gold, weitere in den Einstellungen).
 /// Die Farben liegen hier statt in der App, damit ein Test die Lesbarkeit prüfen kann.
 public enum DesignStil: Equatable {
-    case normal, deco, pinnwand
+    case normal, deco, pinnwand, zuhause
 }
 
 public struct Palette: Equatable, Identifiable {
@@ -49,10 +49,49 @@ public enum Designs {
         Palette(id: "pinnwand", name: "Polaroid-Pinnwand", hell: true, stil: .pinnwand,
                 hintergrund: 0xC89A64, karte: 0xFDFDF8, rand: 0xE2D6C0, text: 0x2B2118,
                 akzent: 0xC0392B, aufAkzent: 0xFFFFFF, preis: 0xC0392B),
+        zuhauseAbend,
     ]
+
+    /// „Zuhause“ hat zwei Farbwelten (docs/design/palette-zuhause.md). In `alle` steht nur das
+    /// Abendlicht, damit das Design einmal in der Auswahl erscheint. Welche Farbwelt gilt,
+    /// entscheidet `palette(_:erscheinung:systemDunkel:)`.
+    public static let zuhauseID = "zuhause"
+
+    public static let zuhauseAbend = Palette(
+        id: zuhauseID, name: "Zuhause", hell: false, stil: .zuhause,
+        hintergrund: 0x23160C, karte: 0x452C1B, rand: 0x5E3F27, text: 0xF1E3C6,
+        akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0xEFB249)
+
+    // aufAkzent dunkel: das helle #FFF6E6 aus dem Muster erreicht auf Kupfer nur ca. 3,4.
+    public static let zuhauseHell = Palette(
+        id: zuhauseID, name: "Zuhause", hell: true, stil: .zuhause,
+        hintergrund: 0xEFE6D6, karte: 0xF8F1E5, rand: 0xE0D0B5, text: 0x23160C,
+        akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0x9A3A24)
 
     public static func palette(_ id: String) -> Palette {
         alle.first { $0.id == id } ?? alle[0]
+    }
+
+    /// Palette mit Blick auf die Erscheinung. Nur „Zuhause“ wechselt die Farbwelt, alle anderen
+    /// Designs haben genau eine und ignorieren Erscheinung und Systemmodus.
+    public static func palette(_ id: String, erscheinung: Erscheinung, systemDunkel: Bool) -> Palette {
+        guard id == zuhauseID else { return palette(id) }
+        switch erscheinung {
+        case .automatisch: return systemDunkel ? zuhauseAbend : zuhauseHell
+        case .hell: return zuhauseHell
+        case .abendlicht: return zuhauseAbend
+        }
+    }
+
+    /// Ob die App hell (`true`) oder dunkel (`false`) erzwingen soll; `nil` heißt: dem
+    /// Dunkelmodus des iPhones folgen.
+    public static func erzwingtHell(_ id: String, erscheinung: Erscheinung) -> Bool? {
+        guard id == zuhauseID else { return palette(id).hell }
+        switch erscheinung {
+        case .automatisch: return nil
+        case .hell: return true
+        case .abendlicht: return false
+        }
     }
 }
 

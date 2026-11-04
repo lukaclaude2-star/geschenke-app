@@ -114,6 +114,9 @@ struct DesignHintergrund: View {
                 }
             case .normal:
                 EmptyView()
+            case .zuhause:
+                // Lichtinsel folgt mit dem Einbau der Erscheinung (Plan design-vorschau, Task 3).
+                EmptyView()
             }
         }
     }

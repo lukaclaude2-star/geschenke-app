@@ -67,7 +67,7 @@ struct KartenView: View {
             }
         case .pinnwand:
             EmptyView()
-        case .normal:
+        case .normal, .zuhause:
             RoundedRectangle(cornerRadius: ecken).stroke(Look.rand)
         }
     }
