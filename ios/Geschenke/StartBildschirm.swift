@@ -71,20 +71,22 @@ struct StartBildschirm: View {
 
     @ViewBuilder private var hinweis: some View {
         if bereit && zustand.daten.startTippen {
-            Text("zum Öffnen tippen").font(.subheadline.weight(.semibold)).foregroundStyle(Look.text)
+            Text("zum Öffnen tippen").font(.zuhause(.subheadline, .halbfett)).foregroundStyle(Look.text)
         } else if !bereit {
-            Text("einen Moment …").font(.subheadline).foregroundStyle(Look.leise)
+            Text("einen Moment …").font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
         }
     }
 
     /// Nach dem Video: volle Flut in Creme, die sich nach oben links zur Lichtinsel zusammenzieht.
     private func lichtFlut(s: CGFloat, mitte: CGPoint) -> some View {
-        ZStack {
-            Color(hex: 0xEBD9B4).opacity(lichtZurueckFortschritt ? 0 : 1)
+        // Creme wie im letzten Videobild, sonst springt die Farbe beim Übergang
+        let creme = Color(hex: Look.palette.hell ? 0xF6E7C8 : 0xEBD9B4)
+        return ZStack {
+            creme.opacity(lichtZurueckFortschritt ? 0 : 1)
                 .animation(.easeOut(duration: 0.45), value: lichtZurueckFortschritt)
             RadialGradient(stops: [
-                .init(color: Color(hex: 0xEBD9B4), location: 0),
-                .init(color: Color(hex: 0xEBD9B4), location: 0.2),
+                .init(color: creme, location: 0),
+                .init(color: creme, location: 0.2),
                 .init(color: Color(hex: 0xEFB249), location: 0.43),
                 .init(color: Color(hex: 0xEFB249).opacity(0.55), location: 0.66),
                 .init(color: Color(hex: 0xEFB249).opacity(0.15), location: 0.86),
@@ -92,9 +94,11 @@ struct StartBildschirm: View {
             ], center: .center, startRadius: 0, endRadius: 315 * s)
             .frame(width: 630 * s, height: 630 * s)
             .scaleEffect(lichtZurueckFortschritt ? 0.5 : 3.08)
+            .position(x: mitte.x + (lichtZurueckFortschritt ? -65 * s : 0),
+                      y: mitte.y + (lichtZurueckFortschritt ? -280 * s : 0))
+            // Erst schnell sammeln, dann ruhig ankommen (wie die freigegebene Demo)
+            .animation(.timingCurve(0.33, 1, 0.68, 1, duration: 1.05), value: lichtZurueckFortschritt)
             .opacity(lichtZurueckFortschritt ? 0 : 1)
-            .position(x: mitte.x + (lichtZurueckFortschritt ? -112 * s : 0),
-                      y: mitte.y + (lichtZurueckFortschritt ? -262 * s : 0))
             .animation(.timingCurve(0.65, 0, 0.35, 1, duration: 1.05), value: lichtZurueckFortschritt)
         }
         .allowsHitTesting(false)

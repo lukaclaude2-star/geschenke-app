@@ -20,7 +20,11 @@ struct WischZielView: View {
     }
 
     var body: some View {
-        WischView(modell: modell)
+        if Look.stil == .zuhause {
+            ZuhauseWischView(modell: modell)
+        } else {
+            WischView(modell: modell)
+        }
     }
 }
 
