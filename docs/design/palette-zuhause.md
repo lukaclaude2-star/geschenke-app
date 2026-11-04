@@ -16,12 +16,16 @@ Schalter in den Einstellungen (Automatisch / Hell / Abendlicht).
 | karte2 | `#3A2516` | `#E6D9C3` | zweite Kartenstufe |
 | text | `#F1E3C6` | `#23160C` | Fließtext, Titel |
 | leise | `#C0AE88` | `#7B5930` | Nebentext |
-| linie | `#140C06` | `#23160C` | Linien der Illustrationen |
+| linie | `#7B5930` | `#23160C` | Linien der Illustrationen* |
 | akzent | `#C2721E` | `#C2721E` | Knöpfe, Hervorhebung |
-| akzenttext | `#23160C` | `#23160C` | Schrift auf Akzent* |
+| akzenttext | `#23160C` | `#23160C` | Schrift auf Akzent\*\* |
 | licht | `rgba(239,178,73,.22)` | `rgba(239,178,73,.30)` | Lichtinsel oben links (radialer Verlauf) |
 
-\* Im Muster stand bei Hell `#FFF6E6`. Auf `#C2721E` ergibt das nur Kontrast ≈ 3,4
+\* Linie Abendlicht: Luka hat am 04.11. Cognac `#7B5930` statt `#140C06` gewählt (Coco-Test 2). Fast-Schwarz
+hatte auf der Karte nur Kontrast 1,5, die Zeichnungen wurden zu Farbflecken. Schaum `#D7BA81` war
+abgelehnt, weil die Linie innen auf Licht und Haut verschwindet (Kontrast 1,0).
+
+\*\* Im Muster stand bei Hell `#FFF6E6`. Auf `#C2721E` ergibt das nur Kontrast ≈ 3,4
 (Pflicht: mindestens 4,5), daher auch hier Espresso `#23160C` (≈ 4,8).
 
 Für die App zusätzlich festgelegt (noch nicht im Muster sichtbar):
@@ -59,7 +63,7 @@ Zuordnung je Motiv (genaue Bereichsnummern in `FARBEN` in `bauen.py`):
 |---|---|---|
 | Katze (`animals_cat_sleeping2`) | kupfer | – |
 | Geschenk auspacken (`unwrap_gift_3`) | licht | haut, braun, rot; 1 Lücke offen |
-| Kranz (`christmas_holly_3`) | moosdunkel | moos, kleine Bereiche rot; 4 Lücken offen |
+| Kranz (`christmas_holly_3`) | moosdunkel (Abendlicht: moos) | moos, kleine Bereiche rot; 4 Lücken offen |
 | Geschenkstapel (`present_5`) | rot (große + kleine Schachtel) | runde Schachtel licht, flache moos; 3 Lücken offen |
 | Familie (`family_love-7`) | kupfer | haut, rot, Rest braun |
 | Tee (`food_tea`) | licht | braun, rot; 1 Lücke offen |

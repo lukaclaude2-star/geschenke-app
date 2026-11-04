@@ -46,7 +46,7 @@ Kandidaten (`illustrationen-gratis.html`), noch keine Wahl:
 | Paket | Lizenz | Passt für | Haken |
 |---|---|---|---|
 | Doodle Icons (Khushmeen), khushmeen.com/icons | CC0 (auf eigener Seite bestätigt) | 400+ Linien-Symbole, Ersatz für Emojis | keine Szenen, keine Figur |
-| Kitbitz, kitbitz.art | CC0 | 2000+ farbige Welt-Teile, nah an Forest | Inhalt (Wohnen, Geschenke?) ungeprüft; mehrere Zeichner |
+| Kitbitz, kitbitz.art | CC0 | 2000+ farbige Welt-Teile, nah an Forest; Interior-Kit mit 281 Teilen (Sofas, Betten, Lampen, Pflanzen, Bücher, Regale, Katze) | geprüft 04.11.: keine Geschenkpakete, keine Schleifen, keine Menschen, Tassen nur als Teil von Tischen; Draufsicht wie in einem Spiel, kräftige Farben (Lila, Orange); mehrere Zeichner (Foto `moodboard/kitbitz-interior.png`) |
 | Lukasz Adam, lukaszadam.com/illustrations | CC0 bzw. MIT | ca. 120 Szenen | überwiegend Technik-Themen |
 | Open Doodles, opendoodles.com | frei, ohne Namensnennung | Menschen | sehr verbreitet |
 

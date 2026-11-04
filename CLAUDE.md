@@ -39,3 +39,25 @@ anpassen.
 10. **Datensparsam.** Kein Login. Profile, Merkliste und Gewichtung liegen nur auf
     dem Handy. An die KI geht nur der Gesprächstext, keine Gerätekennung.
 11. **Kostenlos im Betrieb**, solange Luka nichts anderes entscheidet.
+
+## Luka etwas zeigen
+
+Alles Visuelle (Entwürfe, Vergleiche, Bildschirmfotos, Vorschauen) zeigst du auf der
+Zeigeseite `.superpowers/zeigen/` (nicht im Git), nicht über neue Server oder Dateien.
+
+1. Server läuft? Sonst im Hintergrund starten:
+   `python -m http.server 8770 --bind 127.0.0.1 --directory .superpowers/zeigen`
+2. Neue Ansicht als Ordner `ansichten/<JJJJ-MM-TT>-<thema>/index.html` anlegen
+   (eigenständige Seite, Bilder in denselben Ordner).
+   Ist es ein Design-Entwurf: erst den Agenten `design-pruefer` prüfen lassen und
+   überarbeiten, bis er FREIGEBEN sagt (höchstens 3 Runden). Seine Noten Luka mitnennen.
+3. Anmelden: `python -X utf8 .superpowers/zeigen/anmelden.py <ordner> "<Titel>"`.
+   Die Seite springt dann von selbst zur neuen Ansicht.
+4. Luka den Link `http://127.0.0.1:8770/` nennen. Er öffnet ihn im integrierten
+   Browser von VS Code.
+
+## Design
+
+Vor jeder Arbeit an der Oberfläche (Entwürfe, SwiftUI-Views, Farben, Illustrationen)
+`DESIGN.md` lesen. Sie hat Vorrang vor Design-Skills (`swiftui-design-skill`,
+`frontend-design`). Was dort als offen markiert ist, entscheidet Luka.
