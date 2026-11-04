@@ -31,9 +31,10 @@ struct ZuhauseWischView: View {
             }
             ZStack {
                 if modell.stapel.isEmpty { leer }
-                let oben = Array(modell.stapel.prefix(2))
+                // Drei Karten: die dritte liegt unsichtbar bereit und blendet beim Wegwerfen ein
+                let oben = Array(modell.stapel.prefix(3))
                 ForEach(oben.reversed()) { eintrag in
-                    karte(eintrag, istOben: eintrag.id == oben.first?.id)
+                    karte(eintrag, rang: oben.firstIndex(of: eintrag) ?? 0)
                 }
             }
             .frame(maxHeight: .infinity)
@@ -111,37 +112,47 @@ struct ZuhauseWischView: View {
 
     // MARK: Karte
 
-    @ViewBuilder private func karte(_ eintrag: StapelKarte, istOben: Bool) -> some View {
+    @ViewBuilder private func karte(_ eintrag: StapelKarte, rang: Int) -> some View {
         let person = modell.personen[eintrag.person]
+        let istOben = rang == 0
+        let folgt: CGFloat = rang == 1 ? zug : 0
         ZuhauseKarte(karte: eintrag.karte,
                      grund: passtWeil(eintrag.karte, gewichtung: person.gewichtung),
                      istTreffer: trefferIDs.contains(eintrag.id),
                      name: person.name ?? "diese Person",
                      fuer: modell.istSammel ? modell.name(eintrag.person) : nil)
-            .overlay { verpackung(eintrag, istOben: istOben, name: person.name) }
+            .overlay { verpackung(eintrag, rang: rang, name: person.name) }
             .overlay(alignment: .top) { if istOben { stempel } }
-            .scaleEffect(istOben ? 1 : 0.96 + 0.04 * zug)
-            .offset(y: istOben ? 0 : 10 * (1 - zug))
+            .scaleEffect(istOben ? 1 : 0.96 + 0.04 * folgt)
+            .offset(y: istOben ? 0 : 10 * (1 - folgt))
             .offset(istOben && !bewegungReduziert ? versatz : .zero)
             .rotationEffect(.degrees(istOben && !bewegungReduziert ? Double(versatz.width / 18) : 0))
-            .opacity(istOben && bewegungReduziert && wischt != nil ? 0 : 1)
+            .opacity(deckkraft(rang: rang))
             .gesture(ziehen(eintrag), including: istOben ? .all : .none)
             .allowsHitTesting(istOben)
-            .zIndex(istOben ? 1 : 0)
+            .zIndex(Double(3 - rang))
             .accessibilityElement(children: .combine)
             .accessibilityAction(named: "Merken") { weg(eintrag, ja: true) }
             .accessibilityAction(named: "Weiter") { weg(eintrag, ja: false) }
     }
 
-    @ViewBuilder private func verpackung(_ eintrag: StapelKarte, istOben: Bool, name: String?) -> some View {
+    private func deckkraft(rang: Int) -> Double {
+        switch rang {
+        case 0: return bewegungReduziert && wischt != nil ? 0 : 1
+        case 1: return 1
+        default: return wischt != nil ? 1 : 0
+        }
+    }
+
+    @ViewBuilder private func verpackung(_ eintrag: StapelKarte, rang: Int, name: String?) -> some View {
         let anhaenger = name ?? (modell.istSammel ? modell.name(eintrag.person) : "dich")
-        if istOben {
+        if rang == 0 {
             if auspackID == eintrag.id {
                 Verpackung(offen: 0, auspacken: auspackFortschritt, name: anhaenger, ruhig: bewegungReduziert)
             } else if bleibtVerpackt(eintrag) {
                 Verpackung(offen: 0, auspacken: 0, name: anhaenger, ruhig: bewegungReduziert)
             }
-        } else if bleibtVerpackt(eintrag) {
+        } else if rang == 2 || bleibtVerpackt(eintrag) {
             Verpackung(offen: 0, auspacken: 0, name: anhaenger, ruhig: bewegungReduziert)
         } else {
             Verpackung(offen: Double(zug), auspacken: 0, name: anhaenger, ruhig: bewegungReduziert)

@@ -111,6 +111,14 @@ Wie `2026-11-04-design-vorschau.md` Task 1 und 2, zusätzlich:
 **Neustart 05.11. 00:01** nach Nutzungslimit (22:10–00:00 verloren). Neuer Zeitplan:
 00:55 A1 · 01:40 A2 · 02:10 A3 (nur Schrift + Startseite/Einstellungen) · 03:10 B2 · 04:00 B3 · 04:45 B4 · 05:40 B5. Helfer B1 neu gestartet (bis 01:45).
 
+**Stand 05.11. 00:40:**
+- B1 fertig (Kern-CI grün, 81 Tests). B2 fertig (Leiste, Startseite, Erscheinung, Nunito).
+- A1 freigegeben (Runde 2, alle 8/10), Feinschliff des Prüfers eingebaut, angemeldet.
+- B4: Videos `start-abend.mp4`/`start-hell.mp4` (1170×2532, 60 fps, BT.709) und Standbilder in der App; Hell-Flut nativ auf #F6E7C8 korrigiert (vorher Farbsprung). App-Icon aus dem Logo.
+- B3 nativ geschrieben (`ZuhauseWischView.swift`), auch nach dem Chat (vorher öffnete der Chat immer die alte Wischansicht). Merkliste, Knöpfe, Chips, Chat-Blasen im Zuhause-Stil.
+- CI-Fehler gefunden: Der Bau-Schritt meldete grün, obwohl Swift nicht kompilierte (nur `.app`-Ordner geprüft). Jetzt wird die Programmdatei geprüft.
+- A2 beim Prüfer (Runde 1). A3 danach.
+
 **Abgebrochen 04.11. ca. 22:10 (Nutzungslimit erreicht).** Stand damals:
 - Plan steht. A1 begonnen: `.superpowers/zeigen/ansichten/2026-11-05-startanimation-2/` (erzeugen.py, vorlage.html, index.html gebaut, Zeitfunktion `bild(t)`, tiefere Box mit Kartonrand, Hineinfliegen, Export-Modus `?export=abend|hell`). Noch nicht angeschaut, nicht geprüft, nicht angemeldet. Kontaktbogen: `pruefung/bogen1.png`.
 - B1-Helfer wurde angehalten, bevor er fertig war. Vor dem Weitermachen `git status` prüfen: Teiländerungen in `ios/` möglich, evtl. schon Commits/Push auf design-neu.

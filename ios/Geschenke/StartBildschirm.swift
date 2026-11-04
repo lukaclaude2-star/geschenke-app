@@ -94,8 +94,9 @@ struct StartBildschirm: View {
             ], center: .center, startRadius: 0, endRadius: 315 * s)
             .frame(width: 630 * s, height: 630 * s)
             .scaleEffect(lichtZurueckFortschritt ? 0.5 : 3.08)
-            .position(x: mitte.x + (lichtZurueckFortschritt ? -65 * s : 0),
-                      y: mitte.y + (lichtZurueckFortschritt ? -280 * s : 0))
+            // Ziel ist die Lichtinsel der Startseite (DesignHintergrund, fest bei 130/100),
+            // unabhängig davon, wie viel vom Video auf diesem iPhone abgeschnitten ist
+            .position(lichtZurueckFortschritt ? CGPoint(x: 130, y: 100) : mitte)
             // Erst schnell sammeln, dann ruhig ankommen (wie die freigegebene Demo)
             .animation(.timingCurve(0.33, 1, 0.68, 1, duration: 1.05), value: lichtZurueckFortschritt)
             .opacity(lichtZurueckFortschritt ? 0 : 1)
