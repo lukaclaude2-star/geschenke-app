@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Stand 04.11. abends: noch nicht umsetzen.** Luka will erst weiter am Design arbeiten. Seitdem entschieden (DESIGN.md 5 und 6a): Leiste Start, Wischen, Merkliste, **Einstellungen** (Profile über die Startseite), neuer Startbildschirm mit Geschenk-Logo und Ladering. Task 4 vor der Umsetzung entsprechend überarbeiten und den Startbildschirm als eigene Aufgabe ergänzen.
+
 **Goal:** Ein neues Design „Zuhause“ mit zwei Farbwelten (Abendlicht und Hell), das automatisch dem Dunkelmodus des iPhones folgt oder per Schalter festgelegt wird, sowie eine Leiste unten (Start, Wischen, Merkliste, Profile) und eine neue Startseite nach „Coco-Test 2“ ohne Kacheln, als Vorschau auf Branch `design-neu`.
 
 **Architecture:** Paletten, Erscheinungs-Logik und Begrüßung liegen testbar im Kern (`GeschenkeCore`). Eine neue Wurzel-View liest den Dunkelmodus des Systems, wählt daraus die Palette und setzt `preferredColorScheme`. Die Motive werden per Python-Skript aus den Coco-SVGs je Farbwelt fertig gefärbt und als SVG mit Hell/Dunkel-Variante in einen neuen Asset-Katalog geschrieben; iOS wählt die Variante selbst. Im Design „Zuhause“ zeigt die Wurzel eine `TabView` mit eigener Startseite (`ZuhauseStartView`). Alle 8 alten Designs behalten `NavigationStack { StartView() }` und bleiben unverändert.
