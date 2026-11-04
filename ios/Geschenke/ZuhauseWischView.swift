@@ -213,9 +213,9 @@ struct ZuhauseWischView: View {
                 let weit = wert.translation.width
                 let schwung = wert.predictedEndTranslation.width
                 if weit > schwelle || schwung > schwelle * 2.6 {
-                    weg(karte, ja: true)
+                    weg(karte, ja: true, fingerTempo: wert.velocity)
                 } else if weit < -schwelle || schwung < -schwelle * 2.6 {
-                    weg(karte, ja: false)
+                    weg(karte, ja: false, fingerTempo: wert.velocity)
                 } else {
                     // nicht weit genug: Karte und Verpackung gleiten im selben Takt zurück
                     withAnimation(.easeOut(duration: 0.22)) { versatz = .zero }
@@ -223,14 +223,20 @@ struct ZuhauseWischView: View {
             }
     }
 
-    private func weg(_ karte: StapelKarte, ja: Bool) {
+    /// `fingerTempo`: Fingergeschwindigkeit beim Loslassen (pt/s), damit die Karte mit dem Schwung
+    /// weiterfliegt statt abzubremsen. Knöpfe werfen mit einem ruhigen Standardtempo.
+    private func weg(_ karte: StapelKarte, ja: Bool, fingerTempo: CGSize = .zero) {
         if auspackID != nil { auspackenBeenden() }
         guard wischt == nil, modell.stapel.first?.id == karte.id else { return }
         entscheidungen += 1
-        let dauer = 0.26
+        let zielX: CGFloat = ja ? 560 : -560
+        let rest = abs(zielX - versatz.width)
+        let geschwindigkeit = max(abs(fingerTempo.width), 1300)
+        let dauer = min(0.32, max(0.16, Double(rest / geschwindigkeit)))
+        let zielY = versatz.height + 40 + min(120, max(-120, fingerTempo.height * 0.08))
         withAnimation(.easeOut(duration: dauer)) {
             wischt = karte.id
-            versatz = CGSize(width: ja ? 520 : -520, height: versatz.height + 40)
+            versatz = CGSize(width: zielX, height: zielY)
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + dauer) {
             var ohneAnimation = Transaction()
@@ -403,12 +409,13 @@ struct Verpackung: View, Animatable {
                 }
                 .frame(height: band)
             }
-            TuerUmriss(links: links, ecke: ecke).stroke(linienFarbe, lineWidth: linie)
+            // doppelt so breit, weil die Form die äußere Hälfte abschneidet
+            TuerUmriss(links: links, ecke: ecke).stroke(linienFarbe, lineWidth: linie * 2)
         }
         .frame(width: breite, height: h)
         .clipShape(form)
         .rotation3DEffect(.degrees(links ? winkel : -winkel), axis: (x: 0, y: 1, z: 0),
-                          anchor: links ? .leading : .trailing, perspective: 0.6)
+                          anchor: links ? .leading : .trailing, perspective: 0.75)
         .offset(x: links ? -weggeschoben : breite + weggeschoben)
         .opacity(1 - seg(auspacken, 0.74, 0.96))
     }

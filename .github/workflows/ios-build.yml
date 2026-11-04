@@ -50,7 +50,8 @@ jobs:
             MARKETING_VERSION="1.0.${{ github.run_number }}" \
             CURRENT_PROJECT_VERSION="${{ github.run_number }}" \
             build 2>&1 | grep -E "error:|warning: .*Geschenke|BUILD" || true
-          test -d build/Build/Products/Release-iphoneos/Geschenke.app
+          # Der .app-Ordner entsteht auch bei Compile-Fehlern, erst die Programmdatei zeigt Erfolg
+          test -f build/Build/Products/Release-iphoneos/Geschenke.app/Geschenke
 
       - name: IPA packen
         run: |

@@ -88,7 +88,7 @@ struct RandKnopf: ButtonStyle {
 
     private func klassisch(_ configuration: Configuration) -> some View {
         let ecken: CGFloat = Look.stil == .deco ? 2 : 14
-        configuration.label
+        return configuration.label
             .font(.headline)
             .foregroundStyle(Look.akzent)
             .frame(maxWidth: .infinity)
