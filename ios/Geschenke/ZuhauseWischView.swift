@@ -39,6 +39,8 @@ struct ZuhauseWischView: View {
                 }
             }
             .frame(maxHeight: .infinity)
+            // Platz für das herausschauende Geschenk, damit es nicht an den Knöpfen klebt
+            .padding(.bottom, 14)
             // Die Geste hängt am Stapel: Wer während Flug oder Auspacken zieht, übernimmt sofort
             // die nächste Karte (am einzelnen Kartenblatt ginge die Geste beim Wechsel verloren).
             .contentShape(Rectangle())
@@ -416,7 +418,7 @@ struct Verpackung: View, Animatable {
     // MARK: Werte je Zeitpunkt (wie bild(t) in der Demo)
 
     private var knotenWeg: Double {
-        ruhig ? 0 : (auspacken > 0 ? aus(seg(auspacken, 0, 0.24)) : clamp(offen * 1.6))
+        ruhig ? 0 : (auspacken > 0 ? aus(seg(auspacken, 0, 0.24)) : clamp(offen * 5))
     }
     private var winkel: Double { ruhig ? 0 : 104 * io(seg(auspacken, 0.14, 0.74)) }
     private var gesamt: Double {

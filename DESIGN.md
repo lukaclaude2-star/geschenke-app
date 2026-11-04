@@ -114,7 +114,10 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
   auflöst, man fliegt also ins Geschenk hinein.
 - **Offen:** vereinfachte Icon-Fassung für kleine Größen.
 
-## 6b. Wischkarte (Luka, 04.11.2026, noch ohne Entwurf)
+## 6b. Wischkarte (Luka, 04.11.2026)
+
+Demo: `.superpowers/zeigen/ansichten/2026-11-05-wischkarte-2/`, in der App
+`ZuhauseWischView.swift`.
 
 Gefühl: Es soll aufregend sein, die nächste Karte zu sehen, und alles fließt, nichts wirkt starr.
 
@@ -129,6 +132,15 @@ Gefühl: Es soll aufregend sein, die nächste Karte zu sehen, und alles fließt,
   gute Treffer verlieren ihre Verpackung nur mit dem Wischen.
 - **Flüssig:** Die Karte klebt am Finger, kippt leicht mit, fliegt beim Loslassen mit dem
   Schwung weiter. Nichts springt oder ruckelt. „Bewegung reduzieren“: Überblenden.
+- **So gebaut (05.11., Lukas Änderungen):** Zwei Papierhälften mit rotem Band, Knoten
+  genau auf der Bandkreuzung (alles an Bandbreite und Höhe aufgehängt, symmetrisch),
+  Anhänger „für Name“ hängt darunter. Auspacken: Knoten löst sich, Anhänger fällt nach
+  unten weg, die Hälften klappen nach hinten auf. Das Licht liegt zwischen Produkt und
+  Papier, ist nur durch den Spalt zu sehen und ist weg, bevor das Papier verschwindet
+  (kein schwebender Lichtstreifen). Die verpackte Karte schaut in Ruhe ein Stück unter
+  der oberen hervor.
+- **Schnelles Weiterwischen:** Ziehen oder Tippen während Flug oder Auspacken bringt
+  beides sofort zu Ende und nimmt die nächste Karte. Kein Wisch geht verloren.
 
 ## 7. Text
 
