@@ -278,10 +278,15 @@ struct EinstellungenView: View {
     @EnvironmentObject private var zustand: AppZustand
     @Environment(\.dismiss) private var schliessen
     @AppStorage(Konfiguration.tokenSchluessel) private var token = ""
+    /// Im Zuhause-Stil sind die Einstellungen ein Reiter der Leiste statt eines Blatts.
+    var alsReiter = false
 
     var body: some View {
         NavigationStack {
             Form {
+                if zustand.daten.design == Designs.zuhauseID {
+                    zuhauseAbschnitte
+                }
                 Section("Schriftgröße") {
                     Picker("Schriftgröße", selection: Binding(
                         get: { Schriftstufe.aus(zustand.daten.schriftgroesse) },
@@ -328,8 +333,50 @@ struct EinstellungenView: View {
             .nachtblau()
             .navigationTitle("Einstellungen")
             .toolbar {
-                Button("Fertig") { schliessen() }
+                if !alsReiter { Button("Fertig") { schliessen() } }
             }
         }
+    }
+
+    /// Erscheinung, Startbildschirm und Auspacken gibt es nur im Design „Zuhause“.
+    @ViewBuilder private var zuhauseAbschnitte: some View {
+        Section {
+            Picker("Erscheinung", selection: Binding(
+                get: { Erscheinung.aus(zustand.daten.erscheinung) },
+                set: { zustand.setzeErscheinung($0) }
+            )) {
+                ForEach(Erscheinung.allCases) { Text($0.titel).tag($0) }
+            }
+            .pickerStyle(.segmented)
+        } header: {
+            Text("Erscheinung")
+        } footer: {
+            Text("Automatisch folgt dem Dunkelmodus des iPhones.")
+        }
+        .listRowBackground(Look.karte)
+
+        Section {
+            Toggle("Zum Öffnen tippen", isOn: Binding(
+                get: { zustand.daten.startTippen },
+                set: { zustand.setzeStartTippen($0) }
+            ))
+            VStack(alignment: .leading, spacing: 8) {
+                Text("Auspacken guter Treffer")
+                Picker("Auspacken guter Treffer", selection: Binding(
+                    get: { AuspackTempo.aus(zustand.daten.auspacken) },
+                    set: { zustand.setzeAuspacken($0) }
+                )) {
+                    ForEach(AuspackTempo.allCases) { Text($0.titel).tag($0) }
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+            }
+            .padding(.vertical, 4)
+        } header: {
+            Text("Geschenk")
+        } footer: {
+            Text("Ohne Tippen öffnet sich das Geschenk beim Start von selbst. Bei „aus“ verlieren auch gute Treffer ihre Verpackung nur mit dem Wischen.")
+        }
+        .listRowBackground(Look.karte)
     }
 }

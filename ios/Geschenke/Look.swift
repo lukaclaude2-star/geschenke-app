@@ -14,7 +14,11 @@ enum Look {
     static var aufAkzent: Color { Color(hex: palette.aufAkzent) }
     static var preis: Color { Color(hex: palette.preis) }
     static var text: Color { Color(hex: palette.text) }
-    static var leise: Color { Color(hex: palette.text).opacity(0.6) }
+    static var leise: Color {
+        // Zuhause: feste Palettenfarbe statt Deckkraft (Kontrast geprüft in palette-zuhause.md)
+        if palette.stil == .zuhause { return Color(hex: palette.hell ? 0x7B5930 : 0xC0AE88) }
+        return Color(hex: palette.text).opacity(0.6)
+    }
     static var stil: DesignStil { palette.stil }
 
     /// Titel auf Karten: Pinnwand in Handschrift, sonst die normale Überschrift.
@@ -115,8 +119,14 @@ struct DesignHintergrund: View {
             case .normal:
                 EmptyView()
             case .zuhause:
-                // Lichtinsel folgt mit dem Einbau der Erscheinung (Plan design-vorschau, Task 3).
-                EmptyView()
+                // Lichtinsel: das einzige Leuchten, steht für die Lampe im Raum (DESIGN.md 2)
+                GeometryReader { _ in
+                    RadialGradient(colors: [Color(hex: 0xEFB249).opacity(Look.palette.hell ? 0.30 : 0.22), .clear],
+                                   center: .center, startRadius: 0, endRadius: 202)
+                        .frame(width: 404, height: 404)
+                        .position(x: 130, y: 100)
+                }
+                .allowsHitTesting(false)
             }
         }
     }

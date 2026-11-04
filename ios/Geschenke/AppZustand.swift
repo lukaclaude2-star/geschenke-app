@@ -30,6 +30,21 @@ final class AppZustand: ObservableObject {
         sichern()
     }
 
+    func setzeErscheinung(_ erscheinung: Erscheinung) {
+        daten.erscheinung = erscheinung.rawValue
+        sichern()
+    }
+
+    func setzeStartTippen(_ an: Bool) {
+        daten.startTippen = an
+        sichern()
+    }
+
+    func setzeAuspacken(_ tempo: AuspackTempo) {
+        daten.auspacken = tempo.rawValue
+        sichern()
+    }
+
     func setzeGeburtstag(_ id: UUID, _ geburtstag: Geburtstag?) {
         guard let i = daten.profile.firstIndex(where: { $0.id == id }) else { return }
         daten.profile[i].geburtstag = geburtstag
