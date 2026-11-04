@@ -42,18 +42,30 @@ final class ZuhauseTests: XCTestCase {
         Gewichtung(profil: testProfil([("garten", 1.0), ("krimis", 0.5), ("tee", 1.6)]))
     }
 
+    /// `anzahl` Karten mit gleichen Tags, IDs `<praefix>0`, `<praefix>1` …
+    private func stapel(_ anzahl: Int, _ praefix: String = "k", tags: [String]) -> [Karte] {
+        var karten: [Karte] = []
+        for i in 0..<anzahl {
+            karten.append(testKarte(praefix + String(i), tags: tags))
+        }
+        return karten
+    }
+
     func testLeereListeKeinTreffer() {
         XCTAssertEqual(richtigGuteTreffer([], gewichtung: gewichtung()), [])
     }
 
     func testZehnKartenGenauEinTrefferMitHoechsterPunktzahl() {
-        var karten = (0..<10).map { testKarte("k\($0)", tags: $0 % 2 == 0 ? ["garten"] : ["krimis"]) }
+        var karten = stapel(10, tags: ["garten"])
+        for i in [1, 3, 5, 7, 9] {
+            karten[i] = testKarte("k" + String(i), tags: ["krimis"])
+        }
         karten[6] = testKarte("k6", tags: ["garten", "krimis"])  // 1,5 statt 1,0
         XCTAssertEqual(richtigGuteTreffer(karten, gewichtung: gewichtung()), ["k6"])
     }
 
     func testAnteilBestimmtAnzahl() {
-        var karten = (0..<20).map { testKarte("k\($0)", tags: ["krimis"]) }
+        var karten = stapel(20, tags: ["krimis"])
         karten[3] = testKarte("k3", tags: ["tee"])
         karten[15] = testKarte("k15", tags: ["garten", "tee"])
         karten[9] = testKarte("k9", tags: ["garten"])
@@ -62,28 +74,24 @@ final class ZuhauseTests: XCTestCase {
     }
 
     func testDoppelteTagsZaehlenEinmal() {
-        var karten = (0..<10).map { testKarte("k\($0)", tags: ["garten"]) }
+        var karten = stapel(10, tags: ["garten"])
         karten[2] = testKarte("k2", tags: ["krimis", "krimis", "krimis"])  // 0,5, nicht 1,5
         karten[7] = testKarte("k7", tags: ["garten", "krimis"])
         XCTAssertEqual(richtigGuteTreffer(karten, gewichtung: gewichtung()), ["k7"])
     }
 
     func testGleichstandNimmtVordereKarte() {
-        let karten = (0..<10).map { testKarte("k\($0)", tags: ["garten"]) }
-        XCTAssertEqual(richtigGuteTreffer(karten, gewichtung: gewichtung()), ["k0"])
+        XCTAssertEqual(richtigGuteTreffer(stapel(10, tags: ["garten"]), gewichtung: gewichtung()), ["k0"])
     }
 
     func testOhnePositivePunktzahlNieTreffer() {
         var g = gewichtung()
         g.setze("garten", auf: 0)
-        let unbekannt = (0..<10).map { testKarte("u\($0)", tags: ["gaming"]) }
-        XCTAssertEqual(richtigGuteTreffer(unbekannt, gewichtung: g), [])
-        let nullGewicht = (0..<10).map { testKarte("n\($0)", tags: ["garten"]) }
-        XCTAssertEqual(richtigGuteTreffer(nullGewicht, gewichtung: g), [])
-        let ohneTags = (0..<10).map { testKarte("o\($0)", tags: []) }
-        XCTAssertEqual(richtigGuteTreffer(ohneTags, gewichtung: g), [])
+        XCTAssertEqual(richtigGuteTreffer(stapel(10, "u", tags: ["gaming"]), gewichtung: g), [])
+        XCTAssertEqual(richtigGuteTreffer(stapel(10, "n", tags: ["garten"]), gewichtung: g), [])
+        XCTAssertEqual(richtigGuteTreffer(stapel(10, "o", tags: []), gewichtung: g), [])
         // Nur eine Karte hat Punkte: Sie ist Treffer, auch wenn der Anteil mehr erlauben würde.
-        var gemischt = (0..<20).map { testKarte("m\($0)", tags: ["gaming"]) }
+        var gemischt = stapel(20, "m", tags: ["gaming"])
         gemischt[12] = testKarte("m12", tags: ["krimis"])
         XCTAssertEqual(richtigGuteTreffer(gemischt, gewichtung: g), ["m12"])
     }
@@ -91,17 +99,16 @@ final class ZuhauseTests: XCTestCase {
     func testWenigerAlsFuenfKarten() {
         let g = gewichtung()
         for anzahl in 1...4 {
-            let karten = (0..<anzahl).map { testKarte("k\($0)", tags: ["tee"]) }
-            let treffer = richtigGuteTreffer(karten, gewichtung: g)
+            let treffer = richtigGuteTreffer(stapel(anzahl, tags: ["tee"]), gewichtung: g)
             XCTAssertLessThanOrEqual(treffer.count, 1, "\(anzahl) Karten")
             XCTAssertTrue(treffer.isEmpty, "\(anzahl) Karten")
         }
-        let ohnePunkte = (0..<4).map { testKarte("k\($0)", tags: ["gaming"]) }
-        XCTAssertEqual(richtigGuteTreffer(ohnePunkte, gewichtung: g), [])
+        XCTAssertEqual(richtigGuteTreffer(stapel(4, tags: ["gaming"]), gewichtung: g), [])
     }
 
     func testFuenfKartenMindestensEinTreffer() {
-        let karten = (0..<5).map { testKarte("k\($0)", tags: $0 == 4 ? ["tee"] : ["krimis"]) }
+        var karten = stapel(5, tags: ["krimis"])
+        karten[4] = testKarte("k4", tags: ["tee"])
         XCTAssertEqual(richtigGuteTreffer(karten, gewichtung: gewichtung()), ["k4"])
     }
 

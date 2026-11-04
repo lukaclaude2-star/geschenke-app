@@ -74,22 +74,31 @@ public func richtigGuteTreffer(_ karten: [Karte], gewichtung: Gewichtung, anteil
         anzahl = max(anzahl, 1)
     }
     guard anzahl > 0 else { return [] }
-    let bewertet = karten.enumerated()
-        .map { (index: $0.offset, id: $0.element.id, punkte: punktzahl($0.element, gewichtung: gewichtung)) }
-        .filter { $0.punkte > 0 }
-        .sorted { $0.punkte == $1.punkte ? $0.index < $1.index : $0.punkte > $1.punkte }
-    return Set(bewertet.prefix(anzahl).map { $0.id })
+    let punkte: [Double] = karten.map { punktzahl($0, gewichtung: gewichtung) }
+    let positiv: [Int] = karten.indices.filter { punkte[$0] > 0 }
+    let reihenfolge: [Int] = positiv.sorted { (a: Int, b: Int) -> Bool in
+        if punkte[a] != punkte[b] {
+            return punkte[a] > punkte[b]
+        }
+        return a < b
+    }
+    let ids: [String] = reihenfolge.prefix(anzahl).map { karten[$0].id }
+    return Set(ids)
 }
 
 /// Grund-Chip auf der Wischkarte: Label des passenden Tags mit dem höchsten Gewicht.
 /// `nil`, wenn kein Tag der Karte ein positives Gewicht hat.
 public func passtWeil(_ karte: Karte, gewichtung: Gewichtung) -> String? {
-    let passend = Set(karte.tags).compactMap { tag -> (tag: String, gewicht: Double)? in
-        guard let gewicht = gewichtung.gewichte[tag], gewicht > 0 else { return nil }
-        return (tag: tag, gewicht: gewicht)
+    var bester: String?
+    var besteGewicht = 0.0
+    // Sortiert durchgehen, damit bei gleichem Gewicht nicht zufällig ein anderer Chip erscheint.
+    for tag in Set(karte.tags).sorted() {
+        let gewicht = gewichtung.gewichte[tag] ?? 0
+        if gewicht > besteGewicht {
+            bester = tag
+            besteGewicht = gewicht
+        }
     }
-    // Bei gleichem Gewicht nach Tag sortieren, damit der Chip nicht zufällig wechselt.
-    guard let bester = passend.max(by: { $0.gewicht == $1.gewicht ? $0.tag > $1.tag : $0.gewicht < $1.gewicht })
-    else { return nil }
-    return gewichtung.labels[bester.tag] ?? bester.tag
+    guard let tag = bester else { return nil }
+    return gewichtung.labels[tag] ?? tag
 }
