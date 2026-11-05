@@ -119,6 +119,10 @@ Wie `2026-11-04-design-vorschau.md` Task 1 und 2, zusätzlich:
 - CI-Fehler gefunden: Der Bau-Schritt meldete grün, obwohl Swift nicht kompilierte (nur `.app`-Ordner geprüft). Jetzt wird die Programmdatei geprüft.
 - A2 beim Prüfer (Runde 1). A3 danach.
 
+**Stand 05.11. 05:15 (Ende der Nacht):**
+- A3 Screens: Runde 2 ÜBERARBEITEN (8/8/7/7/8), Runde 3 FREIGEBEN (alle 8/10), angemeldet. Großschrift-Punkte nativ (Merkliste ohne Zeilenlimit ab xLarge, Motiv in den Einstellungen weicht ab xxLarge).
+- B5: letzter grüner Build 41966183169 (1.0.26). Alle Entwürfe freigegeben, wartet auf iPhone-Test und Merge durch Luka.
+
 **Stand 05.11. 05:05** (zweites Nutzungslimit ca. 01:05–05:00):
 - A2 Wischkarte v2 freigegeben (Runde 2, alle 8/10), Feinschliff eingebaut, angemeldet; alle Punkte nativ übertragen (Geste am Stapel, Auspacken endet bei 0,66, Knoten/Anhänger, Hell-Creme).
 - A3 Screens: Runde 1 ÜBERARBEITEN (7/7/6/6/6, Nunito bestätigt). Punkte in Entwurf und App umgesetzt, Runde 2 läuft. Nicht angemeldet, solange nicht freigegeben.
