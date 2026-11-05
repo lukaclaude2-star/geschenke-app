@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app.bilder import ORDNER as BILDER_ORDNER
 from app.config import settings
 from app.download import router as download_router
+from app.rechtliches import router as rechtliches_router
 from app.drossel import Drossel, schluessel_fuer
 from app.gespraech import naechster_schritt
 from app.karten import karten_fuer, sammel_karten_fuer
@@ -69,6 +70,7 @@ async def schutz(request: Request, call_next):
     return antwort
 
 app.include_router(download_router)
+app.include_router(rechtliches_router)
 # Fotos sind nicht geheim; die App lädt sie wie fremde Produktbilder ohne Token.
 app.mount("/beispielbilder", StaticFiles(directory=BILDER_ORDNER, check_dir=False), name="beispielbilder")
 
