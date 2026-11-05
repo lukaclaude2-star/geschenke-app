@@ -154,7 +154,7 @@ struct MerklisteView: View {
 
     private func zeile(_ eintrag: MerkEintrag) -> some View {
         Button {
-            if let url = URL(string: eintrag.karte.link) { oeffnen(url) }
+            if let url = eintrag.karte.sichererLink { oeffnen(url) }
         } label: {
             zeilenInhalt(eintrag)
         }
@@ -172,7 +172,7 @@ struct MerklisteView: View {
             Button("Löschen", systemImage: "trash", role: .destructive) { zustand.entferneMerk([eintrag.id]) }
         }
         .contextMenu {
-            if let url = URL(string: eintrag.karte.link) {
+            if let url = eintrag.karte.sichererLink {
                 Button("Im Shop öffnen", systemImage: "arrow.up.right.square") { oeffnen(url) }
                 ShareLink(item: url, subject: Text(eintrag.karte.titel)) {
                     Label("Teilen", systemImage: "square.and.arrow.up")
@@ -196,7 +196,9 @@ struct MerklisteView: View {
                 .strikethrough(eintrag.gekauft, color: Look.leise)
                 .lineLimit(schriftgroesse >= .xLarge ? nil : 3)
             (Text(karte.preisText).font(.zuhause(.footnote, .fett)).foregroundStyle(Look.preis)
-                + Text(karte.preisText.isEmpty ? neben : " · \(neben)").font(.zuhause(.footnote)).foregroundStyle(Look.leise))
+                + Text(karte.preisText.isEmpty ? neben : " · \(neben)").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
+                // Partnerlink: auch in der Merkliste als Werbung erkennbar (§ 5a Abs. 4 UWG).
+                + Text(karte.istAnzeige ? " · Anzeige" : "").font(.zuhause(.footnote)).foregroundStyle(Look.leise))
                 .lineLimit(2)
         }
         return Group {

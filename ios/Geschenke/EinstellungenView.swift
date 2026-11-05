@@ -7,6 +7,23 @@ struct EinstellungenView: View {
     @AppStorage(Konfiguration.tokenSchluessel) private var token = ""
     @Environment(\.dynamicTypeSize) private var schriftgroesse
     @State private var zeigeEinfuehrung = false
+    @State private var zeigeEinwilligung = false
+    @State private var frageWiderruf = false
+    @State private var frageLoeschen = false
+
+    private struct Dokument: Identifiable {
+        let id: String
+        let titel: String
+    }
+
+    /// Feste Bezeichnungen: „Impressum“ muss als solches erkennbar sein (§ 5 DDG, KG Berlin).
+    private static let dokumente = [
+        Dokument(id: "impressum", titel: "Impressum"),
+        Dokument(id: "datenschutz", titel: "Datenschutzerklärung"),
+        Dokument(id: "nutzung", titel: "So entstehen die Vorschläge"),
+        Dokument(id: "support", titel: "Hilfe und Kontakt"),
+        Dokument(id: "lizenzen", titel: "Lizenzen"),
+    ]
 
     var body: some View {
         NavigationStack {
@@ -55,12 +72,17 @@ struct EinstellungenView: View {
                 }
                 .offeneZeilen()
 
-                Section {
-                    SecureField("Server-Token", text: $token)
-                } footer: {
-                    Text("Nur nötig, wenn der Token nicht schon beim Bauen mitgegeben wurde.")
+                rechtliches
+
+                // Im App-Store-Build steckt der Token immer drin; das Feld ist nur für Builds ohne Secret.
+                if Konfiguration.tokenImBuild.isEmpty {
+                    Section {
+                        SecureField("Server-Token", text: $token)
+                    } footer: {
+                        Text("Nur nötig, wenn der Token nicht schon beim Bauen mitgegeben wurde.")
+                    }
+                    .offeneZeilen()
                 }
-                .offeneZeilen()
             }
             .zuhauseHintergrund()
             .navigationTitle("Einstellungen")
@@ -70,7 +92,53 @@ struct EinstellungenView: View {
                     zeigeEinfuehrung = false
                 }
             }
+            .sheet(isPresented: $zeigeEinwilligung) {
+                KiEinwilligungView { ja in
+                    zeigeEinwilligung = false
+                    if ja { zustand.setzeKiEinwilligung(true) }
+                }
+                .presentationBackground(Look.hintergrund)
+            }
+            .confirmationDialog("Zustimmung widerrufen?", isPresented: $frageWiderruf, titleVisibility: .visible) {
+                Button("Widerrufen", role: .destructive) { zustand.setzeKiEinwilligung(false) }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Danach schickt die App nichts mehr an den Server und die KI. Gespräch und Vorschläge gehen erst wieder, wenn du erneut zustimmst.")
+            }
+            .confirmationDialog("Alle Daten löschen?", isPresented: $frageLoeschen, titleVisibility: .visible) {
+                Button("Alles löschen", role: .destructive) { zustand.loescheAlles() }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Deine Leute, die Merkliste, alles Gelernte und deine Einstellungen auf diesem iPhone werden gelöscht. Das lässt sich nicht rückgängig machen.")
+            }
         }
+    }
+
+    /// Impressum in zwei Tippern (Reiter Einstellungen → Impressum), Zustimmung und Löschen.
+    private var rechtliches: some View {
+        Section {
+            ForEach(Self.dokumente) { dokument in
+                NavigationLink { RechtstextView(dokumentID: dokument.id) } label: {
+                    Text(dokument.titel).foregroundStyle(Look.text)
+                }
+            }
+            Button {
+                if zustand.daten.hatKiEinwilligung { frageWiderruf = true } else { zeigeEinwilligung = true }
+            } label: {
+                Text(zustand.daten.hatKiEinwilligung ? "Zustimmung zur KI widerrufen" : "Zustimmung zur KI geben")
+                    .foregroundStyle(Look.akzentText)
+            }
+            Button(role: .destructive) { frageLoeschen = true } label: {
+                Text("Alle Daten löschen")
+            }
+        } header: {
+            kopf("Datenschutz und Rechtliches")
+        } footer: {
+            Text(zustand.daten.hatKiEinwilligung
+                 ? "Du hast zugestimmt, dass die App für Gespräch und Vorschläge Text an ihren Server und die KI schickt."
+                 : "Ohne Zustimmung gehen Gespräch und Vorschläge nicht. Alles andere funktioniert.")
+        }
+        .offeneZeilen()
     }
 
     /// Startbildschirm und Auspacken.

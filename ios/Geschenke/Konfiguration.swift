@@ -9,7 +9,12 @@ enum Konfiguration {
         let gespeichert = (UserDefaults.standard.string(forKey: tokenSchluessel) ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
         if !gespeichert.isEmpty { return gespeichert }
-        return (Bundle.main.object(forInfoDictionaryKey: "AppToken") as? String ?? "")
+        return tokenImBuild
+    }
+
+    /// Leer nur bei Builds ohne GitHub-Secret; nur dann zeigen die Einstellungen das Token-Feld.
+    static var tokenImBuild: String {
+        (Bundle.main.object(forInfoDictionaryKey: "AppToken") as? String ?? "")
             .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

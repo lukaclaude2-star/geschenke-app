@@ -19,6 +19,7 @@ struct ZuhauseWischView: View {
     @State private var entscheidungen = 0
     @State private var zeigeGelernt = false
     @State private var zeigeMerkliste = false
+    @State private var zeigeSoEntstehen = false
     @State private var gewichteBeimOeffnen: [Gewichtung] = []
     private let schwelle: CGFloat = 110
 
@@ -74,6 +75,9 @@ struct ZuhauseWischView: View {
         .sensoryFeedback(.impact(weight: .light), trigger: entscheidungen)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
+                // § 5b Abs. 2 UWG: Hauptkriterien der Reihenfolge direkt bei den Ergebnissen.
+                Button { zeigeSoEntstehen = true } label: { Image(systemName: "info.circle") }
+                    .accessibilityLabel("So entstehen die Vorschläge")
                 Button { modell.zurueck() } label: { Image(systemName: "arrow.uturn.backward") }
                     .disabled(!modell.kannZurueck || wischt != nil)
                     .accessibilityLabel("Zurück")
@@ -98,6 +102,7 @@ struct ZuhauseWischView: View {
         }) {
             GelerntView(modell: modell)
         }
+        .sheet(isPresented: $zeigeSoEntstehen) { RechtstextBlatt(dokumentID: "nutzung") }
         .sheet(isPresented: $zeigeMerkliste) {
             NavigationStack {
                 MerklisteView(zumWischen: { zeigeMerkliste = false })
@@ -343,6 +348,10 @@ struct ZuhauseKarte: View {
             ZuhauseFoto(karte: karte, ecken: 16)
                 .overlay(alignment: .topLeading) {
                     if karte.istIdee { Abzeichen(text: "Idee", gefuellt: true).padding(10) }
+                }
+                // Partnerlink: als Werbung erkennbar direkt an der Karte (§ 5a Abs. 4 UWG).
+                .overlay(alignment: .topTrailing) {
+                    if karte.istAnzeige { Abzeichen(text: "Anzeige").padding(10) }
                 }
                 .padding([.horizontal, .top], 12)
                 .frame(maxHeight: .infinity)

@@ -38,6 +38,8 @@ struct LaengeView: View {
         .zuhauseHintergrund()
         .navigationTitle("Neue Suche")
         .navigationBarTitleDisplayMode(.inline)
+        // Jede neue Suche beginnt hier: vor dem ersten Gespräch die Zustimmung (Apple 5.1.2(i)).
+        .brauchtKiEinwilligung()
     }
 }
 

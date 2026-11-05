@@ -20,6 +20,8 @@ struct WischZielView: View {
     }
 
     var body: some View {
-        ZuhauseWischView(modell: modell)
+        // Gespeicherte Profile gehen beim Wischen an den Server: auch hier erst nach Zustimmung,
+        // etwa wenn sie in den Einstellungen widerrufen wurde.
+        ZuhauseWischView(modell: modell).brauchtKiEinwilligung()
     }
 }
