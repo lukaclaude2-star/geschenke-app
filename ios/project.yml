@@ -24,8 +24,10 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
-        # Schrift im Zuhause-Stil (Nunito, SIL Open Font License, siehe Schriften/Nunito-OFL.txt)
-        UIAppFonts: [Nunito-Regular.ttf, Nunito-SemiBold.ttf, Nunito-Bold.ttf, Nunito-ExtraBold.ttf]
+        # Schrift (SIL Open Font License, siehe Schriften/*-OFL.txt): Fraunces für Überschriften,
+        # Nunito Sans für Text. Feste Schnitte aus ios/werkzeuge/schriften/instanzen.py.
+        UIAppFonts: [FrauncesSoft-Bold.ttf, NunitoSans-Regular.ttf, NunitoSans-SemiBold.ttf,
+                     NunitoSans-Bold.ttf, NunitoSans-ExtraBold.ttf]
         # Kommt beim CI-Build aus dem GitHub-Secret APP_TOKEN, steht nie im Repo.
         AppToken: $(APP_TOKEN)
     settings:
