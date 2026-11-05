@@ -96,3 +96,39 @@ def test_listenpunkte():
     html = seite("impressum", texte)
     assert "<ul><li>eins</li><li>zwei</li></ul>" in html
     assert "<p>Text</p>" in html
+
+
+def _text(dokument_id: str) -> str:
+    dokument = next(d for d in lade_texte()["dokumente"] if d["id"] == dokument_id)
+    return " ".join(a for s in dokument["abschnitte"] for a in s["absaetze"])
+
+
+def test_widerruf_verspricht_nur_was_die_app_haelt():
+    # Statusabfrage beim Start und Produktfotos laufen auch ohne Zustimmung.
+    text = _text("datenschutz")
+    assert "schickt die App nichts mehr" not in text
+    assert "Bevor zum ersten Mal etwas an den Server" not in text
+    assert "keine Gespräche und keine Beschreibungen" in text
+
+
+def test_gelerntes_geht_mit_den_wuenschen_mit():
+    # Gewichtung.angewendet legt das beim Wischen Gelernte in die Wünsche, die zum Server gehen.
+    text = _text("datenschutz")
+    assert "alles Gelernte liegen nur auf deinem iPhone" not in text
+    assert "Wünsche (mit dem, was die App beim Wischen gelernt hat)" in text
+
+
+def test_reihenfolge_nennt_alle_hauptparameter():
+    # § 5b Abs. 2 UWG: die Hauptparameter des Rankings, nicht nur einen Teil.
+    text = _text("nutzung")
+    assert "richtet sich nur danach" not in text
+    for parameter in ("Abwechslung", "personalisier", "nach je zwei Produkten"):
+        assert parameter in text, parameter
+
+
+def test_app_texte_passen_zur_datenschutzerklaerung():
+    from pathlib import Path
+    ordner = Path(__file__).resolve().parents[1] / "ios" / "Geschenke"
+    swift = "".join(p.read_text(encoding="utf-8") for p in ordner.glob("*.swift"))
+    assert "schickt die App nichts mehr" not in swift
+    assert "beim Wischen gelernt" in (ordner / "KiEinwilligungView.swift").read_text(encoding="utf-8")

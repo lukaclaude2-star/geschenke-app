@@ -31,9 +31,15 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
 DROSSEL = Drossel(pro_minute=settings.drossel_pro_minute, pro_tag=settings.drossel_pro_tag)
 
 
-def drosseln(request: Request) -> None:
-    if not DROSSEL.erlaubt(schluessel_fuer(request)):
+def _gedrosselt(request: Request, kosten: int) -> None:
+    if not DROSSEL.erlaubt(schluessel_fuer(request), kosten):
         raise HTTPException(status_code=429, detail="zu_viele_anfragen")
+
+
+async def drosseln(request: Request) -> None:
+    # async: läuft auf der Ereignisschleife statt im Thread-Pool, also nie zwei gleichzeitig am Dict.
+    # Keine weiteren Parameter: FastAPI machte sie zu Query-Parametern, die der Client setzen kann.
+    _gedrosselt(request, 1)
 
 
 app = FastAPI(title="Geschenke", docs_url=None, redoc_url=None, openapi_url=None)
@@ -110,5 +116,7 @@ async def route_karten(anfrage: KartenAnfrage) -> KartenAntwort:
 
 
 @app.post("/karten/sammel", dependencies=geschuetzt)
-async def route_karten_sammel(anfrage: KartenSammelAnfrage) -> KartenSammelAntwort:
+async def route_karten_sammel(anfrage: KartenSammelAnfrage, request: Request) -> KartenSammelAntwort:
+    # Jede Person kann eine eigene KI-Anfrage auslösen; eine zählt schon die Abhängigkeit.
+    _gedrosselt(request, kosten=len(anfrage.personen) - 1)
     return await sammel_karten_fuer(KATALOG, anfrage)

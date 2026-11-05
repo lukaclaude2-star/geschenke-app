@@ -103,7 +103,7 @@ struct EinstellungenView: View {
                 Button("Widerrufen", role: .destructive) { zustand.setzeKiEinwilligung(false) }
                 Button("Abbrechen", role: .cancel) {}
             } message: {
-                Text("Danach schickt die App nichts mehr an den Server und die KI. Gespräch und Vorschläge gehen erst wieder, wenn du erneut zustimmst.")
+                Text("Danach schickt die App keine Gespräche und keine Beschreibungen mehr an den Server und die KI. Gespräch und Vorschläge gehen erst wieder, wenn du erneut zustimmst.")
             }
             .confirmationDialog("Alle Daten löschen?", isPresented: $frageLoeschen, titleVisibility: .visible) {
                 Button("Alles löschen", role: .destructive) { zustand.loescheAlles() }

@@ -41,10 +41,15 @@ class Drossel:
         self._uhr = uhr
         # Schlüssel → [Minute, Anzahl in der Minute, Tag, Anzahl am Tag]
         self._eintraege: dict[str, list[int]] = {}
+        self._tag: int | None = None
 
-    def erlaubt(self, schluessel: str) -> bool:
+    def erlaubt(self, schluessel: str, kosten: int = 1) -> bool:
         jetzt = self._uhr()
         minute, tag = int(jetzt // 60), int(jetzt // 86400)
+        if tag != self._tag:
+            # Was vom Vortag stammt, fliegt raus (Datenschutzerklärung: höchstens einen Tag).
+            self._eintraege = {s: e for s, e in self._eintraege.items() if e[2] == tag}
+            self._tag = tag
         eintrag = self._eintraege.get(schluessel)
         if eintrag is None:
             self._platz_schaffen(tag)
@@ -53,10 +58,10 @@ class Drossel:
             eintrag[0], eintrag[1] = minute, 0
         if eintrag[2] != tag:
             eintrag[2], eintrag[3] = tag, 0
-        if eintrag[1] >= self.pro_minute or eintrag[3] >= self.pro_tag:
+        if eintrag[1] + kosten > self.pro_minute or eintrag[3] + kosten > self.pro_tag:
             return False
-        eintrag[1] += 1
-        eintrag[3] += 1
+        eintrag[1] += kosten
+        eintrag[3] += kosten
         return True
 
     def zuruecksetzen(self) -> None:

@@ -3,11 +3,13 @@
 import logging
 
 import httpx
+import pytest
 import respx
+from pydantic import ValidationError
 
 from app.ki import GROQ_URL, KiUeberlastet, frage_json
-from app.modelle import (ChatNachricht, KartenAnfrage, Profil, ProfilAendernAnfrage, SammelPerson,
-                         Wunsch)
+from app.modelle import (Ausschluss, ChatNachricht, KartenAnfrage, Profil, ProfilAendernAnfrage,
+                         SammelPerson, Wunsch)
 
 
 def profil() -> Profil:
@@ -36,6 +38,44 @@ def test_gesehen_behaelt_die_letzten():
     person = SammelPerson(id="0", profil=profil(), gesehen=gesehen)
     assert len(person.gesehen) == 10_000
     assert person.gesehen[-1] == "11999"
+
+
+def test_doppelte_ausschluesse_fallen_weg():
+    # Wiederholte Ausschlüsse kosten bei jedem Produkt Rechenzeit, sagen aber nichts Neues.
+    gleich = [{"schluessel": "eigenschaft:alkohol", "label": "kein Alkohol"}] * 1000
+    p = Profil(zusammenfassung="x", wuensche=[], ausschluesse=gleich)
+    assert [a.schluessel for a in p.ausschluesse] == ["eigenschaft:alkohol"]
+
+
+def test_zu_viele_ausschluesse_abgelehnt():
+    # Kürzen hieße, einen Ausschluss stillschweigend zu ignorieren (Grundbaustein 3).
+    viele = [{"schluessel": f"wort:w{i}", "label": "x"} for i in range(31)]
+    with pytest.raises(ValidationError):
+        Profil(zusammenfassung="x", wuensche=[], ausschluesse=viele)
+    assert len(Profil(zusammenfassung="x", wuensche=[], ausschluesse=viele[:30]).ausschluesse) == 30
+
+
+def test_zu_langer_ausschluss_abgelehnt():
+    with pytest.raises(ValidationError):
+        Ausschluss(schluessel="wort:" + "a" * 300, label="x")
+
+
+def test_wuensche_behalten_die_staerksten():
+    wuensche = [{"tag": f"t{i}", "label": "x", "gewicht": i / 100} for i in range(150)]
+    p = Profil(zusammenfassung="x", wuensche=wuensche, ausschluesse=[])
+    assert [w.tag for w in p.wuensche] == [f"t{i}" for i in range(50, 150)]
+
+
+def test_kaputtes_gewicht_wird_validierungsfehler():
+    kaputt = [{"tag": f"t{i}", "label": "x", "gewicht": "viel"} for i in range(101)]
+    with pytest.raises(ValidationError):
+        Profil(zusammenfassung="x", wuensche=kaputt, ausschluesse=[])
+
+
+def test_kurze_felder_gekuerzt():
+    w = Wunsch(tag="t" * 500, label="l" * 500, gewicht=1)
+    assert (len(w.tag), len(w.label)) == (100, 100)
+    assert len(Ausschluss(schluessel="wort:bier", label="l" * 500).label) == 100
 
 
 def test_zu_viele_nachrichten_abgelehnt(client, auth):

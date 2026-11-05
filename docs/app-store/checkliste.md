@@ -21,7 +21,8 @@ Quellen: `recherche.md`. Prüfen, was automatisch prüfbar ist:
 ## 2. Angaben eintragen (Claude macht das, wenn du sie nennst)
 
 - [ ] Name, Straße, PLZ und Ort, E-Mail, Telefon → `rechtliches/rechtliches.json` (Abschnitt
-      `angaben`). Danach stehen sie in App und Webseiten.
+      `angaben`). Die Webseiten zeigen sie nach dem nächsten Render-Deploy, die App erst mit dem
+      nächsten App-Build (die Texte liegen offline in der App).
 - [ ] Hast du eine **Wirtschafts-Identifikationsnummer** oder **USt-IdNr.**: ins Impressum
       (als Kleinunternehmer meist keine USt-IdNr.).
 
@@ -30,6 +31,10 @@ Quellen: `recherche.md`. Prüfen, was automatisch prüfbar ist:
 - [ ] console.groq.com → Settings → **Data Controls → Zero Data Retention** einschalten. Dann
       speichert Groq gar nichts mehr. Sag Claude Bescheid, dann fällt der Satz „bis zu 30 Tage“
       aus Datenschutzerklärung und Zustimmung.
+
+- [ ] **Render:** im Dashboard prüfen, dass der Dienst in **Frankfurt** läuft (`render.yaml` sagt
+      es, die Datenschutzerklärung auch). Außerdem nachsehen, ob der Auftragsverarbeitungsvertrag
+      (render.com/dpa) automatisch gilt oder im Dashboard abgeschlossen werden muss.
 
 ## 4. App Store Connect
 
@@ -81,7 +86,9 @@ Dann lädt ein Workflow den Build zu TestFlight hoch. Erst TestFlight testen, da
 ## 6. Geld verdienen
 
 - [ ] **Awin** (nach dem Gewerbe): als Werbefläche die App angeben. Feeds aus Partnerprogrammen
-      erlauben die Produktfotos. Partnerlinks bekommen in der App automatisch „Anzeige“.
+      erlauben die Produktfotos. Partnerlinks bekommen in der App automatisch „Anzeige“, solange
+      ihre Domain in `app/partnerlinks.py` steht (Awin ja). Bei jedem neuen Netzwerk (z. B. CJ)
+      oder eigenem Shop-Programm: Claude die Domain nachtragen lassen, sonst fehlt „Anzeige“.
 - [ ] **Amazon PartnerNet** (später): Dann muss der Satz „Als Amazon-Partner verdiene ich an
       qualifizierten Verkäufen.“ in „So entstehen die Vorschläge“ (Claude ergänzt). Vorher prüfen:
       Amazon erlaubt Preisangaben nur aus der eigenen Schnittstelle; die geschätzten Preisspannen
@@ -96,12 +103,19 @@ Dann lädt ein Workflow den Build zu TestFlight hoch. Erst TestFlight testen, da
    „zzgl. Versand“ direkt am Preis.
 3. **Öffentliche Adresse** (siehe oben).
 4. **Kein echter Schutz des App-Tokens:** Er steckt in jeder öffentlichen App. Die Drosselung
-   begrenzt den Schaden. Echter Schutz (App Attest) geht erst mit dem bezahlten Konto.
+   (15 Anfragen pro Minute, 200 am Tag je Verbindung, die Sammelsuche zählt je Person) begrenzt,
+   was eine Verbindung vom Groq-Kontingent verbrauchen kann. Wer viele IP-Adressen hat, kommt
+   trotzdem weiter. Echter Schutz (App Attest) geht erst mit dem bezahlten Konto.
+5. **Geteilte IP-Adresse:** Eine Schulklasse im selben WLAN zählt als eine Verbindung. Probieren
+   viele gleichzeitig, kommt „Gerade kommen sehr viele Anfragen“. Bei Bedarf Grenzen anheben
+   (`DROSSEL_PRO_MINUTE`, `DROSSEL_PRO_TAG` als Umgebungsvariable bei Render).
 
 ## 8. Am iPhone testen (nächste SideStore-Version)
 
 - [ ] Neue Suche → erst „bevor wir loslegen.“, „Nicht jetzt“ geht zurück, „Einverstanden“ startet.
 - [ ] Gespeichertes Profil wischen nach Widerruf → wieder die Zustimmung.
+- [ ] Widerruf mitten in der Suche: Start → Neue Suche → Chat → Wischen, dann im Reiter
+      Einstellungen widerrufen, zurück zum Start-Reiter → Wischen und Chat dürfen nicht weiterlaufen.
 - [ ] Profil per Chat ändern ohne Zustimmung → Zustimmung als Blatt, danach wird gesendet.
 - [ ] Chat zeigt oben „Du schreibst mit einer KI. Sie kann sich irren.“
 - [ ] Einstellungen → Datenschutz und Rechtliches: Impressum, Datenschutzerklärung, So entstehen
@@ -118,7 +132,7 @@ Dann lädt ein Workflow den Build zu TestFlight hoch. Erst TestFlight testen, da
 - „Anzeige“ an Partnerlinks (Karte und Merkliste), Erklärung der Reihenfolge beim Wischen
 - „Alle Daten löschen“ (auch alte Sicherungsdateien)
 - Privacy Manifest, Verschlüsselungs-Angabe, CI prüft beides in jedem Build
-- Server: Drosselung je Verbindung, Längen- und Größengrenzen, Sicherheits-Header, `/docs` aus,
-  keine Nutzertexte mehr im Log, nur Web-Links werden geöffnet
+- Server: Drosselung je Verbindung, Längen- und Größengrenzen (auch für Wünsche und Ausschlüsse),
+  Sicherheits-Header, `/docs` aus, keine Nutzertexte mehr im Log, nur Web-Links werden geöffnet
 - Abhängigkeits-Prüfung (`pip-audit`) in der CI, Geheimnis-Scan über den Git-Verlauf (sauber)
 - Workflow „Server wachhalten“ für die Prüfphase

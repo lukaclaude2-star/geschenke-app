@@ -81,6 +81,48 @@ def test_kein_klartext_ip():
     assert "10.0.0.1" not in schluessel
 
 
+def test_kosten_zaehlen_mehrfach():
+    d = Drossel(pro_minute=10, pro_tag=100, uhr=Uhr())
+    assert d.erlaubt("a", kosten=8)
+    assert not d.erlaubt("a", kosten=3)
+    assert d.erlaubt("a", kosten=2)
+    assert not d.erlaubt("a")
+
+
+def test_alte_tage_verfallen():
+    # Datenschutzerklärung: Der Zähler verfällt spätestens nach einem Tag.
+    uhr = Uhr(86400 * 100)
+    d = Drossel(pro_minute=5, pro_tag=100, uhr=uhr)
+    d.erlaubt("a")
+    uhr.jetzt = 86400 * 101 + 5
+    d.erlaubt("b")
+    assert "a" not in d._eintraege
+
+
+def test_grenzen_unter_dem_groq_kontingent():
+    # Groq gratis: je Modell 1.000 Anfragen und 200.000 Token am Tag, für alle Nutzer zusammen.
+    from app.config import Settings
+    assert Settings.model_fields["drossel_pro_minute"].default <= 15
+    assert Settings.model_fields["drossel_pro_tag"].default <= 200
+
+
+def test_drossel_laeuft_auf_der_ereignisschleife():
+    # Synchron liefe sie im Thread-Pool, und zwei Threads änderten gleichzeitig dasselbe Dict.
+    import inspect
+
+    from app import main
+    assert inspect.iscoroutinefunction(main.drosseln)
+
+
+def test_kosten_nicht_von_aussen_setzbar(client, auth, monkeypatch):
+    from app import main
+    monkeypatch.setattr(main, "DROSSEL", Drossel(pro_minute=1, pro_tag=100))
+    leer = {"laenge": "normal", "nachrichten": []}
+    status = [client.post("/chat/naechste?kosten=0", json=leer, headers=auth).status_code
+              for _ in range(2)]
+    assert status == [200, 429]
+
+
 def test_route_429(client, auth, monkeypatch):
     from app import main
     monkeypatch.setattr(main, "DROSSEL", Drossel(pro_minute=2, pro_tag=100))

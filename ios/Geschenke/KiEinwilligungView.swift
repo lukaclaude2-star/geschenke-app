@@ -12,7 +12,7 @@ struct KiEinwilligungView: View {
 
     private let punkte = [
         "**Du schreibst mit einer KI.** Was du über die Person erzählst, schickt die App an ihren Server in Frankfurt und von dort an den KI-Dienst Groq in den USA. Der Server speichert davon nichts, Groq höchstens 30 Tage zur Abwehr von Missbrauch.",
-        "**Für die Vorschläge** geht auch die Beschreibung der Person mit: Wünsche, Ausschlüsse und Budget. Nie der Name, unter dem du sie speicherst, und nie eine Gerätekennung.",
+        "**Für die Vorschläge** geht auch die Beschreibung der Person mit: Wünsche (mit dem, was die App beim Wischen gelernt hat), Ausschlüsse und Budget. Nie der Name, unter dem du sie speicherst, und nie eine Gerätekennung.",
         "**Produktfotos** lädt die App direkt von den Shops. Die sehen dabei, wie bei jeder Webseite, deine IP-Adresse.",
         "**Bitte keine** vollständigen Namen, Adressen oder Angaben zur Gesundheit. „Meine Oma, 70, gärtnert gern“ reicht völlig.",
     ]
