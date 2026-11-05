@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from app.bilder import ORDNER as BILDER_ORDNER
 from app.config import settings
 from app.download import router as download_router
+from app.drossel import Drossel, schluessel_fuer
 from app.gespraech import naechster_schritt
 from app.karten import karten_fuer, sammel_karten_fuer
 from app.katalog.laden import lade_katalog
@@ -26,8 +27,17 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
 
 # Die Schnittstellen-Doku (/docs, /redoc, /openapi.json) bleibt aus: Sie würde jedem zeigen,
 # welche Routen es gibt und was sie annehmen.
+DROSSEL = Drossel(pro_minute=settings.drossel_pro_minute, pro_tag=settings.drossel_pro_tag)
+
+
+def drosseln(request: Request) -> None:
+    if not DROSSEL.erlaubt(schluessel_fuer(request)):
+        raise HTTPException(status_code=429, detail="zu_viele_anfragen")
+
+
 app = FastAPI(title="Geschenke", docs_url=None, redoc_url=None, openapi_url=None)
-geschuetzt = [Depends(pruefe_token)]
+# Erst der Token, dann die Drossel: Fremde ohne Token verbrauchen keine Zähler.
+geschuetzt = [Depends(pruefe_token), Depends(drosseln)]
 
 # Größte erlaubte Anfrage. Die längste echte ist die Sammelsuche mit 12 Profilen und deren
 # Gesehen-Listen, sie bleibt weit darunter.

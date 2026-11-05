@@ -16,3 +16,11 @@ def client():
 @pytest.fixture
 def auth():
     return {"Authorization": "Bearer test"}
+
+
+@pytest.fixture(autouse=True)
+def drossel_frisch():
+    """Jeder Test beginnt mit leeren Zählern, sonst sperrt die Drossel spätere Tests."""
+    from app import main
+    main.DROSSEL.zuruecksetzen()
+    yield
