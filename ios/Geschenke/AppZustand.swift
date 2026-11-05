@@ -1,28 +1,20 @@
 import Foundation
 import GeschenkeCore
 
-/// Hält Profile, Merkliste und Design und speichert jede Änderung sofort – nur auf dem Handy.
+/// Hält Profile, Merkliste und Einstellungen und speichert jede Änderung sofort – nur auf dem Handy.
 @MainActor
 final class AppZustand: ObservableObject {
     @Published private(set) var daten: AppDaten
-    @Published var zeigeEinstellungen = false
     private let speicher: AppDatenSpeicher
 
     init() {
         let ordner = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         speicher = AppDatenSpeicher(datei: ordner.appendingPathComponent("appdaten.json"))
         daten = speicher.laden()
-        Look.palette = Designs.palette(daten.design)
     }
 
     var api: GeschenkeAPI {
         GeschenkeAPI(basis: Konfiguration.serverURL, token: Konfiguration.token, transport: URLSessionTransport())
-    }
-
-    func setzeDesign(_ id: String) {
-        Look.palette = Designs.palette(id)
-        daten.design = Look.palette.id
-        sichern()
     }
 
     func setzeSchrift(_ stufe: Schriftstufe) {
@@ -98,6 +90,29 @@ final class AppZustand: ObservableObject {
 
     func entferneMerk(_ ids: [UUID]) {
         daten.merkliste.removeAll { ids.contains($0.id) }
+        sichern()
+    }
+
+    /// „Alles löschen“ in der Merkliste (nur nach Bestätigung aufrufen).
+    func leereMerkliste() {
+        daten.merkliste = []
+        sichern()
+    }
+
+    func setzeGekauft(_ id: UUID, _ gekauft: Bool) {
+        guard let i = daten.merkliste.firstIndex(where: { $0.id == id }) else { return }
+        daten.merkliste[i].gekauft = gekauft
+        sichern()
+    }
+
+    func setzeMerkOrdnung(_ ordnung: MerkOrdnung) {
+        daten.merkOrdnung = ordnung.rawValue
+        sichern()
+    }
+
+    /// Sofort speichern: Wer nach dem Überspringen die App beendet, soll sie nicht nochmal sehen.
+    func setzeEinfuehrungGesehen() {
+        daten.einfuehrungGesehen = true
         sichern()
     }
 

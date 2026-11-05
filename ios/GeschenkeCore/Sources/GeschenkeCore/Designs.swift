@@ -1,56 +1,32 @@
 import Foundation
 
-/// Das Design der App: nur noch „Zuhause“ mit Abendlicht und Hell (Luka, 05.11.2026).
-/// Die übrigen Designs sind entfernt; ihre Stile bleiben im Enum, bis die Views aufgeräumt sind.
-/// Die Farben liegen hier statt in der App, damit ein Test die Lesbarkeit prüfen kann.
-public enum DesignStil: Equatable {
-    case normal, deco, pinnwand, zuhause
-}
-
-public struct Palette: Equatable, Identifiable {
-    public let id: String
-    public let name: String
+/// Farben des einzigen Designs „Zuhause“ in den Farbwelten Abendlicht und Hell
+/// (docs/design/palette-zuhause.md). Sie liegen hier statt in der App, damit ein Test die
+/// Lesbarkeit prüfen kann.
+public struct Palette: Equatable {
     public let hell: Bool
-    public let stil: DesignStil
     public let hintergrund: UInt32
     public let karte: UInt32
     public let rand: UInt32
     public let text: UInt32
     public let akzent: UInt32
-    /// Textfarbe auf Akzentflächen (z. B. Herz-Knopf, Abzeichen „für Mama“).
+    /// Textfarbe auf Akzentflächen (z. B. Knopf „merken“, Abzeichen „für Mama“).
     public let aufAkzent: UInt32
     public let preis: UInt32
 }
 
 public enum Designs {
-    public static let standard = zuhauseID
-
-    public static let alle: [Palette] = [
-        zuhauseAbend,
-    ]
-
-    /// „Zuhause“ hat zwei Farbwelten (docs/design/palette-zuhause.md). In `alle` steht nur das
-    /// Abendlicht; welche Farbwelt gilt, entscheidet `palette(_:erscheinung:systemDunkel:)`.
-    public static let zuhauseID = "zuhause"
-
     public static let zuhauseAbend = Palette(
-        id: zuhauseID, name: "Zuhause", hell: false, stil: .zuhause,
-        hintergrund: 0x23160C, karte: 0x452C1B, rand: 0x5E3F27, text: 0xF1E3C6,
+        hell: false, hintergrund: 0x23160C, karte: 0x452C1B, rand: 0x5E3F27, text: 0xF1E3C6,
         akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0xEFB249)
 
     // aufAkzent dunkel: das helle #FFF6E6 aus dem Muster erreicht auf Kupfer nur ca. 3,4.
     public static let zuhauseHell = Palette(
-        id: zuhauseID, name: "Zuhause", hell: true, stil: .zuhause,
-        hintergrund: 0xEFE6D6, karte: 0xF8F1E5, rand: 0xE0D0B5, text: 0x23160C,
+        hell: true, hintergrund: 0xEFE6D6, karte: 0xF8F1E5, rand: 0xE0D0B5, text: 0x23160C,
         akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0x9A3A24)
 
-    public static func palette(_ id: String) -> Palette {
-        alle.first { $0.id == id } ?? alle[0]
-    }
-
-    /// Palette mit Blick auf die Erscheinung. Alte, gespeicherte Design-IDs landen ebenfalls bei
-    /// „Zuhause“, deshalb spielt die ID keine Rolle mehr.
-    public static func palette(_ id: String, erscheinung: Erscheinung, systemDunkel: Bool) -> Palette {
+    /// Farbwelt nach der Einstellung „Erscheinung“ und dem Dunkelmodus des iPhones.
+    public static func palette(erscheinung: Erscheinung, systemDunkel: Bool) -> Palette {
         switch erscheinung {
         case .automatisch: return systemDunkel ? zuhauseAbend : zuhauseHell
         case .hell: return zuhauseHell
@@ -60,7 +36,7 @@ public enum Designs {
 
     /// Ob die App hell (`true`) oder dunkel (`false`) erzwingen soll; `nil` heißt: dem
     /// Dunkelmodus des iPhones folgen.
-    public static func erzwingtHell(_ id: String, erscheinung: Erscheinung) -> Bool? {
+    public static func erzwingtHell(_ erscheinung: Erscheinung) -> Bool? {
         switch erscheinung {
         case .automatisch: return nil
         case .hell: return true

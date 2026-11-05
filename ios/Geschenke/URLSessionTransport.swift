@@ -23,3 +23,6 @@ extension APIFehler {
 func fehlerText(_ fehler: Error) -> String {
     (fehler as? APIFehler)?.meldung ?? "Etwas ist schiefgegangen."
 }
+
+/// Render Free schläft nach 15 Minuten und braucht bis zu einer Minute zum Aufwachen.
+let wachtAufText = "Der Server schläft noch, ich wecke ihn. Das dauert beim ersten Mal bis zu einer Minute."

@@ -8,24 +8,9 @@ enum ZuhauseGewicht: String {
     case halbfett = "NunitoSans-SemiBold"
     case fett = "NunitoSans-Bold"
     case extrafett = "NunitoSans-ExtraBold"
-
-    var system: Font.Weight {
-        switch self {
-        case .normal: return .regular
-        case .halbfett: return .semibold
-        case .fett: return .bold
-        case .extrafett: return .heavy
-        }
-    }
 }
 
 extension Font {
-    /// Für Ansichten, die alle Designs teilen: im Zuhause-Stil Nunito Sans, sonst Systemschrift
-    /// im selben Gewicht (die alten Designs sehen unverändert aus).
-    static func app(_ stil: Font.TextStyle, _ gewicht: ZuhauseGewicht = .normal) -> Font {
-        Look.stil == .zuhause ? .zuhause(stil, gewicht) : .system(stil, weight: gewicht.system)
-    }
-
     static func zuhause(_ stil: Font.TextStyle, _ gewicht: ZuhauseGewicht = .normal) -> Font {
         .custom(gewicht.rawValue, size: grundgroesse(stil), relativeTo: stil)
     }

@@ -50,7 +50,6 @@ final class AppDatenTests: XCTestCase {
     func testAlteDatenOhneErscheinung() throws {
         let json = #"{"profile":[],"merkliste":[],"design":"zuhause","schriftgroesse":"normal"}"#
         let daten = try JSONDecoder().decode(AppDaten.self, from: Data(json.utf8))
-        XCTAssertEqual(daten.design, "zuhause")
         XCTAssertEqual(daten.erscheinung, "automatisch")
         XCTAssertTrue(daten.startTippen)
         XCTAssertEqual(daten.auspacken, "normal")

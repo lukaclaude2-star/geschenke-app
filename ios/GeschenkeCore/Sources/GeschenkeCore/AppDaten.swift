@@ -4,7 +4,6 @@ import Foundation
 public struct AppDaten: Codable, Equatable {
     public var profile: [GespeichertesProfil] = []
     public var merkliste: [MerkEintrag] = []
-    public var design: String = Designs.standard
     /// Rohwert einer `Schriftstufe` – als Text gespeichert, damit unbekannte Werte nichts kaputt machen.
     public var schriftgroesse: String = "normal"
     /// Rohwert einer `Erscheinung` (Hell, Abendlicht oder dem iPhone folgen).
@@ -21,18 +20,16 @@ public struct AppDaten: Codable, Equatable {
     public init() {}
 
     enum CodingKeys: String, CodingKey {
-        case profile, merkliste, design, schriftgroesse, erscheinung, startTippen, auspacken
+        case profile, merkliste, schriftgroesse, erscheinung, startTippen, auspacken
         case merkOrdnung, einfuehrungGesehen
     }
 
     // Neue Felder immer optional lesen – sonst landen die Daten aus v1 in appdaten.kaputt-*.json.
+    // Der Schlüssel „design“ aus der Zeit mit mehreren Designs wird einfach übergangen.
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         profile = try c.decodeIfPresent([GespeichertesProfil].self, forKey: .profile) ?? []
         merkliste = try c.decodeIfPresent([MerkEintrag].self, forKey: .merkliste) ?? []
-        // Es gibt nur noch „Zuhause“: alte Auswahl (z. B. „nachtblau“) wird beim Laden ersetzt.
-        _ = try c.decodeIfPresent(String.self, forKey: .design)
-        design = Designs.standard
         schriftgroesse = try c.decodeIfPresent(String.self, forKey: .schriftgroesse) ?? "normal"
         erscheinung = try c.decodeIfPresent(String.self, forKey: .erscheinung) ?? "automatisch"
         startTippen = try c.decodeIfPresent(Bool.self, forKey: .startTippen) ?? true

@@ -68,7 +68,7 @@ struct ZuhauseWischView: View {
         .padding(.horizontal, 18)
         .padding(.bottom, 8)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .nachtblau()
+        .zuhauseHintergrund()
         .navigationTitle(modell.titel)
         .navigationBarTitleDisplayMode(.inline)
         .sensoryFeedback(.impact(weight: .light), trigger: entscheidungen)
@@ -100,7 +100,8 @@ struct ZuhauseWischView: View {
         }
         .sheet(isPresented: $zeigeMerkliste) {
             NavigationStack {
-                MerklisteView().toolbar { Button("Fertig") { zeigeMerkliste = false } }
+                MerklisteView(zumWischen: { zeigeMerkliste = false })
+                    .toolbar { ToolbarItem(placement: .topBarLeading) { Button("Fertig") { zeigeMerkliste = false } } }
             }
             .presentationBackground(Look.hintergrund)
         }
@@ -185,7 +186,7 @@ struct ZuhauseWischView: View {
         VStack(spacing: 12) {
             if modell.laedt {
                 ProgressView().tint(Look.akzent)
-                Text(modell.wachtAuf ? "Server wacht auf …" : "Suche passende Geschenke …")
+                Text(modell.wachtAuf ? wachtAufText : "Suche passende Geschenke …")
                     .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
             } else if let fehler = modell.fehler {
                 Text(fehler).font(.zuhause(.subheadline)).foregroundStyle(Look.leise).multilineTextAlignment(.center)
@@ -357,7 +358,7 @@ struct ZuhauseKarte: View {
                 } else if let grund {
                     Text(grund).font(.zuhause(.caption, .halbfett)).foregroundStyle(Look.text)
                         .padding(.horizontal, 10).padding(.vertical, 3)
-                        .background(Color(hex: Look.palette.hell ? 0xE6D9C3 : 0x3A2516), in: Capsule())
+                        .background(Look.flaeche, in: Capsule())
                         .overlay(Capsule().stroke(Color(hex: Look.palette.hell ? 0xE0D0B5 : 0x7B5930), lineWidth: 1))
                 }
             }
@@ -378,6 +379,15 @@ struct Verpackung: View, Animatable {
     var auspacken: Double
     let name: String
     let ruhig: Bool
+
+    /// Ausdrücklich, weil die privaten Konstanten unten den automatischen Initialisierer
+    /// dateiprivat machen; die Einführung nutzt die Verpackung für ihre Übungskarte.
+    init(offen: Double, auspacken: Double, name: String, ruhig: Bool) {
+        self.offen = offen
+        self.auspacken = auspacken
+        self.name = name
+        self.ruhig = ruhig
+    }
 
     var animatableData: AnimatablePair<Double, Double> {
         get { AnimatablePair(offen, auspacken) }

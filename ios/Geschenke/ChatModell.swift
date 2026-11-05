@@ -97,7 +97,7 @@ final class ChatModell: ObservableObject {
         }
     }
 
-    /// Zeigt nach 5 Sekunden „Server wacht auf …“ – Render Free braucht aus dem Schlaf bis zu einer Minute.
+    /// Zeigt nach 5 Sekunden den Wartetext (`wachtAufText`) – Render Free braucht aus dem Schlaf bis zu einer Minute.
     private func mitWarten(_ arbeit: @escaping () async throws -> Void) async {
         denkt = true
         wachtAuf = false
