@@ -28,7 +28,7 @@ struct ChatView: View {
                         if modell.denkt {
                             HStack(spacing: 8) {
                                 ProgressView().tint(Look.akzent)
-                                Text(modell.wachtAuf ? "Server wacht auf …" : "…")
+                                Text(modell.wachtAuf ? wachtAufText : "…")
                                     .foregroundStyle(Look.leise)
                             }
                             .id("denkt")
@@ -53,7 +53,7 @@ struct ChatView: View {
 
             unten
         }
-        .nachtblau()
+        .zuhauseHintergrund()
         .navigationTitle("Erzähl mal")
         .navigationBarTitleDisplayMode(.inline)
         .task { await modell.start() }
@@ -78,7 +78,7 @@ struct ChatView: View {
             }
         }
         .navigationDestination(isPresented: $zeigeWischen) {
-            if let stapel { PassendeWischView(modell: stapel) }
+            if let stapel { ZuhauseWischView(modell: stapel) }
         }
     }
 
@@ -141,19 +141,18 @@ struct Blase: View {
 
     var body: some View {
         let vonApp = nachricht.rolle == "app"
-        let zuhause = Look.stil == .zuhause
-        let ecken: CGFloat = zuhause ? 18 : 14
+        let ecken: CGFloat = 18
         HStack {
             if !vonApp { Spacer(minLength: 40) }
             Text(nachricht.text)
-                .padding(.horizontal, zuhause ? 14 : 12)
-                .padding(.vertical, zuhause ? 10 : 9)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 10)
                 .foregroundStyle(vonApp ? Look.text : Look.aufAkzent)
                 .background(vonApp ? Look.karte : Look.akzent)
                 .clipShape(RoundedRectangle(cornerRadius: ecken))
                 .overlay {
                     // Hell: feine Kante wie bei den Karten (DESIGN.md 5)
-                    if zuhause && vonApp && Look.palette.hell {
+                    if vonApp && Look.palette.hell {
                         RoundedRectangle(cornerRadius: ecken).stroke(Look.rand, lineWidth: 1)
                     }
                 }
@@ -171,7 +170,7 @@ struct ProfilSpeichernView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
-            Text("Als Profil speichern?").font(.app(.title3, .fett))
+            Text("Als Profil speichern?").font(.titel(.title3))
             Text(profil.zusammenfassung).foregroundStyle(Look.leise)
             ErkannteStichwoerter(profil: profil)
             TextField("", text: $name, prompt: Text("z. B. Oma Gerda").foregroundStyle(Look.leise))
@@ -205,10 +204,10 @@ struct ErkannteStichwoerter: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Erkannte Stichwörter").font(.app(.subheadline, .halbfett))
+            Text("Erkannte Stichwörter").font(.zuhause(.subheadline, .halbfett))
             if profil.wuensche.isEmpty {
                 Text("Keine – erzähl ruhig mehr über Hobbys und Interessen.")
-                    .font(.app(.footnote)).foregroundStyle(Look.leise)
+                    .font(.zuhause(.footnote)).foregroundStyle(Look.leise)
             } else {
                 FlussLayout(abstand: 6) {
                     ForEach(profil.wuensche, id: \.tag) { Abzeichen(text: $0.label) }
@@ -216,7 +215,7 @@ struct ErkannteStichwoerter: View {
             }
             if !profil.ausschluesse.isEmpty {
                 Text("Nie: " + profil.ausschluesse.map(\.label).joined(separator: ", "))
-                    .font(.app(.footnote)).foregroundStyle(Look.leise)
+                    .font(.zuhause(.footnote)).foregroundStyle(Look.leise)
             }
         }
     }

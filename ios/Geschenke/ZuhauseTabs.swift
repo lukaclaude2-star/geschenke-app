@@ -19,43 +19,41 @@ struct ZuhauseTabs: View {
                 NavigationStack { ZuhauseWischenListe() }
             }
             Tab("Merkliste", systemImage: "heart", value: ZuhauseReiter.merkliste) {
-                NavigationStack { MerklisteView() }
+                NavigationStack { MerklisteView(zumWischen: { reiter = .wischen }) }
             }
             Tab("Einstellungen", systemImage: "gearshape", value: ZuhauseReiter.einstellungen) {
-                EinstellungenView(alsReiter: true)
+                EinstellungenView()
             }
         }
     }
 }
 
-/// Reiter „Wischen“: für wen weitersuchen?
+/// Reiter „Wischen“: für wen weitersuchen? Offen auf dem Hintergrund, ohne Kachelflächen.
 struct ZuhauseWischenListe: View {
     @EnvironmentObject private var zustand: AppZustand
 
     var body: some View {
+        let profile = zustand.daten.profile
         ScrollView {
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("wischen").font(.zuhause(.largeTitle, .extrafett))
-                    Text(zustand.daten.profile.isEmpty ? "noch niemand gespeichert" : "für wen soll ich weitersuchen?")
+                    Text("wischen").font(.titel(.largeTitle))
+                    Text(profile.isEmpty ? "noch niemand gespeichert" : "für wen soll ich weitersuchen?")
                         .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                 }
                 .padding(.top, 8)
-                if zustand.daten.profile.isEmpty {
+                if profile.isEmpty {
                     VStack(spacing: 12) {
                         Image("coco-katze").resizable().scaledToFit().frame(width: 130)
                             .accessibilityHidden(true)
                         Text("Starte eine Suche. Danach kannst du die Person speichern und hier weiterwischen.")
                             .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                             .multilineTextAlignment(.center)
-                        NavigationLink { LaengeView() } label: { Text("Gespräch starten") }
-                            .buttonStyle(GoldKnopf())
                     }
-                    .padding(16).frame(maxWidth: .infinity)
-                    .zuhauseKarte(ecken: 16)
+                    .padding(.vertical, 12).frame(maxWidth: .infinity)
                 } else {
                     VStack(spacing: 0) {
-                        ForEach(Array(zustand.daten.profile.enumerated()), id: \.element.id) { nummer, eintrag in
+                        ForEach(Array(profile.enumerated()), id: \.element.id) { nummer, eintrag in
                             if nummer > 0 { Look.trenner }
                             NavigationLink {
                                 WischZielView(ziel: WischZiel(personen: [WischPerson(eintrag)]))
@@ -64,29 +62,31 @@ struct ZuhauseWischenListe: View {
                             }
                             .buttonStyle(.plain)
                         }
-                    }
-                    .padding(.horizontal, 14)
-                    .zuhauseKarte(ecken: 16)
-                    if zustand.daten.profile.count >= 2 {
-                        NavigationLink {
-                            SammelAuswahlView(vorauswahl: Set(zustand.daten.profile.map(\.id)))
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text("Für mehrere zugleich").font(.zuhause(.headline, .fett))
-                                    Text("z. B. alle zu Weihnachten").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
+                        if profile.count >= 2 {
+                            Look.trenner
+                            NavigationLink {
+                                SammelAuswahlView(vorauswahl: Set(profile.map(\.id)))
+                            } label: {
+                                HStack(spacing: 12) {
+                                    Image("coco-familie").resizable().scaledToFit().frame(width: 40, height: 40)
+                                        .accessibilityHidden(true)
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text("Für mehrere zugleich").font(.zuhause(.headline, .fett)).foregroundStyle(Look.text)
+                                        Text("z. B. alle zu Weihnachten").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
+                                    }
+                                    Spacer(minLength: 8)
+                                    Image(systemName: "chevron.right").font(.footnote.bold()).foregroundStyle(Look.leise)
                                 }
-                                Spacer()
-                                Image(systemName: "chevron.right").font(.footnote.bold()).foregroundStyle(Look.leise)
+                                .frame(minHeight: 62)
+                                .contentShape(Rectangle())
                             }
-                            .padding(14).frame(minHeight: 62)
-                            .zuhauseKarte(ecken: 16)
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
                     }
+                    .padding(.horizontal, 4)
                 }
                 NavigationLink { LaengeView() } label: {
-                    Text("Neue Person").font(.zuhause(.headline, .fett))
+                    Text(profile.isEmpty ? "Gespräch starten" : "Neue Person").font(.zuhause(.headline, .fett))
                         .foregroundStyle(Look.aufAkzent)
                         .frame(maxWidth: .infinity, minHeight: 50)
                         .background(Look.akzent, in: Capsule())
@@ -96,7 +96,7 @@ struct ZuhauseWischenListe: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
-        .nachtblau()
+        .zuhauseHintergrund()
         .toolbar(.hidden, for: .navigationBar)
     }
 }
@@ -120,12 +120,11 @@ struct ZuhauseProfileView: View {
                     }
                 }
             }
-            .padding(.horizontal, 14)
-            .zuhauseKarte(ecken: 16)
-            .padding(16)
+            .padding(.horizontal, 20)
+            .padding(.vertical, 8)
         }
-        .nachtblau()
-        .navigationTitle("Profile")
+        .zuhauseHintergrund()
+        .navigationTitle("Deine Leute")
         .confirmationDialog("Profil löschen?", isPresented: Binding(
             get: { zuLoeschen != nil }, set: { if !$0 { zuLoeschen = nil } }
         ), presenting: zuLoeschen) { eintrag in
@@ -155,11 +154,6 @@ struct ZuhausePersonZeile: View {
         let wuensche = eintrag.profil.wuensche.sorted { $0.gewicht > $1.gewicht }.prefix(3).map(\.label)
         return wuensche.isEmpty ? eintrag.profil.zusammenfassung : wuensche.joined(separator: ", ")
     }
-}
-
-extension Look {
-    /// Trennlinie zwischen Zeilen einer Karte.
-    static var trenner: some View { Color(hex: palette.hell ? 0xE6D9C3 : 0x3A2516).frame(height: 1) }
 }
 
 extension View {

@@ -36,7 +36,7 @@ struct GelerntView: View {
                                 Text(eintrag.label)
                                 Spacer()
                                 Text(Gewichtung.stufe(eintrag.gewicht))
-                                    .font(.app(.caption, .fett))
+                                    .font(.zuhause(.caption, .fett))
                                     .foregroundStyle(Look.akzent)
                             }
                             Slider(value: Binding(
@@ -50,7 +50,7 @@ struct GelerntView: View {
                 } footer: {
                     Text("Zieh nach rechts für mehr davon, nach links für weniger.")
                 }
-                .listRowBackground(Look.karte)
+                .offeneZeilen()
 
                 if !modell.ausschluesse(person: person).isEmpty {
                     Section("Nie zeigen") {
@@ -58,7 +58,7 @@ struct GelerntView: View {
                             Label(ausschluss.label, systemImage: "nosign")
                         }
                     }
-                    .listRowBackground(Look.karte)
+                    .offeneZeilen()
                 }
 
                 Section {
@@ -79,9 +79,10 @@ struct GelerntView: View {
                 } footer: {
                     Text("Bereits gewischte Karten dürfen dann wieder auftauchen.")
                 }
-                .listRowBackground(Look.karte)
+                .offeneZeilen()
             }
-            .nachtblau()
+            .textCase(nil)
+            .zuhauseHintergrund()
             .navigationTitle("Gewichtung")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
