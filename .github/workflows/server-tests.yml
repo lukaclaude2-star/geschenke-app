@@ -2,7 +2,7 @@ name: Server testen
 
 on:
   push:
-    paths: [app/**, tests/**, scripts/**, katalog/**, requirements*.txt, pytest.ini, .github/workflows/server-tests.yml]
+    paths: [app/**, tests/**, scripts/**, katalog/**, rechtliches/**, requirements*.txt, pytest.ini, .github/workflows/server-tests.yml]
   workflow_dispatch:
 
 jobs:
@@ -16,3 +16,5 @@ jobs:
           python-version: "3.12"
       - run: pip install -r requirements-dev.txt
       - run: pytest -q
+      # Bekannte Sicherheitslücken in den Paketen, die auf Render laufen
+      - run: pip install pip-audit && pip-audit -r requirements.txt

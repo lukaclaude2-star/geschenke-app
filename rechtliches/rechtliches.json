@@ -1,0 +1,283 @@
+{
+  "stand": "05.11.2026",
+  "angaben": {
+    "name": "[Vor- und Nachname]",
+    "strasse": "[Straße und Hausnummer]",
+    "plz_ort": "[PLZ und Ort]",
+    "email": "[E-Mail-Adresse]",
+    "telefon": "[Telefonnummer]"
+  },
+  "dokumente": [
+    {
+      "id": "impressum",
+      "titel": "Impressum",
+      "abschnitte": [
+        {
+          "ueberschrift": "Angaben gemäß § 5 DDG",
+          "absaetze": [
+            "{{name}}",
+            "{{strasse}}",
+            "{{plz_ort}}",
+            "Deutschland"
+          ]
+        },
+        {
+          "ueberschrift": "Kontakt",
+          "absaetze": [
+            "E-Mail: [{{email}}](mailto:{{email}})",
+            "Telefon: {{telefon}}"
+          ]
+        },
+        {
+          "ueberschrift": "Verbraucherstreitbeilegung",
+          "absaetze": [
+            "Ich bin nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen."
+          ]
+        },
+        {
+          "ueberschrift": "Links zu Shops",
+          "absaetze": [
+            "Die App zeigt Produkte und Links fremder Shops. Für deren Inhalte, Preise, Lieferung und Kaufabwicklung ist allein der jeweilige Shop verantwortlich. Erfahre ich von einem rechtswidrigen Inhalt, entferne ich den Link."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "datenschutz",
+      "titel": "Datenschutzerklärung",
+      "abschnitte": [
+        {
+          "ueberschrift": "Kurz gesagt",
+          "absaetze": [
+            "- Kein Konto, kein Login, keine Werbe-Tracker, keine Analyse-Dienste.",
+            "- Deine Leute, deine Merkliste und alles Gelernte speichert die App nur auf deinem iPhone.",
+            "- Für Vorschläge schickt die App, was du über die Person erzählst, samt dem beim Wischen Gelernten an meinen Server und von dort an einen KI-Dienst. Ich speichere davon nichts.",
+            "- Bevor das zum ersten Mal passiert, fragt die App dich. Du kannst die Zustimmung jederzeit in den Einstellungen widerrufen."
+          ]
+        },
+        {
+          "ueberschrift": "Verantwortlich",
+          "absaetze": [
+            "{{name}}, {{strasse}}, {{plz_ort}}, Deutschland",
+            "E-Mail: [{{email}}](mailto:{{email}})"
+          ]
+        },
+        {
+          "ueberschrift": "Was nur auf deinem iPhone liegt",
+          "absaetze": [
+            "Gespeicherte Personen (Name oder Spitzname, Wünsche, Ausschlüsse, Budget, freiwillig der Geburtstag), die Merkliste, was die App beim Wischen gelernt hat, schon gesehene Vorschläge, deine Einstellungen und ob du der Übertragung an die KI zugestimmt hast.",
+            "Diese Daten liegen im Speicher der App. Ich habe darauf keinen Zugriff. Nutzt du iCloud- oder Computer-Backups deines iPhones, sind sie dort mitgesichert.",
+            "Löschen kannst du alles unter Einstellungen → Alle Daten löschen, einzelne Personen und Merkliste-Einträge direkt in der App, oder indem du die App löschst."
+          ]
+        },
+        {
+          "ueberschrift": "Was die App an meinen Server schickt",
+          "absaetze": [
+            "- Beim Start: eine kurze Statusabfrage, ob der Server wach ist. Dabei fallen nur technische Verbindungsdaten an.",
+            "- Im Gespräch: deine Antworten und die bisherigen Fragen, damit die nächste Frage passt.",
+            "- Für Vorschläge: die Beschreibung der Person, also Zusammenfassung, Wünsche (mit dem, was die App beim Wischen gelernt hat), Ausschlüsse und Budget, dazu die Liste schon gesehener Vorschläge.",
+            "Nicht übertragen werden: der Name, unter dem du eine Person speicherst, der Geburtstag, die Merkliste und jede Geräte- oder Werbekennung.",
+            "Der Server verarbeitet die Anfrage im Arbeitsspeicher und verwirft sie danach. Es gibt keine Datenbank mit Gesprächen oder Profilen.",
+            "Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO: Du möchtest Geschenkvorschläge, und dafür ist die Verarbeitung nötig."
+          ]
+        },
+        {
+          "ueberschrift": "KI-Dienst Groq",
+          "absaetze": [
+            "Gesprächsfragen, Profile und Ideenkarten erzeugt ein Sprachmodell. Dafür schickt mein Server den Text der Anfrage an Groq, Inc., USA ([Datenschutz bei Groq](https://groq.com/privacy-policy)). Groq erfährt dabei nicht, von welchem Gerät die Anfrage kommt.",
+            "Groq speichert Anfragen nach eigenen Angaben standardmäßig nicht. Zur Fehlersuche und zur Abwehr von Missbrauch kann Groq Ein- und Ausgaben bis zu 30 Tage protokollieren. Die Daten liegen dann in den USA.",
+            "Die Übermittlung in die USA stützt sich auf die Standardvertragsklauseln der EU-Kommission (Art. 46 Abs. 2 lit. c DSGVO), die Groq in seinem Auftragsverarbeitungsvertrag vorsieht.",
+            "Bitte schreib keine vollständigen Namen, Adressen, Telefonnummern oder Angaben zur Gesundheit in das Gespräch. Für gute Vorschläge reicht zum Beispiel „meine Oma, 70, gärtnert gern“."
+          ]
+        },
+        {
+          "ueberschrift": "Hosting bei Render",
+          "absaetze": [
+            "Der Server läuft bei Render Services, Inc., USA, in einem Rechenzentrum in Frankfurt am Main ([Datenschutz bei Render](https://render.com/privacy)). Render verarbeitet dabei die Daten, die für die Verbindung nötig sind, vor allem deine IP-Adresse, und führt kurzzeitig technische Protokolle.",
+            "Render ist nach dem EU-US Data Privacy Framework zertifiziert (Angemessenheitsbeschluss, Art. 45 DSGVO) und arbeitet als Auftragsverarbeiter. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO: Ohne diese Daten kann der Server nicht antworten."
+          ]
+        },
+        {
+          "ueberschrift": "Schutz vor Missbrauch",
+          "absaetze": [
+            "Damit niemand den Server mit Anfragen überflutet, zählt er Anfragen je Verbindung. Dafür bildet er aus deiner IP-Adresse einen Hash mit einem geheimen Schlüssel, der bei jedem Neustart neu entsteht. Die IP-Adresse selbst wird nicht gespeichert, der Zähler liegt nur im Arbeitsspeicher und verfällt spätestens nach einem Tag.",
+            "Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO. Mein berechtigtes Interesse ist, dass die App für alle erreichbar bleibt."
+          ]
+        },
+        {
+          "ueberschrift": "Produktfotos und Shops",
+          "absaetze": [
+            "Produktfotos lädt die App direkt vom Server des jeweiligen Shops. Wie bei jeder Webseite erhält der Shop dabei deine IP-Adresse und technische Angaben wie die iOS-Version. Ich binde die Fotos so ein, statt sie zu kopieren, weil die Rechte an den Fotos bei den Shops liegen. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO.",
+            "Beispielfotos auf Ideenkarten (von Pixabay) liegen auf meinem Server.",
+            "Tippst du auf „Im Shop öffnen“, öffnet sich die Seite des Shops im Browser. Ab dann gilt die Datenschutzerklärung des Shops. Bei Partnerlinks setzt das Partnernetzwerk (zum Beispiel Awin oder Amazon) dort meist ein Cookie, damit der Shop die Provision zuordnen kann. Das passiert im Browser, nicht in der App."
+          ]
+        },
+        {
+          "ueberschrift": "Apple",
+          "absaetze": [
+            "Die App bekommst du über den App Store von Apple. Dafür gelten die Datenschutzbestimmungen von Apple. Hast du in iOS „Mit App-Entwicklern teilen“ eingeschaltet, erhalte ich von Apple anonyme Absturzberichte und Nutzungsstatistiken, die ich keiner Person zuordnen kann.",
+            "Die App nutzt kein Tracking über Apps und Webseiten anderer Anbieter hinweg."
+          ]
+        },
+        {
+          "ueberschrift": "Zustimmung in der App",
+          "absaetze": [
+            "Bevor die App zum ersten Mal Gesprächstext oder die Beschreibung einer Person an den Server und die KI schickt, erklärt sie, welche Daten wohin gehen, und fragt nach deinem Einverständnis. Ohne Zustimmung funktionieren Gespräch und Vorschläge nicht, alles andere schon.",
+            "Du kannst die Zustimmung jederzeit unter Einstellungen → Datenschutz und Rechtliches widerrufen. Danach schickt die App keine Gespräche und keine Beschreibungen mehr an den Server und die KI, bis du erneut zustimmst. Die Statusabfrage beim Start und die Fotos auf der Merkliste lädt sie weiterhin (siehe oben)."
+          ]
+        },
+        {
+          "ueberschrift": "Speicherdauer",
+          "absaetze": [
+            "- Mein Server: keine dauerhafte Speicherung von Gesprächen oder Profilen.",
+            "- Zähler gegen Missbrauch: höchstens ein Tag, nur im Arbeitsspeicher.",
+            "- Groq: siehe oben, höchstens 30 Tage.",
+            "- Render: technische Protokolle für kurze Zeit nach den Regeln von Render.",
+            "- Auf deinem iPhone: bis du die Daten oder die App löschst."
+          ]
+        },
+        {
+          "ueberschrift": "Deine Rechte",
+          "absaetze": [
+            "Du hast das Recht auf Auskunft (Art. 15 DSGVO), Berichtigung (Art. 16), Löschung (Art. 17), Einschränkung der Verarbeitung (Art. 18), Datenübertragbarkeit (Art. 20) und Widerspruch gegen Verarbeitungen auf Grundlage von Art. 6 Abs. 1 lit. f (Art. 21). Eine erteilte Zustimmung kannst du jederzeit widerrufen.",
+            "Weil mein Server nichts dauerhaft speichert, kann ich dir einzelne Anfragen in der Regel nicht zuordnen (Art. 11 DSGVO). Deine gespeicherten Daten siehst und löschst du direkt in der App.",
+            "Schreib mir für alle Fragen an [{{email}}](mailto:{{email}}).",
+            "Außerdem hast du das Recht auf Beschwerde bei einer Datenschutz-Aufsichtsbehörde (Art. 77 DSGVO), zum Beispiel bei der Landesbeauftragten für Datenschutz und Informationsfreiheit Nordrhein-Westfalen ([www.ldi.nrw.de](https://www.ldi.nrw.de))."
+          ]
+        },
+        {
+          "ueberschrift": "Keine automatisierten Entscheidungen",
+          "absaetze": [
+            "Die App sortiert Vorschläge automatisch nach Passung. Das ist keine Entscheidung mit rechtlicher Wirkung im Sinne von Art. 22 DSGVO."
+          ]
+        },
+        {
+          "ueberschrift": "Änderungen",
+          "absaetze": [
+            "Ändert sich die App, passe ich diese Erklärung an. Stand: {{stand}}"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "nutzung",
+      "titel": "So entstehen die Vorschläge",
+      "abschnitte": [
+        {
+          "ueberschrift": "Reihenfolge",
+          "absaetze": [
+            "Die Reihenfolge der Karten richtet sich danach, wie gut ein Produkt zur Person passt. Die wichtigsten Kriterien, ungefähr nach Gewicht:",
+            "- Stichwörter aus dem Gespräch: Hobbys, Interessen und Lebenslage der Person.",
+            "- Was du beim Wischen gezeigt hast: Ja-Wische machen ähnliche Stichwörter wichtiger. Du siehst und änderst das unter „Was ich gelernt habe“.",
+            "- Persönliches: Passt ein Produkt ohnehin, rückt es etwas nach vorn, wenn es personalisiert, handgemacht oder ein Erlebnis ist.",
+            "- Abwechslung: Mehrere Produkte zum selben Thema rücken etwas nach hinten, damit nicht nur eine Sorte kommt.",
+            "- Dein Budget.",
+            "- Ausschlüsse: Was du ausschließt, zeigt die App nie, auch nicht weiter hinten.",
+            "Ideenkarten haben feste Plätze: Gibt es zu einem Wunsch kaum passende Produkte oder gehen sie aus, mischt die App nach je zwei Produkten eine Ideenkarte ein.",
+            "Vorher fliegt Ramsch raus: Jedes Produkt muss feste Regeln (Preis, Beschreibung, Foto) und eine Geschenk-Note der KI bestehen. Schon gesehene Karten kommen nicht wieder.",
+            "**Provision spielt für die Reihenfolge keine Rolle.** Kein Shop kann sich einen Platz kaufen."
+          ]
+        },
+        {
+          "ueberschrift": "Wie die App Geld verdient",
+          "absaetze": [
+            "Die App ist kostenlos. Manche Links sind Partnerlinks: Kaufst du darüber, zahlt der Shop mir eine Provision. Für dich ändert sich am Preis nichts. Karten mit Partnerlink tragen das Abzeichen „Anzeige“."
+          ]
+        },
+        {
+          "ueberschrift": "Ideenkarten",
+          "absaetze": [
+            "Karten mit dem Abzeichen „Idee“ sind Vorschläge der KI, kein bestimmtes Produkt. Sie führen zur Suche bei Amazon. Das Foto ist ein Beispielbild, die Preisspanne eine Schätzung."
+          ]
+        },
+        {
+          "ueberschrift": "Preise",
+          "absaetze": [
+            "Preise stammen aus den Shops und werden regelmäßig aktualisiert. Sie enthalten die MwSt., Versandkosten kommen gegebenenfalls dazu. Seit dem letzten Abruf kann sich ein Preis geändert haben. Es gilt immer der Preis im Shop."
+          ]
+        },
+        {
+          "ueberschrift": "Kauf",
+          "absaetze": [
+            "Ich verkaufe nichts selbst. Ein Kauf kommt nur zwischen dir und dem Shop zustande, zu dessen Bedingungen."
+          ]
+        },
+        {
+          "ueberschrift": "KI",
+          "absaetze": [
+            "Im Gespräch schreibst du mit einer KI. Sie kann sich irren oder etwas falsch verstehen. Prüf vor dem Kauf im Shop, ob ein Geschenk wirklich passt, zum Beispiel bei Allergien oder Altersangaben."
+          ]
+        },
+        {
+          "ueberschrift": "Verfügbarkeit",
+          "absaetze": [
+            "Die App läuft auf einem kostenlosen Server. Nach einer Pause braucht er bis zu einer Minute zum Aufwachen und kann auch einmal ausfallen. Einen Anspruch auf ständige Verfügbarkeit gibt es nicht."
+          ]
+        },
+        {
+          "ueberschrift": "Lizenz",
+          "absaetze": [
+            "Für die Nutzung der App gilt die [Standard-Lizenzvereinbarung von Apple](https://www.apple.com/legal/internet-services/itunes/dev/stdeula/)."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "support",
+      "titel": "Hilfe und Kontakt",
+      "abschnitte": [
+        {
+          "ueberschrift": "Kontakt",
+          "absaetze": [
+            "Fragen, Fehler oder Wünsche? Schreib mir an [{{email}}](mailto:{{email}}). Ich antworte in der Regel innerhalb weniger Tage."
+          ]
+        },
+        {
+          "ueberschrift": "Wo sind meine Daten?",
+          "absaetze": [
+            "Nur auf deinem iPhone. Es gibt kein Konto. Details stehen in der [Datenschutzerklärung](https://geschenke.onrender.com/datenschutz)."
+          ]
+        },
+        {
+          "ueberschrift": "Wie lösche ich alles?",
+          "absaetze": [
+            "In der App unter Einstellungen → Alle Daten löschen. Oder lösch einfach die App."
+          ]
+        },
+        {
+          "ueberschrift": "Warum dauert der erste Start manchmal?",
+          "absaetze": [
+            "Der kostenlose Server schläft nach einer Pause und braucht bis zu einer Minute zum Aufwachen. Danach geht es schnell."
+          ]
+        }
+      ]
+    },
+    {
+      "id": "lizenzen",
+      "titel": "Lizenzen",
+      "abschnitte": [
+        {
+          "ueberschrift": "Schriften",
+          "absaetze": [
+            "Fraunces: Copyright 2018 The Fraunces Project Authors ([github.com/undercasetype/Fraunces](https://github.com/undercasetype/Fraunces)), lizenziert unter der SIL Open Font License 1.1.",
+            "Nunito Sans: Copyright 2016 The Nunito Sans Project Authors ([github.com/Fonthausen/NunitoSans](https://github.com/Fonthausen/NunitoSans)), lizenziert unter der SIL Open Font License 1.1.",
+            "Der vollständige Lizenztext liegt der App bei und steht unter [openfontlicense.org](https://openfontlicense.org)."
+          ]
+        },
+        {
+          "ueberschrift": "Illustrationen",
+          "absaetze": [
+            "Coco Material ([cocomaterial.com](https://cocomaterial.com)), gemeinfrei (CC0), eingefärbt für diese App."
+          ]
+        },
+        {
+          "ueberschrift": "Fotos",
+          "absaetze": [
+            "Beispielfotos auf Ideenkarten: [Pixabay](https://pixabay.com), Pixabay-Inhaltslizenz.",
+            "Produktfotos: Die Rechte liegen bei den jeweiligen Shops und Herstellern."
+          ]
+        }
+      ]
+    }
+  ]
+}

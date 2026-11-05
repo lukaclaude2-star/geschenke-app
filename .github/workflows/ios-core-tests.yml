@@ -5,7 +5,7 @@ name: iOS-Kern testen
 
 on:
   push:
-    paths: [ios/GeschenkeCore/**, .github/workflows/ios-core-tests.yml]
+    paths: [ios/GeschenkeCore/**, rechtliches/**, .github/workflows/ios-core-tests.yml]
   workflow_dispatch:
 
 jobs:

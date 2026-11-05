@@ -16,12 +16,20 @@ public struct AppDaten: Codable, Equatable {
     public var merkOrdnung: String = "person"
     /// Die Einführung beim ersten Start wurde gezeigt (oder übersprungen).
     public var einfuehrungGesehen: Bool = false
+    /// Version des Zustimmungstexts, dem zugestimmt wurde (0 = keine Zustimmung). Apple 5.1.2(i):
+    /// Vor der ersten Übertragung an die KI muss die Person ausdrücklich zustimmen.
+    public var kiEinwilligung: Int = 0
+
+    /// Ändert sich, was an wen geht, steigt die Version und die App fragt erneut.
+    public static let kiEinwilligungVersion = 1
+
+    public var hatKiEinwilligung: Bool { kiEinwilligung == Self.kiEinwilligungVersion }
 
     public init() {}
 
     enum CodingKeys: String, CodingKey {
         case profile, merkliste, schriftgroesse, erscheinung, startTippen, auspacken
-        case merkOrdnung, einfuehrungGesehen
+        case merkOrdnung, einfuehrungGesehen, kiEinwilligung
     }
 
     // Neue Felder immer optional lesen – sonst landen die Daten aus v1 in appdaten.kaputt-*.json.
@@ -36,6 +44,7 @@ public struct AppDaten: Codable, Equatable {
         auspacken = try c.decodeIfPresent(String.self, forKey: .auspacken) ?? "normal"
         merkOrdnung = try c.decodeIfPresent(String.self, forKey: .merkOrdnung) ?? "person"
         einfuehrungGesehen = try c.decodeIfPresent(Bool.self, forKey: .einfuehrungGesehen) ?? false
+        kiEinwilligung = try c.decodeIfPresent(Int.self, forKey: .kiEinwilligung) ?? 0
     }
 }
 
@@ -132,5 +141,16 @@ public final class AppDatenSpeicher {
         }
         let kodiert = try JSONEncoder().encode(daten)
         try kodiert.write(to: datei, options: .atomic)
+    }
+
+    /// „Alle Daten löschen“: die Datei und alle beiseitegelegten unlesbaren Fassungen, denn auch
+    /// die enthalten Profile und Merkliste.
+    public func loescheAlles() throws {
+        let ordner = datei.deletingLastPathComponent()
+        let dateien = (try? FileManager.default.contentsOfDirectory(atPath: ordner.path)) ?? []
+        for name in dateien where name == datei.lastPathComponent || name.hasPrefix("appdaten.kaputt-") {
+            try FileManager.default.removeItem(at: ordner.appendingPathComponent(name))
+        }
+        unlesbar = false
     }
 }

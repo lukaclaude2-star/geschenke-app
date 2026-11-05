@@ -22,6 +22,11 @@ struct ChatView: View {
             ScrollViewReader { leser in
                 ScrollView {
                     LazyVStack(alignment: .leading, spacing: 10) {
+                        // EU AI Act Art. 50: Wer mit einer KI schreibt, muss das wissen.
+                        Text("Du schreibst mit einer KI. Sie kann sich irren.")
+                            .font(.zuhause(.footnote)).foregroundStyle(Look.leise)
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
                         ForEach(modell.nachrichten) { nachricht in
                             Blase(nachricht: nachricht).id(nachricht.id)
                         }

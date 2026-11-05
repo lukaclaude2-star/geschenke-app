@@ -1,0 +1,30 @@
+name: Server wachhalten
+
+# Render Free schläft nach 15 Minuten ohne Anfrage, das Aufwachen dauert bis zu einer Minute.
+# Prüft Apple die App, kann so eine Pause als „App hängt“ gewertet werden. Diesen Workflow von
+# Hand starten, sobald die App „In Prüfung“ ist (Actions → Server wachhalten → Run workflow).
+# Kosten: Linux-Minuten, höchstens 6 Stunden je Lauf (≈ 360 der 2000 Freiminuten im Monat).
+
+on:
+  workflow_dispatch:
+    inputs:
+      stunden:
+        description: "Wie viele Stunden wachhalten (1–6)"
+        default: "6"
+
+jobs:
+  wach:
+    runs-on: ubuntu-latest
+    timeout-minutes: 370
+    steps:
+      - name: Alle 10 Minuten /health abrufen
+        env:
+          STUNDEN: ${{ inputs.stunden }}
+        run: |
+          stunden=$(( STUNDEN < 1 ? 1 : (STUNDEN > 6 ? 6 : STUNDEN) ))
+          runden=$(( stunden * 6 ))
+          for i in $(seq 1 $runden); do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 https://geschenke.onrender.com/health || echo "000")
+            echo "$(date -u +%H:%M) Runde $i/$runden: $code"
+            if [ "$i" -lt "$runden" ]; then sleep 600; fi
+          done

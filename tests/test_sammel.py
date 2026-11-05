@@ -91,6 +91,17 @@ def test_route_braucht_token_und_zwei_personen(client, auth):
     assert client.post("/karten/sammel", json=eine, headers=auth).status_code == 422
 
 
+def test_sammelsuche_zaehlt_je_person(client, auth, monkeypatch):
+    # Jede Person kann eine eigene KI-Anfrage auslösen, also zählt jede für die Drossel.
+    from app import main
+    from app.drossel import Drossel
+    monkeypatch.setattr(main, "DROSSEL", Drossel(pro_minute=5, pro_tag=100))
+    person = {"profil": {"zusammenfassung": "x", "wuensche": [], "ausschluesse": []}}
+    vier = {"personen": [{"id": str(i), **person} for i in range(4)]}
+    status = [client.post("/karten/sammel", json=vier, headers=auth).status_code for _ in range(2)]
+    assert status == [200, 429]
+
+
 async def test_ideen_fuer_mehrere_personen_laufen_gleichzeitig(katalog, monkeypatch):
     import asyncio
     import time

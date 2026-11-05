@@ -13,6 +13,7 @@ struct ProfilView: View {
     @State private var budgetVon = BudgetSkala.minimum
     @State private var budgetBis = BudgetSkala.maximum
     @State private var budgetGeaendert = false
+    @State private var zeigeEinwilligung = false
 
     var body: some View {
         if let eintrag = zustand.profil(profilID) {
@@ -76,13 +77,27 @@ struct ProfilView: View {
                     .background(Look.karte)
                     .clipShape(RoundedRectangle(cornerRadius: 12))
                 Button {
-                    Task { await aendern(eintrag) }
+                    // Die Änderung geht an die KI: ohne Zustimmung erst fragen.
+                    if zustand.daten.hatKiEinwilligung {
+                        Task { await aendern(eintrag) }
+                    } else {
+                        zeigeEinwilligung = true
+                    }
                 } label: {
                     Image(systemName: "arrow.up.circle.fill").font(.system(size: 32))
                 }
                 .disabled(denkt || anweisung.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
             }
             .padding()
+        }
+        .sheet(isPresented: $zeigeEinwilligung) {
+            KiEinwilligungView { ja in
+                zeigeEinwilligung = false
+                guard ja else { return }
+                zustand.setzeKiEinwilligung(true)
+                Task { await aendern(eintrag) }
+            }
+            .presentationBackground(Look.hintergrund)
         }
         .zuhauseHintergrund()
         .navigationTitle(eintrag.name)

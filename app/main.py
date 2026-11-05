@@ -7,6 +7,8 @@ from fastapi.staticfiles import StaticFiles
 from app.bilder import ORDNER as BILDER_ORDNER
 from app.config import settings
 from app.download import router as download_router
+from app.rechtliches import router as rechtliches_router
+from app.drossel import Drossel, schluessel_fuer
 from app.gespraech import naechster_schritt
 from app.karten import karten_fuer, sammel_karten_fuer
 from app.katalog.laden import lade_katalog
@@ -24,9 +26,57 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
         raise HTTPException(status_code=401, detail="Nicht berechtigt")
 
 
-app = FastAPI(title="Geschenke")
-geschuetzt = [Depends(pruefe_token)]
+# Die Schnittstellen-Doku (/docs, /redoc, /openapi.json) bleibt aus: Sie würde jedem zeigen,
+# welche Routen es gibt und was sie annehmen.
+DROSSEL = Drossel(pro_minute=settings.drossel_pro_minute, pro_tag=settings.drossel_pro_tag)
+
+
+def _gedrosselt(request: Request, kosten: int) -> None:
+    if not DROSSEL.erlaubt(schluessel_fuer(request), kosten):
+        raise HTTPException(status_code=429, detail="zu_viele_anfragen")
+
+
+async def drosseln(request: Request) -> None:
+    # async: läuft auf der Ereignisschleife statt im Thread-Pool, also nie zwei gleichzeitig am Dict.
+    # Keine weiteren Parameter: FastAPI machte sie zu Query-Parametern, die der Client setzen kann.
+    _gedrosselt(request, 1)
+
+
+app = FastAPI(title="Geschenke", docs_url=None, redoc_url=None, openapi_url=None)
+# Erst der Token, dann die Drossel: Fremde ohne Token verbrauchen keine Zähler.
+geschuetzt = [Depends(pruefe_token), Depends(drosseln)]
+
+# Größte erlaubte Anfrage. Die längste echte ist die Sammelsuche mit 12 Profilen und deren
+# Gesehen-Listen, sie bleibt weit darunter.
+MAX_ANFRAGE_BYTES = 4_000_000
+SICHERHEITS_HEADER = {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "X-Frame-Options": "DENY",
+    "Strict-Transport-Security": "max-age=31536000",
+}
+HTML_CSP = ("default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; base-uri 'none'; "
+            "form-action 'none'; frame-ancestors 'none'")
+
+
+@app.middleware("http")
+async def schutz(request: Request, call_next):
+    if request.method == "POST":
+        laenge = request.headers.get("content-length")
+        if laenge is None:
+            # Ohne Länge ließe sich ein beliebig großer Rumpf stückweise schicken.
+            return JSONResponse(status_code=411, content={"fehler": "laenge_fehlt"})
+        if not laenge.isdigit() or int(laenge) > MAX_ANFRAGE_BYTES:
+            return JSONResponse(status_code=413, content={"fehler": "zu_gross"})
+    antwort = await call_next(request)
+    for name, wert in SICHERHEITS_HEADER.items():
+        antwort.headers.setdefault(name, wert)
+    if antwort.headers.get("content-type", "").startswith("text/html"):
+        antwort.headers.setdefault("Content-Security-Policy", HTML_CSP)
+    return antwort
+
 app.include_router(download_router)
+app.include_router(rechtliches_router)
 # Fotos sind nicht geheim; die App lädt sie wie fremde Produktbilder ohne Token.
 app.mount("/beispielbilder", StaticFiles(directory=BILDER_ORDNER, check_dir=False), name="beispielbilder")
 
@@ -66,5 +116,7 @@ async def route_karten(anfrage: KartenAnfrage) -> KartenAntwort:
 
 
 @app.post("/karten/sammel", dependencies=geschuetzt)
-async def route_karten_sammel(anfrage: KartenSammelAnfrage) -> KartenSammelAntwort:
+async def route_karten_sammel(anfrage: KartenSammelAnfrage, request: Request) -> KartenSammelAntwort:
+    # Jede Person kann eine eigene KI-Anfrage auslösen; eine zählt schon die Abhängigkeit.
+    _gedrosselt(request, kosten=len(anfrage.personen) - 1)
     return await sammel_karten_fuer(KATALOG, anfrage)

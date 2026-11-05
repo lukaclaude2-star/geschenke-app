@@ -13,7 +13,7 @@ on:
   push:
     # Auf Arbeits-Branches nur auf Knopfdruck – jeder Push dort würde Mac-Minuten kosten.
     branches: [main]
-    paths: [ios/**, .github/workflows/ios-build.yml]
+    paths: [ios/**, rechtliches/**, .github/workflows/ios-build.yml]
 
 jobs:
   build:
@@ -52,6 +52,11 @@ jobs:
             build 2>&1 | grep -E "error:|warning: .*Geschenke|BUILD" || true
           # Der .app-Ordner entsteht auch bei Compile-Fehlern, erst die Programmdatei zeigt Erfolg
           test -f build/Build/Products/Release-iphoneos/Geschenke.app/Geschenke
+          # Für den App Store Pflicht: Privacy Manifest und die Rechtstexte für Impressum & Co.
+          test -f build/Build/Products/Release-iphoneos/Geschenke.app/PrivacyInfo.xcprivacy
+          test -f build/Build/Products/Release-iphoneos/Geschenke.app/rechtliches.json
+          plutil -lint build/Build/Products/Release-iphoneos/Geschenke.app/PrivacyInfo.xcprivacy
+          test "$(/usr/libexec/PlistBuddy -c 'Print :ITSAppUsesNonExemptEncryption' build/Build/Products/Release-iphoneos/Geschenke.app/Info.plist)" = "false"
 
       - name: IPA packen
         run: |

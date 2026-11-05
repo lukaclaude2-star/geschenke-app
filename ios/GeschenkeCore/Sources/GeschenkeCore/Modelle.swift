@@ -82,10 +82,12 @@ public struct Karte: Codable, Equatable, Identifiable {
     public let tags: [String]
     /// Ideenkarte mit festem Foto zum Stichwort, das nur ein Beispiel zeigt.
     public let beispielbild: Bool?
+    /// Partnerlink mit Provision: zeigt „Anzeige“ (§ 5a Abs. 4 UWG). Fehlt bei alten Merkliste-Einträgen.
+    public let anzeige: Bool?
 
     public init(id: String, art: String, titel: String, preis: Double?, preisVon: Double?, preisBis: Double?,
                 bildURL: String?, emoji: String?, shop: String, link: String, tags: [String],
-                beispielbild: Bool? = nil) {
+                beispielbild: Bool? = nil, anzeige: Bool? = nil) {
         self.id = id
         self.art = art
         self.titel = titel
@@ -98,10 +100,11 @@ public struct Karte: Codable, Equatable, Identifiable {
         self.link = link
         self.tags = tags
         self.beispielbild = beispielbild
+        self.anzeige = anzeige
     }
 
     enum CodingKeys: String, CodingKey {
-        case id, art, titel, preis, emoji, shop, link, tags, beispielbild
+        case id, art, titel, preis, emoji, shop, link, tags, beispielbild, anzeige
         case preisVon = "preis_von"
         case preisBis = "preis_bis"
         case bildURL = "bild_url"
@@ -109,6 +112,15 @@ public struct Karte: Codable, Equatable, Identifiable {
 
     public var istIdee: Bool { art == "idee" }
     public var istBeispielbild: Bool { beispielbild == true }
+    public var istAnzeige: Bool { anzeige == true }
+
+    /// Nur Web-Links öffnen: Der Katalog kommt aus fremden Shop-Seiten, ein `javascript:`- oder
+    /// `tel:`-Link soll nie aus der App heraus ausgelöst werden.
+    public var sichererLink: URL? {
+        guard let url = URL(string: link), let schema = url.scheme?.lowercased(),
+              schema == "https" || schema == "http", let host = url.host, !host.isEmpty else { return nil }
+        return url
+    }
 
     public var preisText: String {
         if let preis {

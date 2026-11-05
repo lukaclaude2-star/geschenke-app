@@ -116,6 +116,29 @@ final class AppZustand: ObservableObject {
         sichern()
     }
 
+    /// Zustimmung zur Übertragung an Server und KI (Apple 5.1.2(i)); `false` widerruft sie.
+    func setzeKiEinwilligung(_ ja: Bool) {
+        daten.kiEinwilligung = ja ? AppDaten.kiEinwilligungVersion : 0
+        sichern()
+    }
+
+    /// „Alle Daten löschen“ (nur nach Bestätigung aufrufen): Profile, Merkliste, Gelerntes,
+    /// Einstellungen, Zustimmung und beiseitegelegte alte Dateien. Die Einführung kommt nicht wieder.
+    func loescheAlles() {
+        try? speicher.loescheAlles()
+        var neu = AppDaten()
+        neu.einfuehrungGesehen = true
+        daten = neu
+        sichern()
+    }
+
+    /// Rechtstexte aus dem App-Paket (`rechtliches.json`, dieselbe Datei wie auf dem Server).
+    static let rechtstexte: Rechtstexte? = {
+        guard let url = Bundle.main.url(forResource: "rechtliches", withExtension: "json"),
+              let daten = try? Data(contentsOf: url) else { return nil }
+        return try? Rechtstexte.laden(daten)
+    }()
+
     private func sichern() {
         try? speicher.speichern(daten)
     }

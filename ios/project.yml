@@ -11,7 +11,11 @@ targets:
   Geschenke:
     type: application
     platform: iOS
-    sources: [Geschenke]
+    sources:
+      - Geschenke
+      # Rechtstexte: dieselbe Datei zeigt der Server als Webseiten (app/rechtliches.py).
+      - path: ../rechtliches/rechtliches.json
+        buildPhase: resources
     scheme: {}
     dependencies:
       - package: GeschenkeCore
@@ -30,6 +34,9 @@ targets:
                      NunitoSans-Bold.ttf, NunitoSans-ExtraBold.ttf]
         # Kommt beim CI-Build aus dem GitHub-Secret APP_TOKEN, steht nie im Repo.
         AppToken: $(APP_TOKEN)
+        # Nur HTTPS über URLSession, keine eigene Verschlüsselung: von der Exportdokumentation
+        # befreit. Spart die Frage bei jedem Upload in App Store Connect.
+        ITSAppUsesNonExemptEncryption: false
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: de.luka.geschenke
