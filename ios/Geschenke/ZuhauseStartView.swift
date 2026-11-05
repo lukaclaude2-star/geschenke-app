@@ -34,7 +34,7 @@ struct ZuhauseStartView: View {
     private var kopf: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(begruessung(stunde: Calendar.current.component(.hour, from: Date())))
-                .font(.zuhause(.largeTitle, .fett))
+                .font(.zuhause(.largeTitle, .extrafett))
                 .lineLimit(1).minimumScaleFactor(0.7)
             Text("für wen suchst du heute?").font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
         }

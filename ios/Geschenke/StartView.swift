@@ -294,7 +294,7 @@ struct EinstellungenView: View {
                     )) {
                         ForEach(Schriftstufe.allCases) { Text($0.titel).tag($0) }
                     }
-                    .pickerStyle(.segmented)
+                    .auswahlStil()
                     Text("So sieht Text in der App aus.").foregroundStyle(Look.leise)
                 }
                 .listRowBackground(Look.karte)
@@ -347,7 +347,7 @@ struct EinstellungenView: View {
             )) {
                 ForEach(Erscheinung.allCases) { Text($0.titel).tag($0) }
             }
-            .pickerStyle(.segmented)
+            .auswahlStil()
         } header: {
             Text("Erscheinung")
         } footer: {
@@ -356,10 +356,16 @@ struct EinstellungenView: View {
         .listRowBackground(Look.karte)
 
         Section {
-            Toggle("Zum Öffnen tippen", isOn: Binding(
+            Toggle(isOn: Binding(
                 get: { zustand.daten.startTippen },
                 set: { zustand.setzeStartTippen($0) }
-            ))
+            )) {
+                HStack(spacing: 10) {
+                    Image("coco-geschenk").resizable().scaledToFit().frame(width: 34, height: 34)
+                        .accessibilityHidden(true)
+                    Text("Zum Öffnen tippen")
+                }
+            }
             VStack(alignment: .leading, spacing: 8) {
                 Text("Auspacken guter Treffer")
                 Picker("Auspacken guter Treffer", selection: Binding(
@@ -368,7 +374,7 @@ struct EinstellungenView: View {
                 )) {
                     ForEach(AuspackTempo.allCases) { Text($0.titel).tag($0) }
                 }
-                .pickerStyle(.segmented)
+                .auswahlStil()
                 .labelsHidden()
             }
             .padding(.vertical, 4)

@@ -46,3 +46,21 @@ extension Font {
         }
     }
 }
+
+/// Segmentierte Auswahl, ab großer Schrift ein Menü: Segmente würden lange Wörter sonst
+/// abschneiden („Abendlicht“, „sehr groß“), DESIGN.md 3.
+struct AuswahlStil: ViewModifier {
+    @Environment(\.dynamicTypeSize) private var groesse
+
+    func body(content: Content) -> some View {
+        if groesse >= .xxLarge {
+            content.pickerStyle(.menu)
+        } else {
+            content.pickerStyle(.segmented)
+        }
+    }
+}
+
+extension View {
+    func auswahlStil() -> some View { modifier(AuswahlStil()) }
+}

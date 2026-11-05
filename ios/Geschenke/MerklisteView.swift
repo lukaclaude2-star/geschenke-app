@@ -4,6 +4,7 @@ import SwiftUI
 struct MerklisteView: View {
     @EnvironmentObject private var zustand: AppZustand
     @Environment(\.openURL) private var oeffnen
+    @Environment(\.dynamicTypeSize) private var schriftgroesse
 
     private struct Gruppe: Identifiable {
         let fuer: String
@@ -90,7 +91,11 @@ struct MerklisteView: View {
                 }
             } header: {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("merkliste").font(.zuhause(.largeTitle, .fett)).foregroundStyle(Look.text)
+                    HStack(alignment: .bottom, spacing: 10) {
+                        Text("merkliste").font(.zuhause(.largeTitle, .extrafett)).foregroundStyle(Look.text)
+                        Image("coco-stapel").resizable().scaledToFit().frame(width: 44, height: 44)
+                            .accessibilityHidden(true)
+                    }
                     if anzahl > 0 {
                         Text(untertitel).font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                     }
@@ -130,18 +135,27 @@ struct MerklisteView: View {
         Button {
             if let url = URL(string: eintrag.karte.link) { oeffnen(url) }
         } label: {
-            HStack(spacing: 12) {
-                ZuhauseFoto(karte: eintrag.karte, ecken: 10).frame(width: 58, height: 58)
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(eintrag.karte.titel).font(.zuhause(.subheadline, .halbfett))
-                        .foregroundStyle(Look.text).lineLimit(2)
-                    HStack(alignment: .firstTextBaseline, spacing: 6) {
-                        Text(eintrag.karte.preisText).font(.zuhause(.footnote, .fett)).foregroundStyle(Look.preis)
-                        Text(eintrag.karte.shop).font(.zuhause(.footnote)).foregroundStyle(Look.leise).lineLimit(1)
+            let text = VStack(alignment: .leading, spacing: 2) {
+                Text(eintrag.karte.titel).font(.zuhause(.subheadline, .halbfett))
+                    .foregroundStyle(Look.text).lineLimit(3)
+                Text(eintrag.karte.preisText).font(.zuhause(.footnote, .fett)).foregroundStyle(Look.preis)
+                Text(eintrag.karte.shop).font(.zuhause(.footnote)).foregroundStyle(Look.leise).lineLimit(1)
+            }
+            Group {
+                if schriftgroesse.isAccessibilitySize {
+                    // sehr große Schrift: Foto über dem Text, damit der Titel die ganze Breite hat
+                    VStack(alignment: .leading, spacing: 8) {
+                        ZuhauseFoto(karte: eintrag.karte, ecken: 10).frame(width: 88, height: 88)
+                        text
+                    }
+                } else {
+                    HStack(spacing: 12) {
+                        ZuhauseFoto(karte: eintrag.karte, ecken: 10).frame(width: 58, height: 58)
+                        text
+                        Spacer(minLength: 8)
+                        Image(systemName: "chevron.right").font(.footnote.bold()).foregroundStyle(Look.leise)
                     }
                 }
-                Spacer(minLength: 8)
-                Text("ansehen ›").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
             }
             .frame(minHeight: 62)
             .contentShape(Rectangle())

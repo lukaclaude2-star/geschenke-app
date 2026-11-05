@@ -36,16 +36,23 @@ struct ZuhauseWischenListe: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 12) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("wischen").font(.zuhause(.largeTitle, .fett))
+                    Text("wischen").font(.zuhause(.largeTitle, .extrafett))
                     Text(zustand.daten.profile.isEmpty ? "noch niemand gespeichert" : "für wen soll ich weitersuchen?")
                         .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                 }
                 .padding(.top, 8)
                 if zustand.daten.profile.isEmpty {
-                    Text("Starte eine Suche. Danach kannst du die Person speichern und hier weiterwischen.")
-                        .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
-                        .padding(14).frame(maxWidth: .infinity, alignment: .leading)
-                        .zuhauseKarte(ecken: 16)
+                    VStack(spacing: 12) {
+                        Image("coco-katze").resizable().scaledToFit().frame(width: 130)
+                            .accessibilityHidden(true)
+                        Text("Starte eine Suche. Danach kannst du die Person speichern und hier weiterwischen.")
+                            .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
+                            .multilineTextAlignment(.center)
+                        NavigationLink { LaengeView() } label: { Text("Gespräch starten") }
+                            .buttonStyle(GoldKnopf())
+                    }
+                    .padding(16).frame(maxWidth: .infinity)
+                    .zuhauseKarte(ecken: 16)
                 } else {
                     VStack(spacing: 0) {
                         ForEach(Array(zustand.daten.profile.enumerated()), id: \.element.id) { nummer, eintrag in
