@@ -45,7 +45,7 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
   und `NunitoSans-Regular/SemiBold/Bold/ExtraBold`, erzeugt mit
   `ios/werkzeuge/schriften/instanzen.py`. Fraunces (`Font.titel`) nur für Seitentitel,
   Abschnittsüberschriften, die Einführung und Navigationstitel; alles andere `Font.zuhause`.
-  Im Code `Font.zuhause(stil, gewicht)` bzw. `Font.app(stil, gewicht)`.
+  Im Code `Font.zuhause(stil, gewicht)` und `Font.titel(stil)`.
 - Immer Textstile (`.headline`, `.body` …), keine festen Größen: Dynamic Type muss gehen.
 - Freundliche, kleingeschriebene Begrüßung („guten abend.“) wie bei stoic.
 - **Keine** kleinen Großbuchstaben mit weitem Abstand über Überschriften („PROFILE“).
@@ -85,7 +85,8 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 - Eckenradius passend zur Größe (große Karte runder als ein kleiner Knopf).
 - Pro Screen **ein** Erkennungsmerkmal, das mit voller Sorgfalt gemacht ist. Startseite:
   die Katze schläft auf der Kante der Hauptkarte (Coco-Test 2, von Luka als deutlich
-  besser bewertet). Weitere Motive nur klein und mit Bedeutung (Kranz am Anlass, Tee beim Profil).
+  besser bewertet). Weitere Motive nur klein und mit Bedeutung (Kranz am Anlass, Geschenkstapel
+  an der Merkliste). Die Einführung zeigt je Seite ein großes Motiv (Familie, verpackte Karte, Katze).
 - Katalogfotos (weißer Grund) auf einer Creme-Tafel mit Multiplizieren zeigen, damit kein
   reines Weiß entsteht.
 - Leere Zustände (keine Profile, Merkliste leer, Server wacht auf) gehören zum Entwurf.

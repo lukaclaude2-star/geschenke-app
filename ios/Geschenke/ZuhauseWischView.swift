@@ -185,7 +185,7 @@ struct ZuhauseWischView: View {
     @ViewBuilder private var leer: some View {
         VStack(spacing: 12) {
             if modell.laedt {
-                ProgressView().tint(Look.akzent)
+                ProgressView().tint(Look.akzentText)
                 Text(modell.wachtAuf ? wachtAufText : "Suche passende Geschenke …")
                     .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
             } else if let fehler = modell.fehler {
@@ -380,8 +380,8 @@ struct Verpackung: View, Animatable {
     let name: String
     let ruhig: Bool
 
-    /// Ausdrücklich, weil die privaten Konstanten unten den automatischen Initialisierer
-    /// dateiprivat machen; die Einführung nutzt die Verpackung für ihre Übungskarte.
+    /// Die Einführung nutzt die Verpackung für ihre Übungskarte; der ausdrückliche
+    /// Initialisierer macht diese Schnittstelle sichtbar.
     init(offen: Double, auspacken: Double, name: String, ruhig: Bool) {
         self.offen = offen
         self.auspacken = auspacken

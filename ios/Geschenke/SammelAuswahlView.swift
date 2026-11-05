@@ -23,7 +23,7 @@ struct SammelAuswahlView: View {
                         } label: {
                             HStack {
                                 Image(systemName: gewaehlt.contains(eintrag.id) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(Look.akzent)
+                                    .foregroundStyle(Look.akzentText)
                                     .font(.title3)
                                 VStack(alignment: .leading, spacing: 2) {
                                     Text(eintrag.name).font(.zuhause(.headline, .halbfett)).foregroundStyle(Look.text)

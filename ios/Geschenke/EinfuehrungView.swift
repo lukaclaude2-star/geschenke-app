@@ -19,8 +19,8 @@ struct EinfuehrungView: View {
               text: "Ein kurzes Gespräch über Hobbys, Wünsche und das, was gar nicht geht. Mehr brauche ich nicht."),
         Seite(titel: "wisch dich durch.",
               text: "Nach rechts merkst du dir ein Geschenk, nach links geht es weiter. Mit jedem Wisch lerne ich dazu. Probier es mit der Karte aus."),
-        Seite(titel: "alles bleibt bei dir.",
-              text: "Deine Leute und deine Merkliste liegen nur auf diesem iPhone. Kein Konto, kein Login."),
+        Seite(titel: "gespeichert wird nur bei dir.",
+              text: "Deine Leute und deine Merkliste liegen nur auf diesem iPhone. Für Vorschläge schickt die App nur, was du über die Person erzählst, ohne Gerätekennung. Kein Konto, kein Login."),
     ]
 
     private var istLetzte: Bool { seite == seiten.count - 1 }
@@ -41,25 +41,28 @@ struct EinfuehrungView: View {
             // Passt alles, steht der Text unten; bei sehr großer Schrift lässt sich scrollen.
             GeometryReader { geo in
                 ScrollView {
-                    VStack(alignment: .leading, spacing: 0) {
-                        Spacer(minLength: 8)
-                        // Bild direkt über dem Text, kein Loch dazwischen
-                        bild
-                            .frame(maxWidth: .infinity)
-                            .frame(height: schriftgroesse.isAccessibilitySize ? 170 : 320)
-                            .padding(.bottom, 24)
-                        VStack(alignment: .leading, spacing: 10) {
-                            Text(seiten[seite].titel).font(.titel(.title))
-                                .foregroundStyle(Look.text)
-                                .accessibilityAddTraits(.isHeader)
-                            Text(seiten[seite].text).font(.zuhause(.body))
-                                .foregroundStyle(Look.leise)
+                    // ZStack: alte und neue Seite liegen beim Überblenden übereinander, nicht untereinander
+                    ZStack {
+                        VStack(alignment: .leading, spacing: 0) {
+                            Spacer(minLength: 8)
+                            // Bild direkt über dem Text, kein Loch dazwischen
+                            bild
+                                .frame(maxWidth: .infinity)
+                                .frame(height: schriftgroesse.isAccessibilitySize ? 170 : 320)
+                                .padding(.bottom, 24)
+                            VStack(alignment: .leading, spacing: 10) {
+                                Text(seiten[seite].titel).font(.titel(.title))
+                                    .foregroundStyle(Look.text)
+                                    .accessibilityAddTraits(.isHeader)
+                                Text(seiten[seite].text).font(.zuhause(.body))
+                                    .foregroundStyle(Look.leise)
+                            }
+                            .fixedSize(horizontal: false, vertical: true)
                         }
-                        .fixedSize(horizontal: false, vertical: true)
+                        .frame(minHeight: geo.size.height, alignment: .bottom)
+                        .id(seite)
+                        .transition(.opacity)
                     }
-                    .frame(minHeight: geo.size.height, alignment: .bottom)
-                    .id(seite)
-                    .transition(.opacity)
                 }
                 .scrollBounceBehavior(.basedOnSize)
             }

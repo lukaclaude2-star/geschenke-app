@@ -28,10 +28,10 @@ struct ProfilView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     Text(eintrag.profil.zusammenfassung).foregroundStyle(Look.leise)
                     FlussLayout(abstand: 6) {
-                        ForEach(eintrag.profil.wuensche, id: \.tag) { Abzeichen(text: $0.label) }
+                        ForEach(eintrag.profil.wuensche, id: \.tag) { Abzeichen(text: ohneEmoji($0.label)) }
                     }
                     if !eintrag.profil.ausschluesse.isEmpty {
-                        Text("Nie: " + eintrag.profil.ausschluesse.map(\.label).joined(separator: ", "))
+                        Text("Nie: " + eintrag.profil.ausschluesse.map { ohneEmoji($0.label) }.joined(separator: ", "))
                             .font(.zuhause(.footnote))
                             .foregroundStyle(Look.leise)
                     }
@@ -61,7 +61,7 @@ struct ProfilView: View {
                     ForEach(verlauf) { Blase(nachricht: $0) }
                     if denkt {
                         HStack(spacing: 8) {
-                            ProgressView().tint(Look.akzent)
+                            ProgressView().tint(Look.akzentText)
                             if wachtAuf { Text(wachtAufText).foregroundStyle(Look.leise) }
                         }
                     }
@@ -213,7 +213,7 @@ struct GeburtstagZeile: View {
                     let heute = Calendar.current.dateComponents([.day, .month], from: Date())
                     aendern(Geburtstag(tag: heute.day ?? 1, monat: heute.month ?? 1))
                 }
-                .foregroundStyle(Look.akzent)
+                .foregroundStyle(Look.akzentText)
             }
         }
         .pickerStyle(.menu)

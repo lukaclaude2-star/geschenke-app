@@ -131,11 +131,11 @@ struct ZuhauseStartView: View {
                 Abschnittstitel(text: "Deine Leute")
                 Spacer()
                 NavigationLink { ZuhauseProfileView() } label: {
-                    Text("alle \(alle.count) ansehen ›").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
+                    Text("alle ansehen ›").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
                         .frame(minHeight: 44)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel("Alle \(alle.count) Personen ansehen")
+                .accessibilityLabel("Alle Personen ansehen")
             }
             ForEach(Array(alle.prefix(2).enumerated()), id: \.element.id) { nummer, eintrag in
                 if nummer > 0 { Look.trenner }

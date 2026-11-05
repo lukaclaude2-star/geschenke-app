@@ -14,6 +14,8 @@ struct Wurzel: View {
         let erzwungen = Designs.erzwingtHell(Erscheinung.aus(zustand.daten.erscheinung))
         ZStack {
             ZuhauseTabs()
+                // solange Startbildschirm oder Einführung darüber liegen, nicht per VoiceOver erreichbar
+                .accessibilityHidden(!startFertig || zeigeEinfuehrung)
                 // Farbwelt gewechselt → alles neu zeichnen (Look liest die Farben statisch).
                 .id(palette.hell)
             if !startFertig {
@@ -33,6 +35,7 @@ struct Wurzel: View {
                     withAnimation(.easeOut(duration: 0.3)) { zeigeEinfuehrung = false }
                 }
                 .transition(.opacity)
+                .accessibilityAddTraits(.isModal)
                 .zIndex(2)
             }
         }

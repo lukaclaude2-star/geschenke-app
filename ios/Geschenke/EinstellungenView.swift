@@ -65,7 +65,10 @@ struct EinstellungenView: View {
             .zuhauseHintergrund()
             .navigationTitle("Einstellungen")
             .fullScreenCover(isPresented: $zeigeEinfuehrung) {
-                EinfuehrungView { zeigeEinfuehrung = false }
+                EinfuehrungView {
+                    zustand.setzeEinfuehrungGesehen()
+                    zeigeEinfuehrung = false
+                }
             }
         }
     }

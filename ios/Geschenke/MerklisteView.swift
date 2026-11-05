@@ -58,7 +58,9 @@ struct MerklisteView: View {
             }
         }
         .confirmationDialog("Merkliste leeren?", isPresented: $frageLoeschen, titleVisibility: .visible) {
-            Button("Alle \(liste.count) löschen", role: .destructive) { zustand.leereMerkliste() }
+            Button(liste.count == 1 ? "Löschen" : "Alle \(liste.count) löschen", role: .destructive) {
+                zustand.leereMerkliste()
+            }
             Button("Abbrechen", role: .cancel) {}
         } message: {
             Text(liste.count == 1

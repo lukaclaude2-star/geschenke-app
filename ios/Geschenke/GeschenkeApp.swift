@@ -15,6 +15,12 @@ struct GeschenkeApp: App {
             .font: UIFontMetrics(forTextStyle: .headline).scaledFont(for: fraunces),
             .foregroundColor: farbe,
         ]
+        if let gross = UIFont(name: Font.titelSchrift, size: 34) {
+            UINavigationBar.appearance().largeTitleTextAttributes = [
+                .font: UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: gross),
+                .foregroundColor: farbe,
+            ]
+        }
     }
 
     var body: some Scene {

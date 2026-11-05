@@ -151,7 +151,7 @@ struct ZuhausePersonZeile: View {
     }
 
     private var beschreibung: String {
-        let wuensche = eintrag.profil.wuensche.sorted { $0.gewicht > $1.gewicht }.prefix(3).map(\.label)
+        let wuensche = eintrag.profil.wuensche.sorted { $0.gewicht > $1.gewicht }.prefix(3).map { ohneEmoji($0.label) }
         return wuensche.isEmpty ? eintrag.profil.zusammenfassung : wuensche.joined(separator: ", ")
     }
 }

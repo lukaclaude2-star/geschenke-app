@@ -27,7 +27,7 @@ struct ChatView: View {
                         }
                         if modell.denkt {
                             HStack(spacing: 8) {
-                                ProgressView().tint(Look.akzent)
+                                ProgressView().tint(Look.akzentText)
                                 Text(modell.wachtAuf ? wachtAufText : "…")
                                     .foregroundStyle(Look.leise)
                             }
@@ -206,15 +206,15 @@ struct ErkannteStichwoerter: View {
         VStack(alignment: .leading, spacing: 6) {
             Text("Erkannte Stichwörter").font(.zuhause(.subheadline, .halbfett))
             if profil.wuensche.isEmpty {
-                Text("Keine – erzähl ruhig mehr über Hobbys und Interessen.")
+                Text("Noch keine. Erzähl ruhig mehr über Hobbys und Interessen.")
                     .font(.zuhause(.footnote)).foregroundStyle(Look.leise)
             } else {
                 FlussLayout(abstand: 6) {
-                    ForEach(profil.wuensche, id: \.tag) { Abzeichen(text: $0.label) }
+                    ForEach(profil.wuensche, id: \.tag) { Abzeichen(text: ohneEmoji($0.label)) }
                 }
             }
             if !profil.ausschluesse.isEmpty {
-                Text("Nie: " + profil.ausschluesse.map(\.label).joined(separator: ", "))
+                Text("Nie: " + profil.ausschluesse.map { ohneEmoji($0.label) }.joined(separator: ", "))
                     .font(.zuhause(.footnote)).foregroundStyle(Look.leise)
             }
         }
