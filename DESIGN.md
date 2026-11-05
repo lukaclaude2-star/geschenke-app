@@ -5,9 +5,9 @@ KI-Agenten). **Diese Datei hat Vorrang vor allgemeinen Design-Skills** wie
 `swiftui-design-skill` oder `frontend-design`. Widerspricht ein Skill dieser Datei, gilt
 diese Datei.
 
-Stand 04.11.2026 · Fahrplan: `docs/superpowers/plans/2026-11-03-design-neu.md`
-(Phase 1 läuft). Was hier als **offen** markiert ist, ist noch nicht entschieden: nicht
-selbst festlegen, sondern Luka fragen.
+Stand 05.11.2026 · zuletzt umgesetzt: Runde 5 (`docs/superpowers/plans/2026-11-05-runde5.md`).
+Was hier als **offen** markiert ist, ist noch nicht entschieden: nicht selbst festlegen,
+sondern Luka fragen.
 
 ## 1. Gefühl und Welt
 
@@ -32,13 +32,19 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 - Eine Lichtinsel (weicher, warmer Verlauf oben links) ist das einzige erlaubte Leuchten.
   Sie steht für die Lampe im Raum. Sonst keine Verläufe, kein Glow, keine farbigen Schatten.
 - Kontrast für Text mindestens 4,5 (`kontrast()` in `Designs.swift`, Tests im Kern).
+- Kupfer als Schrift oder Symbol auf dem hellen Grund erreicht nur 2,97. In Hell steht
+  Akzent-Schrift deshalb in Rotdunkel `#9A3A24` (`Look.akzentText`, auch der Tint der App);
+  Kupfer bleibt dort Fläche (Knöpfe). Im Abendlicht ist Kupfer als Schrift erlaubt (4,8).
 
 ## 3. Schrift
 
 - **Entschieden (Luka, 05.11.2026): Überschriften Fraunces, Text Nunito Sans** (beide OFL).
   Fraunces als weiche Serife (Achse SOFT 100, Bold), Nunito Sans für Fließtext, Knöpfe und
   Preise. Gewählt aus sechs Vorschlägen (Ansicht „Schriftvorschläge“): wirkt erwachsen, warm
-  und nicht nach App-Baukasten. **Noch nicht umgesetzt:** in der App steht bis dahin Nunito.
+  und nicht nach App-Baukasten. **Umgesetzt (Runde 5):** feste Schnitte `FrauncesSoft-Bold`
+  und `NunitoSans-Regular/SemiBold/Bold/ExtraBold`, erzeugt mit
+  `ios/werkzeuge/schriften/instanzen.py`. Fraunces (`Font.titel`) nur für Seitentitel,
+  Abschnittsüberschriften, die Einführung und Navigationstitel; alles andere `Font.zuhause`.
   Im Code `Font.zuhause(stil, gewicht)` bzw. `Font.app(stil, gewicht)`.
 - Immer Textstile (`.headline`, `.body` …), keine festen Größen: Dynamic Type muss gehen.
 - Freundliche, kleingeschriebene Begrüßung („guten abend.“) wie bei stoic.
@@ -70,6 +76,10 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 - **Keine Kacheln** (Luka, 04.11.: „sehen zu sehr nach KI aus“). Navigation über die Leiste
   unten (Start, Wischen, Merkliste, Einstellungen), nicht über Kacheln auf der Startseite.
   Die Profile erreicht man über die Startseite (Luka, 04.11.).
+- **Listen ohne Kachelflächen** (Luka, 05.11.: „die Kacheln weglassen“): „Zuletzt gemerkt“,
+  „Deine Leute“, Merkliste, Profile, Einstellungen und Gewichtung stehen offen auf dem
+  Hintergrund, getrennt durch Abstand und feine Linien (`offeneZeilen()`, `Look.trenner`).
+  Eine Fläche behalten nur die Hauptkarte (die Katze schläft auf ihrer Kante) und die Wischkarte.
 - Kein gleichförmiges Kachelraster aus Symbol, Titel und Untertitel. Die Wichtigkeit
   bestimmt die Größe: eine große Hauptkarte, kleinere Nebenkarten.
 - Eckenradius passend zur Größe (große Karte runder als ein kleiner Knopf).
@@ -159,5 +169,5 @@ Gefühl: Es soll aufregend sein, die nächste Karte zu sehen, und alles fließt,
 
 ## 9. Offen (Luka entscheidet)
 
-- Schrift: entschieden Fraunces + Nunito Sans (3), Umsetzung offen. Name, 3–5 Stichwörter für die Welt (Phase 1). Das Logo steht (6a).
-- Ob die 8 alten Designs bleiben, wenn „Zuhause“ fertig ist (Phase 3)
+- Name, 3–5 Stichwörter für die Welt. Das Logo steht (6a), die Schrift ist umgesetzt (3),
+  die alten Designs sind entfernt (2).

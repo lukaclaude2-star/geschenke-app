@@ -15,8 +15,7 @@ struct EinfuehrungView: View {
     }
 
     private let seiten = [
-        Seite(titel: "erzähl mir
-von der person.",
+        Seite(titel: "erzähl mir\nvon der person.",
               text: "Ein kurzes Gespräch über Hobbys, Wünsche und das, was gar nicht geht. Mehr brauche ich nicht."),
         Seite(titel: "wisch dich durch.",
               text: "Nach rechts merkst du dir ein Geschenk, nach links geht es weiter. Mit jedem Wisch lerne ich dazu. Probier es mit der Karte aus."),
