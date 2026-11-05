@@ -23,12 +23,12 @@ struct SammelAuswahlView: View {
                         } label: {
                             HStack {
                                 Image(systemName: gewaehlt.contains(eintrag.id) ? "checkmark.circle.fill" : "circle")
-                                    .foregroundStyle(Look.akzent)
+                                    .foregroundStyle(Look.akzentText)
                                     .font(.title3)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(eintrag.name).font(.app(.headline, .halbfett)).foregroundStyle(Look.text)
+                                    Text(eintrag.name).font(.zuhause(.headline, .halbfett)).foregroundStyle(Look.text)
                                     Text(eintrag.profil.zusammenfassung)
-                                        .font(.app(.caption))
+                                        .font(.zuhause(.caption))
                                         .foregroundStyle(Look.leise)
                                         .lineLimit(1)
                                 }
@@ -38,8 +38,9 @@ struct SammelAuswahlView: View {
                 } footer: {
                     Text("Jede Karte zeigt, für wen sie gedacht ist. Ausschlüsse und Budget gelten pro Person.")
                 }
-                .listRowBackground(Look.karte)
+                .offeneZeilen()
             }
+            .textCase(nil)
             Button("Los (\(gewaehlt.count))") {
                 // Reihenfolge wie in der Profilliste, damit „für …“ stabil bleibt.
                 let personen = zustand.daten.profile.filter { gewaehlt.contains($0.id) }.map(WischPerson.init)
@@ -50,7 +51,7 @@ struct SammelAuswahlView: View {
             .opacity(gewaehlt.count < 2 ? 0.5 : 1)
             .padding()
         }
-        .nachtblau()
+        .zuhauseHintergrund()
         .navigationTitle("Für mehrere suchen")
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $ziel) { WischZielView(ziel: $0) }

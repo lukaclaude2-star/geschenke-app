@@ -1,8 +1,9 @@
 import GeschenkeCore
 import SwiftUI
 
-/// Startseite im Zuhause-Stil nach Coco-Test 2: Begrüßung, eine große Hauptkarte mit der
-/// schlafenden Katze, Anlasszeile, zuletzt Gemerktes und die Profile. Keine Kacheln.
+/// Startseite: Begrüßung, eine große Hauptkarte mit der schlafenden Katze, Anlasszeile, zuletzt
+/// Gemerktes und die Profile. Nur die Hauptkarte hat eine Fläche (die Katze schläft auf ihr),
+/// alles andere steht offen auf dem Hintergrund (Luka, 05.11.2026: „die Kacheln weglassen“).
 struct ZuhauseStartView: View {
     @EnvironmentObject private var zustand: AppZustand
     @Binding var reiter: ZuhauseReiter
@@ -12,7 +13,7 @@ struct ZuhauseStartView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 14) {
+            VStack(alignment: .leading, spacing: 18) {
                 kopf
                 hauptkarte
                 anlassZeile(naechsterAnlass(heute: Date(), profile: zustand.daten.profile))
@@ -22,7 +23,7 @@ struct ZuhauseStartView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
-        .nachtblau()
+        .zuhauseHintergrund()
         .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(item: $ziel) { WischZielView(ziel: $0) }
         .navigationDestination(isPresented: $zeigeSammel) {
@@ -34,7 +35,7 @@ struct ZuhauseStartView: View {
     private var kopf: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(begruessung(stunde: Calendar.current.component(.hour, from: Date())))
-                .font(.zuhause(.largeTitle, .extrafett))
+                .font(.titel(.largeTitle))
                 .lineLimit(1).minimumScaleFactor(0.7)
             Text("für wen suchst du heute?").font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
         }
@@ -43,7 +44,7 @@ struct ZuhauseStartView: View {
 
     private var hauptkarte: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Text("Geschenk finden").font(.zuhause(.title2, .extrafett))
+            Text("Geschenk finden").font(.titel(.title2))
             Text("Erzähl mir kurz von der Person, ich suche passende Ideen.")
                 .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                 .fixedSize(horizontal: false, vertical: true)
@@ -90,9 +91,11 @@ struct ZuhauseStartView: View {
 
     private var zuletztGemerkt: some View {
         let liste = zustand.daten.merkliste
+        // Noch offene Ideen zuerst; schon Gekauftes braucht hier keinen Platz
+        let zuerst = liste.filter { !$0.gekauft } + liste.filter(\.gekauft)
         return VStack(alignment: .leading, spacing: 6) {
             HStack {
-                Text("Zuletzt gemerkt").font(.zuhause(.headline, .fett))
+                Abschnittstitel(text: "Zuletzt gemerkt")
                 Spacer()
                 if !liste.isEmpty {
                     Button { reiter = .merkliste } label: {
@@ -105,10 +108,9 @@ struct ZuhauseStartView: View {
             if liste.isEmpty {
                 Text("Noch nichts gemerkt. Was du beim Wischen nach rechts schiebst, landet hier.")
                     .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
-                    .padding(.bottom, 8)
             } else {
-                HStack(alignment: .top, spacing: 8) {
-                    ForEach(liste.prefix(3)) { eintrag in
+                HStack(alignment: .top, spacing: 10) {
+                    ForEach(zuerst.prefix(3)) { eintrag in
                         VStack(alignment: .leading, spacing: 3) {
                             ZuhauseFoto(karte: eintrag.karte, ecken: 10).aspectRatio(1, contentMode: .fit)
                             Text(eintrag.karte.preisText).font(.zuhause(.caption, .fett)).foregroundStyle(Look.preis)
@@ -117,41 +119,33 @@ struct ZuhauseStartView: View {
                     }
                     ForEach(0..<max(0, 3 - liste.count), id: \.self) { _ in Color.clear.frame(maxWidth: .infinity) }
                 }
-                .padding(.bottom, 8)
             }
         }
-        .padding(.horizontal, 14).padding(.top, 4)
-        .zuhauseKarte(ecken: 16)
+        .padding(.horizontal, 4)
     }
 
     private var profile: some View {
         let alle = zustand.daten.profile
         return VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("Deine Leute").font(.zuhause(.headline, .fett))
+                Abschnittstitel(text: "Deine Leute")
                 Spacer()
                 NavigationLink { ZuhauseProfileView() } label: {
-                    Text("alle \(alle.count) ›").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
+                    Text("alle ansehen ›").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
                         .frame(minHeight: 44)
                 }
                 .buttonStyle(.plain)
+                .accessibilityLabel("Alle Personen ansehen")
             }
             ForEach(Array(alle.prefix(2).enumerated()), id: \.element.id) { nummer, eintrag in
-                Look.trenner
+                if nummer > 0 { Look.trenner }
                 NavigationLink { ProfilView(profilID: eintrag.id) } label: {
-                    HStack(spacing: 12) {
-                        if nummer == 0 {
-                            Image("coco-tee").resizable().scaledToFit().frame(width: 40, height: 40)
-                                .accessibilityHidden(true)
-                        }
-                        ZuhausePersonZeile(eintrag: eintrag)
-                    }
+                    ZuhausePersonZeile(eintrag: eintrag)
                 }
                 .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal, 14).padding(.top, 2)
-        .zuhauseKarte(ecken: 16)
+        .padding(.horizontal, 4)
     }
 
     private func tageText(_ anlass: Anlass) -> String {
@@ -174,7 +168,7 @@ struct ZuhauseStartView: View {
     private func knopfText(_ anlass: Anlass) -> String {
         switch anlass.art {
         case .weihnachten:
-            return zustand.daten.profile.count >= 2 ? "Für alle ›" : "Suchen ›"
+            return zustand.daten.profile.count >= 2 ? "Für alle suchen ›" : "Suchen ›"
         case .geburtstag(_, let name):
             return "Für \(name) ›"
         }

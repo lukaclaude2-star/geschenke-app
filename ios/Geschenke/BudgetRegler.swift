@@ -13,7 +13,7 @@ struct BudgetRegler: View {
         VStack(alignment: .leading, spacing: 10) {
             let grenzen = BudgetSkala.grenzen(von: von, bis: bis)
             Text(BudgetSkala.text(von: grenzen.min, bis: grenzen.max).replacingOccurrences(of: "Budget: ", with: ""))
-                .font(.app(.title3, .fett))
+                .font(.zuhause(.title3, .fett))
                 .foregroundStyle(Look.preis)
             GeometryReader { geo in
                 let breite = max(1, geo.size.width - griff)
@@ -44,7 +44,7 @@ struct BudgetRegler: View {
                 Spacer()
                 Text("\(Int(BudgetSkala.maximum)) €+")
             }
-            .font(.app(.caption2))
+            .font(.zuhause(.caption2))
             .foregroundStyle(Look.leise)
         }
     }

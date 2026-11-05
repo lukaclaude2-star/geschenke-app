@@ -1,36 +1,29 @@
 import SwiftUI
 
-/// Schrift im Zuhause-Stil: Nunito (OFL, rund und weich, DESIGN.md 3). Immer an einen Textstil
-/// gebunden, damit Dynamic Type und die Schriftstufen der App weiter greifen.
+/// Schrift im Zuhause-Stil (DESIGN.md 3): Nunito Sans für Text, Knöpfe und Preise, Fraunces
+/// (weiche Serife) für Überschriften. Beide OFL, feste Schnitte aus `ios/werkzeuge/schriften`.
+/// Immer an einen Textstil gebunden, damit Dynamic Type und die Schriftstufen der App greifen.
 enum ZuhauseGewicht: String {
-    case normal = "Nunito-Regular"
-    case halbfett = "Nunito-SemiBold"
-    case fett = "Nunito-Bold"
-    case extrafett = "Nunito-ExtraBold"
-
-    var system: Font.Weight {
-        switch self {
-        case .normal: return .regular
-        case .halbfett: return .semibold
-        case .fett: return .bold
-        case .extrafett: return .heavy
-        }
-    }
+    case normal = "NunitoSans-Regular"
+    case halbfett = "NunitoSans-SemiBold"
+    case fett = "NunitoSans-Bold"
+    case extrafett = "NunitoSans-ExtraBold"
 }
 
 extension Font {
-    /// Für Ansichten, die alle Designs teilen: im Zuhause-Stil Nunito, sonst Systemschrift
-    /// im selben Gewicht (die alten Designs sehen unverändert aus).
-    static func app(_ stil: Font.TextStyle, _ gewicht: ZuhauseGewicht = .normal) -> Font {
-        Look.stil == .zuhause ? .zuhause(stil, gewicht) : .system(stil, weight: gewicht.system)
-    }
-
     static func zuhause(_ stil: Font.TextStyle, _ gewicht: ZuhauseGewicht = .normal) -> Font {
         .custom(gewicht.rawValue, size: grundgroesse(stil), relativeTo: stil)
     }
 
+    /// Überschriften: Seitentitel, Abschnitte, Einführung.
+    static func titel(_ stil: Font.TextStyle) -> Font {
+        .custom(titelSchrift, size: grundgroesse(stil), relativeTo: stil)
+    }
+
+    static let titelSchrift = "FrauncesSoft-Bold"
+
     /// iOS-Standardgrößen bei Schriftstufe „Groß“ (Standard).
-    private static func grundgroesse(_ stil: Font.TextStyle) -> CGFloat {
+    static func grundgroesse(_ stil: Font.TextStyle) -> CGFloat {
         switch stil {
         case .largeTitle: return 34
         case .title: return 28

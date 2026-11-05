@@ -25,8 +25,6 @@ final class Runde2DatenTests: XCTestCase {
         XCTAssertEqual(daten.profile.first?.profil.budgetMax, 50)
         XCTAssertEqual(daten.profile.first?.gewichtung.gewichte["garten"], 1.15)
         XCTAssertEqual(daten.merkliste.first?.karte.id, "a")
-        // gespeichertes altes Design wird zu „Zuhause“
-        XCTAssertEqual(daten.design, "zuhause")
     }
 
     func testSpeicherLaedtV1DateiOhneKaputtKopie() throws {
@@ -42,7 +40,6 @@ final class Runde2DatenTests: XCTestCase {
         let dateien = try FileManager.default.contentsOfDirectory(atPath: ordner.path)
         XCTAssertFalse(dateien.contains { $0.hasPrefix("appdaten.kaputt-") })
         XCTAssertEqual(speicher.laden().erscheinung, "hell")
-        XCTAssertEqual(speicher.laden().design, "zuhause")
     }
 
     func testGesehenWirdGespeichert() throws {

@@ -33,11 +33,11 @@ struct GelerntView: View {
                     ForEach(eintraege) { eintrag in
                         VStack(alignment: .leading, spacing: 4) {
                             HStack {
-                                Text(eintrag.label)
+                                Text(ohneEmoji(eintrag.label))
                                 Spacer()
                                 Text(Gewichtung.stufe(eintrag.gewicht))
-                                    .font(.app(.caption, .fett))
-                                    .foregroundStyle(Look.akzent)
+                                    .font(.zuhause(.caption, .fett))
+                                    .foregroundStyle(Look.akzentText)
                             }
                             Slider(value: Binding(
                                 get: { eintrag.gewicht },
@@ -46,19 +46,21 @@ struct GelerntView: View {
                         }
                     }
                 } header: {
-                    Text("Was ich gelernt habe")
+                    Text("Was ich gelernt habe").font(.titel(.headline)).foregroundStyle(Look.text)
                 } footer: {
                     Text("Zieh nach rechts für mehr davon, nach links für weniger.")
                 }
-                .listRowBackground(Look.karte)
+                .offeneZeilen()
 
                 if !modell.ausschluesse(person: person).isEmpty {
-                    Section("Nie zeigen") {
+                    Section {
                         ForEach(modell.ausschluesse(person: person), id: \.schluessel) { ausschluss in
-                            Label(ausschluss.label, systemImage: "nosign")
+                            Label(ohneEmoji(ausschluss.label), systemImage: "nosign")
                         }
+                    } header: {
+                        Text("Nie zeigen").font(.titel(.headline)).foregroundStyle(Look.text)
                     }
-                    .listRowBackground(Look.karte)
+                    .offeneZeilen()
                 }
 
                 Section {
@@ -67,21 +69,22 @@ struct GelerntView: View {
                         reihenfolge = modell.personen[person].gewichtung.eintraege.map(\.tag)
                     } label: {
                         Label("Alles zurücksetzen", systemImage: "arrow.counterclockwise")
-                            .foregroundStyle(Look.akzent)
+                            .foregroundStyle(Look.akzentText)
                     }
                     Button {
                         Task { await modell.gesehenZuruecksetzen() }
                         schliessen()
                     } label: {
                         Label("Gesehene wieder zeigen", systemImage: "eye")
-                            .foregroundStyle(Look.akzent)
+                            .foregroundStyle(Look.akzentText)
                     }
                 } footer: {
                     Text("Bereits gewischte Karten dürfen dann wieder auftauchen.")
                 }
-                .listRowBackground(Look.karte)
+                .offeneZeilen()
             }
-            .nachtblau()
+            .textCase(nil)
+            .zuhauseHintergrund()
             .navigationTitle("Gewichtung")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

@@ -18,7 +18,7 @@ struct ProfilView: View {
         if let eintrag = zustand.profil(profilID) {
             inhalt(eintrag)
         } else {
-            Text("Profil nicht gefunden.").nachtblau()
+            Text("Profil nicht gefunden.").zuhauseHintergrund()
         }
     }
 
@@ -28,11 +28,11 @@ struct ProfilView: View {
                 VStack(alignment: .leading, spacing: 14) {
                     Text(eintrag.profil.zusammenfassung).foregroundStyle(Look.leise)
                     FlussLayout(abstand: 6) {
-                        ForEach(eintrag.profil.wuensche, id: \.tag) { Abzeichen(text: $0.label) }
+                        ForEach(eintrag.profil.wuensche, id: \.tag) { Abzeichen(text: ohneEmoji($0.label)) }
                     }
                     if !eintrag.profil.ausschluesse.isEmpty {
-                        Text("Nie: " + eintrag.profil.ausschluesse.map(\.label).joined(separator: ", "))
-                            .font(.app(.footnote))
+                        Text("Nie: " + eintrag.profil.ausschluesse.map { ohneEmoji($0.label) }.joined(separator: ", "))
+                            .font(.zuhause(.footnote))
                             .foregroundStyle(Look.leise)
                     }
                     GeburtstagZeile(geburtstag: eintrag.geburtstag) { zustand.setzeGeburtstag(profilID, $0) }
@@ -45,7 +45,7 @@ struct ProfilView: View {
                     .buttonStyle(GoldKnopf())
 
                     VStack(alignment: .leading, spacing: 10) {
-                        Text("Budget").font(.app(.headline, .halbfett))
+                        Abschnittstitel(text: "Budget")
                         BudgetRegler(von: $budgetVon, bis: $budgetBis)
                             .onChange(of: budgetVon) { budgetGeaendert = true }
                             .onChange(of: budgetBis) { budgetGeaendert = true }
@@ -54,17 +54,15 @@ struct ProfilView: View {
                                 .buttonStyle(RandKnopf())
                         }
                     }
-                    .padding(12)
-                    .background(Look.karte)
-                    .clipShape(RoundedRectangle(cornerRadius: 14))
+                    .padding(.vertical, 4)
 
-                    Divider().overlay(Look.rand)
-                    Text("Was hat sich geändert?").font(.app(.headline, .halbfett))
+                    Look.trenner
+                    Abschnittstitel(text: "Was hat sich geändert?")
                     ForEach(verlauf) { Blase(nachricht: $0) }
                     if denkt {
                         HStack(spacing: 8) {
-                            ProgressView().tint(Look.akzent)
-                            if wachtAuf { Text("Server wacht auf …").foregroundStyle(Look.leise) }
+                            ProgressView().tint(Look.akzentText)
+                            if wachtAuf { Text(wachtAufText).foregroundStyle(Look.leise) }
                         }
                     }
                 }
@@ -86,7 +84,7 @@ struct ProfilView: View {
             }
             .padding()
         }
-        .nachtblau()
+        .zuhauseHintergrund()
         .navigationTitle(eintrag.name)
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $ziel) { WischZielView(ziel: $0) }
@@ -188,7 +186,7 @@ struct GeburtstagZeile: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Text("🎂 Geburtstag").font(.app(.headline, .halbfett))
+            Text("Geburtstag").font(.zuhause(.headline, .halbfett))
             Spacer()
             if let g = geburtstag {
                 Picker("Tag", selection: Binding(
@@ -215,12 +213,10 @@ struct GeburtstagZeile: View {
                     let heute = Calendar.current.dateComponents([.day, .month], from: Date())
                     aendern(Geburtstag(tag: heute.day ?? 1, monat: heute.month ?? 1))
                 }
-                .foregroundStyle(Look.akzent)
+                .foregroundStyle(Look.akzentText)
             }
         }
         .pickerStyle(.menu)
-        .padding(12)
-        .background(Look.karte)
-        .clipShape(RoundedRectangle(cornerRadius: 14))
+        .padding(.vertical, 4)
     }
 }
