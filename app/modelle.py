@@ -4,6 +4,21 @@ from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator
 
+# Grenzen gegen Missbrauch (Plan 2026-11-05). Zu lange Texte und Listen werden gekürzt statt
+# abgelehnt: Ein eingefügter Roman oder ein über Monate gewachsenes Profil soll die App nicht
+# kaputtmachen, nur die KI nicht mit beliebig viel Text füttern.
+MAX_TEXT = 2000
+MAX_GESEHEN = 10_000
+MAX_NACHRICHTEN = 60
+
+
+def gekuerzt(wert, laenge: int = MAX_TEXT):
+    return wert[:laenge] if isinstance(wert, str) else wert
+
+
+def letzte_gesehen(wert):
+    return wert[-MAX_GESEHEN:] if isinstance(wert, list) else wert
+
 
 def ohne_html(text: str) -> str:
     """Feeds liefern Beschreibungen oft mit HTML-Resten (<p>, &nbsp;)."""
@@ -64,6 +79,8 @@ class Profil(BaseModel):
     budget_min: float | None = None
     budget_max: float | None = None
 
+    _zusammenfassung_kuerzen = field_validator("zusammenfassung", mode="before")(gekuerzt)
+
 
 class Karte(BaseModel):
     id: str
@@ -85,10 +102,12 @@ class ChatNachricht(BaseModel):
     rolle: Literal["app", "nutzer"]
     text: str
 
+    _text_kuerzen = field_validator("text", mode="before")(gekuerzt)
+
 
 class ChatAnfrage(BaseModel):
     laenge: Literal["schnell", "normal", "gruendlich"]
-    nachrichten: list[ChatNachricht]
+    nachrichten: list[ChatNachricht] = Field(max_length=MAX_NACHRICHTEN)
 
 
 class ChatAntwort(BaseModel):
@@ -102,6 +121,8 @@ class KartenAnfrage(BaseModel):
     gesehen: list[str] = []
     anzahl: int = Field(default=10, ge=1, le=30)
 
+    _gesehen_kuerzen = field_validator("gesehen", mode="before")(letzte_gesehen)
+
 
 class KartenAntwort(BaseModel):
     karten: list[Karte]
@@ -110,9 +131,11 @@ class KartenAntwort(BaseModel):
 
 
 class SammelPerson(BaseModel):
-    id: str
+    id: str = Field(max_length=100)
     profil: Profil
     gesehen: list[str] = []
+
+    _gesehen_kuerzen = field_validator("gesehen", mode="before")(letzte_gesehen)
 
 
 class KartenSammelAnfrage(BaseModel):
@@ -132,9 +155,11 @@ class KartenSammelAntwort(BaseModel):
 
 
 class ProfilAusGespraechAnfrage(BaseModel):
-    nachrichten: list[ChatNachricht]
+    nachrichten: list[ChatNachricht] = Field(max_length=MAX_NACHRICHTEN)
 
 
 class ProfilAendernAnfrage(BaseModel):
     profil: Profil
     anweisung: str
+
+    _anweisung_kuerzen = field_validator("anweisung", mode="before")(gekuerzt)

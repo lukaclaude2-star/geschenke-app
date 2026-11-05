@@ -47,6 +47,15 @@ def _payload(modell: str, system: str, nutzer: str, max_tokens: int) -> dict:
     return payload
 
 
+def _fehlercode(antwort: httpx.Response) -> str:
+    """Nur der Fehlercode, nie der Rumpf: In failed_generation steht, was die KI über die Person schrieb."""
+    try:
+        code = antwort.json()["error"]["code"]
+    except (ValueError, KeyError, TypeError):
+        return "ohne Code"
+    return code if isinstance(code, str) else "ohne Code"
+
+
 def _json_aus(antwort: httpx.Response) -> dict | None:
     try:
         inhalt = antwort.json()["choices"][0]["message"]["content"] or ""
@@ -89,13 +98,14 @@ async def _kette(system: str, nutzer: str, client: httpx.AsyncClient | None, max
                     logger.warning("Groq %s: Status %s", modell, antwort.status_code)
                     break
                 if antwort.status_code != 200:
-                    logger.warning("Groq %s: unerwarteter Status %s %s", modell, antwort.status_code,
-                                   antwort.text[:200])
+                    logger.warning("Groq %s: unerwarteter Status %s (%s)", modell, antwort.status_code,
+                                   _fehlercode(antwort))
                     break
                 wert = _json_aus(antwort)
                 if wert is not None:
                     return wert
-                logger.warning("Groq %s: leeres oder kaputtes JSON: %s", modell, antwort.text[:300])
+                # Nur die Länge: Der Inhalt beschreibt die beschenkte Person (Grundbaustein 10).
+                logger.warning("Groq %s: leeres oder kaputtes JSON (%s Zeichen)", modell, len(antwort.text))
         raise KiUeberlastet("Kein Modell hat geantwortet")
     finally:
         if eigener_client:

@@ -24,8 +24,40 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
         raise HTTPException(status_code=401, detail="Nicht berechtigt")
 
 
-app = FastAPI(title="Geschenke")
+# Die Schnittstellen-Doku (/docs, /redoc, /openapi.json) bleibt aus: Sie würde jedem zeigen,
+# welche Routen es gibt und was sie annehmen.
+app = FastAPI(title="Geschenke", docs_url=None, redoc_url=None, openapi_url=None)
 geschuetzt = [Depends(pruefe_token)]
+
+# Größte erlaubte Anfrage. Die längste echte ist die Sammelsuche mit 12 Profilen und deren
+# Gesehen-Listen, sie bleibt weit darunter.
+MAX_ANFRAGE_BYTES = 4_000_000
+SICHERHEITS_HEADER = {
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "X-Frame-Options": "DENY",
+    "Strict-Transport-Security": "max-age=31536000",
+}
+HTML_CSP = ("default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; base-uri 'none'; "
+            "form-action 'none'; frame-ancestors 'none'")
+
+
+@app.middleware("http")
+async def schutz(request: Request, call_next):
+    if request.method == "POST":
+        laenge = request.headers.get("content-length")
+        if laenge is None:
+            # Ohne Länge ließe sich ein beliebig großer Rumpf stückweise schicken.
+            return JSONResponse(status_code=411, content={"fehler": "laenge_fehlt"})
+        if not laenge.isdigit() or int(laenge) > MAX_ANFRAGE_BYTES:
+            return JSONResponse(status_code=413, content={"fehler": "zu_gross"})
+    antwort = await call_next(request)
+    for name, wert in SICHERHEITS_HEADER.items():
+        antwort.headers.setdefault(name, wert)
+    if antwort.headers.get("content-type", "").startswith("text/html"):
+        antwort.headers.setdefault("Content-Security-Policy", HTML_CSP)
+    return antwort
+
 app.include_router(download_router)
 # Fotos sind nicht geheim; die App lädt sie wie fremde Produktbilder ohne Token.
 app.mount("/beispielbilder", StaticFiles(directory=BILDER_ORDNER, check_dir=False), name="beispielbilder")
