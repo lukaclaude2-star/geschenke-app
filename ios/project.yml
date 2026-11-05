@@ -24,6 +24,8 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         UILaunchScreen: {}
+        # Schrift im Zuhause-Stil (Nunito, SIL Open Font License, siehe Schriften/Nunito-OFL.txt)
+        UIAppFonts: [Nunito-Regular.ttf, Nunito-SemiBold.ttf, Nunito-Bold.ttf, Nunito-ExtraBold.ttf]
         # Kommt beim CI-Build aus dem GitHub-Secret APP_TOKEN, steht nie im Repo.
         AppToken: $(APP_TOKEN)
     settings:
@@ -34,4 +36,4 @@ targets:
         SWIFT_VERSION: "5.0"
         TARGETED_DEVICE_FAMILY: "1"
         APP_TOKEN: ""
-        ASSETCATALOG_COMPILER_APPICON_NAME: ""
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon

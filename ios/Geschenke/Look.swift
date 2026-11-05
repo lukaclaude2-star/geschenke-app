@@ -14,8 +14,14 @@ enum Look {
     static var aufAkzent: Color { Color(hex: palette.aufAkzent) }
     static var preis: Color { Color(hex: palette.preis) }
     static var text: Color { Color(hex: palette.text) }
-    static var leise: Color { Color(hex: palette.text).opacity(0.6) }
+    static var leise: Color {
+        // Zuhause: feste Palettenfarbe statt Deckkraft (Kontrast geprüft in palette-zuhause.md)
+        if palette.stil == .zuhause { return Color(hex: palette.hell ? 0x7B5930 : 0xC0AE88) }
+        return Color(hex: palette.text).opacity(0.6)
+    }
     static var stil: DesignStil { palette.stil }
+    /// Feine Linie um Knöpfe und Chips im Zuhause-Stil
+    static var zuhauseLinie: Color { palette.hell ? Color(hex: 0x23160C).opacity(0.25) : Color(hex: 0x7B5930) }
 
     /// Titel auf Karten: Pinnwand in Handschrift, sonst die normale Überschrift.
     static var titelSchrift: Font {
@@ -39,7 +45,21 @@ extension Color {
 }
 
 struct GoldKnopf: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder func makeBody(configuration: Configuration) -> some View {
+        if Look.stil == .zuhause {
+            configuration.label
+                .font(.zuhause(.headline, .fett))
+                .foregroundStyle(Look.aufAkzent)
+                .frame(maxWidth: .infinity, minHeight: 50)
+                .background(Look.akzent.opacity(configuration.isPressed ? 0.8 : 1), in: Capsule())
+                .scaleEffect(configuration.isPressed ? 0.98 : 1)
+                .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+        } else {
+            klassisch(configuration)
+        }
+    }
+
+    private func klassisch(_ configuration: Configuration) -> some View {
         configuration.label
             .font(.headline)
             .foregroundStyle(Look.aufAkzent)
@@ -51,9 +71,24 @@ struct GoldKnopf: ButtonStyle {
 }
 
 struct RandKnopf: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
+    @ViewBuilder func makeBody(configuration: Configuration) -> some View {
+        if Look.stil == .zuhause {
+            configuration.label
+                .font(.zuhause(.headline, .fett))
+                .foregroundStyle(Look.text)
+                .frame(maxWidth: .infinity, minHeight: 50)
+                .background(Look.karte.opacity(configuration.isPressed ? 0.7 : 1), in: Capsule())
+                .overlay(Capsule().stroke(Look.zuhauseLinie, lineWidth: 1))
+                .scaleEffect(configuration.isPressed ? 0.98 : 1)
+                .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
+        } else {
+            klassisch(configuration)
+        }
+    }
+
+    private func klassisch(_ configuration: Configuration) -> some View {
         let ecken: CGFloat = Look.stil == .deco ? 2 : 14
-        configuration.label
+        return configuration.label
             .font(.headline)
             .foregroundStyle(Look.akzent)
             .frame(maxWidth: .infinity)
@@ -69,6 +104,21 @@ struct Abzeichen: View {
     var gefuellt = false
 
     var body: some View {
+        if Look.stil == .zuhause {
+            // wie der Grund-Chip auf der Wischkarte
+            Text(text)
+                .font(.zuhause(.caption, .halbfett))
+                .foregroundStyle(gefuellt ? Look.aufAkzent : Look.text)
+                .padding(.horizontal, 10)
+                .padding(.vertical, 3)
+                .background(gefuellt ? Look.akzent : Color(hex: Look.palette.hell ? 0xE6D9C3 : 0x3A2516), in: Capsule())
+                .overlay(Capsule().stroke(gefuellt ? Color.clear : Look.zuhauseLinie, lineWidth: 1))
+        } else {
+            klassisch
+        }
+    }
+
+    private var klassisch: some View {
         Text(text)
             .font(.caption2.weight(.semibold))
             .foregroundStyle(gefuellt ? Look.aufAkzent : Look.akzent)
@@ -114,6 +164,15 @@ struct DesignHintergrund: View {
                 }
             case .normal:
                 EmptyView()
+            case .zuhause:
+                // Lichtinsel: das einzige Leuchten, steht für die Lampe im Raum (DESIGN.md 2)
+                GeometryReader { _ in
+                    RadialGradient(colors: [Color(hex: 0xEFB249).opacity(Look.palette.hell ? 0.30 : 0.22), .clear],
+                                   center: .center, startRadius: 0, endRadius: 202)
+                        .frame(width: 404, height: 404)
+                        .position(x: 130, y: 100)
+                }
+                .allowsHitTesting(false)
             }
         }
     }

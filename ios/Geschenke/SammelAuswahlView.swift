@@ -26,9 +26,9 @@ struct SammelAuswahlView: View {
                                     .foregroundStyle(Look.akzent)
                                     .font(.title3)
                                 VStack(alignment: .leading, spacing: 2) {
-                                    Text(eintrag.name).font(.headline).foregroundStyle(Look.text)
+                                    Text(eintrag.name).font(.app(.headline, .halbfett)).foregroundStyle(Look.text)
                                     Text(eintrag.profil.zusammenfassung)
-                                        .font(.caption)
+                                        .font(.app(.caption))
                                         .foregroundStyle(Look.leise)
                                         .lineLimit(1)
                                 }

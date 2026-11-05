@@ -7,11 +7,17 @@ public struct AppDaten: Codable, Equatable {
     public var design: String = "nachtblau"
     /// Rohwert einer `Schriftstufe` – als Text gespeichert, damit unbekannte Werte nichts kaputt machen.
     public var schriftgroesse: String = "normal"
+    /// Rohwert einer `Erscheinung` (nur im Design „Zuhause“ wirksam).
+    public var erscheinung: String = "automatisch"
+    /// Startbildschirm: Geschenk erst nach Tippen öffnen (sonst von selbst, sobald der Server wach ist).
+    public var startTippen: Bool = true
+    /// Rohwert eines `AuspackTempo`.
+    public var auspacken: String = "normal"
 
     public init() {}
 
     enum CodingKeys: String, CodingKey {
-        case profile, merkliste, design, schriftgroesse
+        case profile, merkliste, design, schriftgroesse, erscheinung, startTippen, auspacken
     }
 
     // Neue Felder immer optional lesen – sonst landen die Daten aus v1 in appdaten.kaputt-*.json.
@@ -21,6 +27,9 @@ public struct AppDaten: Codable, Equatable {
         merkliste = try c.decodeIfPresent([MerkEintrag].self, forKey: .merkliste) ?? []
         design = try c.decodeIfPresent(String.self, forKey: .design) ?? "nachtblau"
         schriftgroesse = try c.decodeIfPresent(String.self, forKey: .schriftgroesse) ?? "normal"
+        erscheinung = try c.decodeIfPresent(String.self, forKey: .erscheinung) ?? "automatisch"
+        startTippen = try c.decodeIfPresent(Bool.self, forKey: .startTippen) ?? true
+        auspacken = try c.decodeIfPresent(String.self, forKey: .auspacken) ?? "normal"
     }
 }
 

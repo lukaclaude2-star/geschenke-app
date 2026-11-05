@@ -132,7 +132,12 @@ Ausschlüsse und Budget schon beim Erzeugen der Idee.
 
 ## Aussehen
 
-**Stil C – dunkel & edel:** Nachtblau-Hintergrund, dunkle Karten, **Gold-Akzente**
+**Offen (03.11.2026):** Luka hat den Grundbaustein „Standard ist Nachtblau mit Gold“
+gestrichen. Das Design wird neu erarbeitet, weil es nach KI-Standard aussieht.
+Gewünschtes Gefühl: wie die Umarmung beim Schenken, also Geborgenheit, Sicherheit
+und Vertrauen. Bis dahin bleibt der bisherige Stil in der App.
+
+*Bisher:* **Stil C – dunkel & edel:** Nachtblau-Hintergrund, dunkle Karten, **Gold-Akzente**
 (Schlagwörter, Knöpfe, Chat-Blasen der App). Mockup:
 `.superpowers/brainstorm/…/content/design-stile.html`, Variante C.
 
