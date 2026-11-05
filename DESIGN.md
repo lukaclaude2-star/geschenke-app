@@ -35,12 +35,11 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 
 ## 3. Schrift
 
-- **Zuhause: Nunito** (OFL, rund und weich) in Regular, SemiBold, Bold und ExtraBold.
-  Vorläufig von Claude entschieden (Nacht 05.11.2026, Luka hatte freigegeben, solche Punkte
-  selbst zu entscheiden); Luka kann sie ändern. Verglichen mit System und Fredoka: Fredoka
-  wirkt zu verspielt, System zu kühl. Im Code `Font.zuhause(stil, gewicht)`, in Ansichten,
-  die alle Designs teilen, `Font.app(stil, gewicht)` (dort bleibt bei den alten Designs die
-  Systemschrift). Die anderen Designs behalten die Systemschrift.
+- **Entschieden (Luka, 05.11.2026): Überschriften Fraunces, Text Nunito Sans** (beide OFL).
+  Fraunces als weiche Serife (Achse SOFT 100, Bold), Nunito Sans für Fließtext, Knöpfe und
+  Preise. Gewählt aus sechs Vorschlägen (Ansicht „Schriftvorschläge“): wirkt erwachsen, warm
+  und nicht nach App-Baukasten. **Noch nicht umgesetzt:** in der App steht bis dahin Nunito.
+  Im Code `Font.zuhause(stil, gewicht)` bzw. `Font.app(stil, gewicht)`.
 - Immer Textstile (`.headline`, `.body` …), keine festen Größen: Dynamic Type muss gehen.
 - Freundliche, kleingeschriebene Begrüßung („guten abend.“) wie bei stoic.
 - **Keine** kleinen Großbuchstaben mit weitem Abstand über Überschriften („PROFILE“).
@@ -160,5 +159,5 @@ Gefühl: Es soll aufregend sein, die nächste Karte zu sehen, und alles fließt,
 
 ## 9. Offen (Luka entscheidet)
 
-- Schrift: vorläufig Nunito (3), Luka bestätigt oder ändert. Name, 3–5 Stichwörter für die Welt (Phase 1). Das Logo steht (6a).
+- Schrift: entschieden Fraunces + Nunito Sans (3), Umsetzung offen. Name, 3–5 Stichwörter für die Welt (Phase 1). Das Logo steht (6a).
 - Ob die 8 alten Designs bleiben, wenn „Zuhause“ fertig ist (Phase 3)
