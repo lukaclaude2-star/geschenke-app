@@ -2,21 +2,19 @@ import XCTest
 @testable import GeschenkeCore
 
 final class DesignsTests: XCTestCase {
-    func testDesignsStandardZuerstZuhauseZuletzt() {
-        XCTAssertEqual(Designs.alle.map(\.id),
-                       ["nachtblau", "wald", "bordeaux", "polarlicht", "graphit", "mint", "deco", "pinnwand",
-                        "zuhause"])
-        XCTAssertEqual(Designs.standard, "nachtblau")
+    func testNurNochZuhause() {
+        XCTAssertEqual(Designs.alle.map(\.id), ["zuhause"])
+        XCTAssertEqual(Designs.standard, "zuhause")
         XCTAssertEqual(Designs.zuhauseID, "zuhause")
         XCTAssertEqual(Designs.palette("zuhause"), Designs.zuhauseAbend)
     }
 
-    func testUnbekanntWirdStandard() {
-        XCTAssertEqual(Designs.palette("gibtsnicht").id, "nachtblau")
-        XCTAssertEqual(Designs.palette("deco").stil, .deco)
-        XCTAssertEqual(Designs.palette("pinnwand").stil, .pinnwand)
-        XCTAssertTrue(Designs.palette("mint").hell)
-        XCTAssertFalse(Designs.palette("wald").hell)
+    func testAlteDesignsWerdenZuhause() {
+        for alt in ["gibtsnicht", "nachtblau", "wald", "deco", "pinnwand", "mint"] {
+            XCTAssertEqual(Designs.palette(alt), Designs.zuhauseAbend, alt)
+            XCTAssertTrue(Designs.palette(alt, erscheinung: .hell, systemDunkel: true).hell, alt)
+            XCTAssertNil(Designs.erzwingtHell(alt, erscheinung: .automatisch), alt)
+        }
     }
 
     func testKontrastBekannt() {
@@ -53,16 +51,11 @@ final class DesignsTests: XCTestCase {
         XCTAssertEqual(p(.hell, true).stil, .zuhause)
         XCTAssertEqual(p(.abendlicht, false).hintergrund, 0x23160C)
         XCTAssertEqual(p(.hell, false).hintergrund, 0xEFE6D6)
-        // Andere Designs ignorieren die Erscheinung.
-        XCTAssertEqual(Designs.palette("mint", erscheinung: .abendlicht, systemDunkel: true).id, "mint")
-        XCTAssertEqual(Designs.palette("gibtsnicht", erscheinung: .hell, systemDunkel: false).id, "nachtblau")
     }
 
     func testErzwingtHell() {
         XCTAssertNil(Designs.erzwingtHell("zuhause", erscheinung: .automatisch))
         XCTAssertEqual(Designs.erzwingtHell("zuhause", erscheinung: .hell), true)
         XCTAssertEqual(Designs.erzwingtHell("zuhause", erscheinung: .abendlicht), false)
-        XCTAssertEqual(Designs.erzwingtHell("wald", erscheinung: .automatisch), false)
-        XCTAssertEqual(Designs.erzwingtHell("mint", erscheinung: .abendlicht), true)
     }
 }

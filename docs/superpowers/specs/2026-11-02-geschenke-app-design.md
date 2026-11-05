@@ -132,7 +132,10 @@ Ausschlüsse und Budget schon beim Erzeugen der Idee.
 
 ## Aussehen
 
-**Offen (03.11.2026):** Luka hat den Grundbaustein „Standard ist Nachtblau mit Gold“
+**Entschieden (05.11.2026):** Einziges Design ist „Zuhause“ (Abendlicht und Hell, siehe
+`DESIGN.md`); alle anderen Designs sind entfernt.
+
+*Vorher (03.11.2026):* Luka hat den Grundbaustein „Standard ist Nachtblau mit Gold“
 gestrichen. Das Design wird neu erarbeitet, weil es nach KI-Standard aussieht.
 Gewünschtes Gefühl: wie die Umarmung beim Schenken, also Geborgenheit, Sicherheit
 und Vertrauen. Bis dahin bleibt der bisherige Stil in der App.

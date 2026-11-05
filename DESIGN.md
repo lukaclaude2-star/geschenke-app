@@ -25,6 +25,8 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 
 - Zwei Farbwelten: **Abendlicht** (dunkel, Standard am Abend) und **Hell**. Wechsel
   automatisch nach dem iPhone-Dunkelmodus, dazu ein Schalter in den Einstellungen.
+- „Zuhause“ ist das einzige Design der App (Luka, 05.11.2026: „alle anderen Designs entfernen
+  und Zuhause das neue Standarddesign“). Eine Design-Auswahl gibt es nicht mehr.
 - Braun vom Espresso bis zum Schaum, Akzent Kupfer `#C2721E`, Lampengelb als Licht,
   etwas Moosgrün. **Kein Blau, kein reines Weiß, kein reines Schwarz, kein Lila.**
 - Eine Lichtinsel (weicher, warmer Verlauf oben links) ist das einzige erlaubte Leuchten.

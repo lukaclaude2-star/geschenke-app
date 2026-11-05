@@ -285,9 +285,7 @@ struct EinstellungenView: View {
     var body: some View {
         NavigationStack {
             Form {
-                if zustand.daten.design == Designs.zuhauseID {
-                    zuhauseAbschnitte
-                }
+                zuhauseAbschnitte
                 Section("Schriftgröße") {
                     Picker("Schriftgröße", selection: Binding(
                         get: { Schriftstufe.aus(zustand.daten.schriftgroesse) },
@@ -297,30 +295,6 @@ struct EinstellungenView: View {
                     }
                     .auswahlStil()
                     Text("So sieht Text in der App aus.").foregroundStyle(Look.leise)
-                }
-                .listRowBackground(Look.karte)
-
-                Section("Design") {
-                    ForEach(Designs.alle) { palette in
-                        Button {
-                            zustand.setzeDesign(palette.id)
-                        } label: {
-                            HStack(spacing: 12) {
-                                HStack(spacing: -6) {
-                                    ForEach([palette.hintergrund, palette.karte, palette.akzent], id: \.self) { farbe in
-                                        Circle().fill(Color(hex: farbe))
-                                            .overlay(Circle().stroke(Color.gray.opacity(0.4), lineWidth: 1))
-                                            .frame(width: 22, height: 22)
-                                    }
-                                }
-                                Text(palette.name).foregroundStyle(Look.text)
-                                Spacer()
-                                if zustand.daten.design == palette.id {
-                                    Image(systemName: "checkmark").foregroundStyle(Look.akzent)
-                                }
-                            }
-                        }
-                    }
                 }
                 .listRowBackground(Look.karte)
 
@@ -339,7 +313,7 @@ struct EinstellungenView: View {
         }
     }
 
-    /// Erscheinung, Startbildschirm und Auspacken gibt es nur im Design „Zuhause“.
+    /// Erscheinung, Startbildschirm und Auspacken.
     @ViewBuilder private var zuhauseAbschnitte: some View {
         Section {
             Picker("Erscheinung", selection: Binding(
