@@ -137,7 +137,7 @@ struct MerklisteView: View {
         } label: {
             let text = VStack(alignment: .leading, spacing: 2) {
                 Text(eintrag.karte.titel).font(.zuhause(.subheadline, .halbfett))
-                    .foregroundStyle(Look.text).lineLimit(3)
+                    .foregroundStyle(Look.text).lineLimit(schriftgroesse >= .xLarge ? nil : 3)
                 Text(eintrag.karte.preisText).font(.zuhause(.footnote, .fett)).foregroundStyle(Look.preis)
                 Text(eintrag.karte.shop).font(.zuhause(.footnote)).foregroundStyle(Look.leise).lineLimit(1)
             }

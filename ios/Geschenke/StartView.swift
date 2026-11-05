@@ -278,6 +278,7 @@ struct EinstellungenView: View {
     @EnvironmentObject private var zustand: AppZustand
     @Environment(\.dismiss) private var schliessen
     @AppStorage(Konfiguration.tokenSchluessel) private var token = ""
+    @Environment(\.dynamicTypeSize) private var schriftgroesse
     /// Im Zuhause-Stil sind die Einstellungen ein Reiter der Leiste statt eines Blatts.
     var alsReiter = false
 
@@ -361,8 +362,11 @@ struct EinstellungenView: View {
                 set: { zustand.setzeStartTippen($0) }
             )) {
                 HStack(spacing: 10) {
-                    Image("coco-geschenk").resizable().scaledToFit().frame(width: 34, height: 34)
-                        .accessibilityHidden(true)
+                    // Bei großer Schrift braucht der Text die Breite, sonst zerfällt er in drei Zeilen
+                    if schriftgroesse < .xxLarge {
+                        Image("coco-geschenk").resizable().scaledToFit().frame(width: 34, height: 34)
+                            .accessibilityHidden(true)
+                    }
                     Text("Zum Öffnen tippen")
                 }
             }
