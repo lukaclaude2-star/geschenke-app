@@ -13,11 +13,16 @@ public struct AppDaten: Codable, Equatable {
     public var startTippen: Bool = true
     /// Rohwert eines `AuspackTempo`.
     public var auspacken: String = "normal"
+    /// Rohwert einer `MerkOrdnung` (Merkliste nach Personen oder Kategorien).
+    public var merkOrdnung: String = "person"
+    /// Die Einführung beim ersten Start wurde gezeigt (oder übersprungen).
+    public var einfuehrungGesehen: Bool = false
 
     public init() {}
 
     enum CodingKeys: String, CodingKey {
         case profile, merkliste, design, schriftgroesse, erscheinung, startTippen, auspacken
+        case merkOrdnung, einfuehrungGesehen
     }
 
     // Neue Felder immer optional lesen – sonst landen die Daten aus v1 in appdaten.kaputt-*.json.
@@ -32,6 +37,8 @@ public struct AppDaten: Codable, Equatable {
         erscheinung = try c.decodeIfPresent(String.self, forKey: .erscheinung) ?? "automatisch"
         startTippen = try c.decodeIfPresent(Bool.self, forKey: .startTippen) ?? true
         auspacken = try c.decodeIfPresent(String.self, forKey: .auspacken) ?? "normal"
+        merkOrdnung = try c.decodeIfPresent(String.self, forKey: .merkOrdnung) ?? "person"
+        einfuehrungGesehen = try c.decodeIfPresent(Bool.self, forKey: .einfuehrungGesehen) ?? false
     }
 }
 
@@ -73,12 +80,28 @@ public struct MerkEintrag: Codable, Equatable, Identifiable {
     public let karte: Karte
     public let fuer: String
     public let datum: Date
+    /// In der Merkliste abgehakt: schon gekauft.
+    public var gekauft: Bool
 
-    public init(id: UUID = UUID(), karte: Karte, fuer: String, datum: Date = Date()) {
+    public init(id: UUID = UUID(), karte: Karte, fuer: String, datum: Date = Date(), gekauft: Bool = false) {
         self.id = id
         self.karte = karte
         self.fuer = fuer
         self.datum = datum
+        self.gekauft = gekauft
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case id, karte, fuer, datum, gekauft
+    }
+
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        id = try c.decode(UUID.self, forKey: .id)
+        karte = try c.decode(Karte.self, forKey: .karte)
+        fuer = try c.decode(String.self, forKey: .fuer)
+        datum = try c.decode(Date.self, forKey: .datum)
+        gekauft = try c.decodeIfPresent(Bool.self, forKey: .gekauft) ?? false
     }
 }
 
