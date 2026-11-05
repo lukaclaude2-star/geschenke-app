@@ -11,6 +11,7 @@ from app.bilder import beispielbild
 from app.config import settings
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import Karte, KatalogProdukt, Profil
+from app.partnerlinks import ist_partnerlink
 from app.ranking import ist_ausgeschlossen
 from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, vokabular_text
 
@@ -115,7 +116,8 @@ async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str],
             id=karten_id, art="idee", titel=titel, preis=None, preis_von=preis_von,
             preis_bis=preis_bis, bild_url=bild, beispielbild=bild is not None,
             emoji=emoji[:4] if isinstance(emoji, str) and emoji.strip() else "🎁",
-            shop="Amazon", link=_link(suchbegriff), tags=themen,
+            shop="Amazon", link=(link := _link(suchbegriff)), tags=themen,
+            anzeige=ist_partnerlink(link),
         ))
         if len(karten) >= anzahl:
             break

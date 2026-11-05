@@ -4,6 +4,7 @@ import math
 from app.ideen import ideen_karten
 from app.modelle import (Karte, KartenAnfrage, KartenAntwort, KartenSammelAnfrage, KartenSammelAntwort,
                          KatalogProdukt, Profil, SammelKarte)
+from app.partnerlinks import ist_partnerlink
 from app.ranking import kandidaten, waehle_aus
 from app.vokabular import tag_label
 
@@ -11,7 +12,7 @@ from app.vokabular import tag_label
 def produkt_zu_karte(p: KatalogProdukt) -> Karte:
     return Karte(
         id=p.id, art="produkt", titel=p.titel, preis=p.preis, bild_url=p.bild_url,
-        shop=p.shop, link=p.link, tags=p.themen + p.lebenslagen,
+        shop=p.shop, link=p.link, tags=p.themen + p.lebenslagen, anzeige=ist_partnerlink(p.link),
     )
 
 

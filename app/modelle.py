@@ -96,6 +96,8 @@ class Karte(BaseModel):
     tags: list[str]
     # Ideenkarte mit Foto, das nur ein Beispiel zeigt (nicht das exakte Produkt).
     beispielbild: bool = False
+    # Partnerlink mit Provision: Die App zeigt „Anzeige“ (app/partnerlinks.py).
+    anzeige: bool = False
 
 
 class ChatNachricht(BaseModel):
