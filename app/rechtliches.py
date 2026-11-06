@@ -100,7 +100,7 @@ def seite(dokument_id: str, texte: dict | None = None) -> str | None:
     fuss = "".join(f'<a href="/{d}">{html.escape(_titel(d, texte))}</a>' for d in DOKUMENTE)
     return ("<!doctype html><html lang=\"de\"><head><meta charset=\"utf-8\">"
             "<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">"
-            f"<title>{titel} · Geschenke-App</title><style>{_STIL}</style></head>"
+            f"<title>{titel} · Wunschwisch</title><style>{_STIL}</style></head>"
             f"<body><main><h1>{titel}</h1>{''.join(inhalt)}<footer>{fuss}</footer></main></body></html>")
 
 
