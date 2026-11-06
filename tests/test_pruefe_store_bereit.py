@@ -9,9 +9,10 @@ from scripts.pruefe_store_bereit import probleme
 WURZEL = Path(__file__).parent.parent
 
 
-def test_echtes_repo_meldet_offene_angaben():
-    gefunden = probleme(WURZEL)
-    assert "Angabe offen in rechtliches/rechtliches.json: name" in gefunden
+def test_platzhalter_werden_gemeldet(tmp_path):
+    wurzel = kopie(tmp_path, {"name": "[Vor- und Nachname]", "email": "max@example.org"})
+    (wurzel / "ios" / "project.yml").write_text("name: Geschenke\n", encoding="utf-8")
+    assert "Angabe offen in rechtliches/rechtliches.json: name" in probleme(wurzel)
 
 
 def kopie(tmp_path: Path, angaben: dict) -> Path:
