@@ -40,3 +40,38 @@ def test_bereich_treffer_ueberholen_keine_echten_treffer():
               [produkt(f"g{i}", themen=("gaming",)) for i in range(5)]
     karten, _ = waehle_karten(katalog, p, set(), 10)
     assert sum(1 for k in karten if k.id.startswith("g")) == 5
+
+
+# --- Runde „Katalog groß“: Gruppen als dritte Stufe ---
+from app.ranking import GRUPPE_ANTEIL, ist_ausgeschlossen
+from tests.test_ranking import aus
+
+
+def test_gruppen_wunsch_trifft_kind_voll():
+    p = profil(wuensche=(("schuhe", 1.0),))
+    assert bewerte(produkt("s", themen=("stiefel",)), p) == 1.0
+
+
+def test_geschwister_in_gruppe_zaehlt_0_7():
+    assert GRUPPE_ANTEIL == 0.7
+    p = profil(wuensche=(("stiefel", 1.0),))
+    assert bewerte(produkt("s", themen=("sneaker",)), p) == 0.7
+
+
+def test_gruppe_schlaegt_bereich():
+    p = profil(wuensche=(("stiefel", 1.0),))
+    assert bewerte(produkt("s", themen=("sneaker",)), p) > bewerte(produkt("v", themen=("vintage",)), p)
+    assert bewerte(produkt("v", themen=("vintage",)), p) == 0.4
+
+
+def test_direkter_treffer_schlaegt_gruppe():
+    p = profil(wuensche=(("stiefel", 1.0),))
+    assert bewerte(produkt("a", themen=("stiefel",)), p) > bewerte(produkt("b", themen=("sneaker",)), p)
+
+
+def test_ausschluss_gruppe_trifft_altes_produkt():
+    assert ist_ausgeschlossen(produkt("s", themen=("sneaker",)), aus("thema:schuhe"))
+
+
+def test_ausschluss_kind_laesst_geschwister_durch():
+    assert not ist_ausgeschlossen(produkt("s", themen=("sneaker",)), aus("thema:stiefel"))

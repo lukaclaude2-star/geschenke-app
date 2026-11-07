@@ -5,42 +5,60 @@ zur Person werden nie gezeigt (Grundbaustein 5). Provision spielt keine Rolle (G
 """
 
 import re
+from functools import lru_cache
 
 from app.config import settings
 from app.modelle import Ausschluss, KatalogProdukt, Profil
-from app.vokabular import EIGENSCHAFT_MUSTER, FARB_LABELS, THEMA_BEREICH
+from app.vokabular import EIGENSCHAFT_MUSTER, FARB_LABELS, THEMA_BEREICH, THEMA_GRUPPE, mit_gruppen
 
 GUT_AB = 1.0
 PERSOENLICH_BONUS = 0.2
 ABWECHSLUNGS_ABZUG = 0.3
 BEREICH_ANTEIL = 0.4
+# Gleiche Gruppe (Stiefel-Wunsch, Sneaker-Produkt): näher als nur der gleiche Bereich.
+GRUPPE_ANTEIL = 0.7
 
 
-def _farbe_im_text(farbe: str, text: str) -> bool:
-    woerter = {farbe, FARB_LABELS.get(farbe, farbe).lower()}
-    return any(re.search(r"\b" + re.escape(w), text) for w in woerter)
+@lru_cache(maxsize=None)
+def _klein(titel: str, beschreibung: str) -> tuple[str, str]:
+    """Titel und Titel+Beschreibung klein – einmal je Produkt statt bei jeder Anfrage."""
+    titel = titel.lower()
+    return titel, f"{titel} {beschreibung.lower()}"
 
 
-def _wort_im_text(muster: str, text: str) -> bool:
-    return re.search(r"\b" + muster, text) is not None
+@lru_cache(maxsize=4096)
+def _muster(art: str, wert: str) -> re.Pattern | None:
+    """Ein vorkompilierter Regex je Ausschluss; Eigenschaften mit allen Wörtern in einem Durchlauf."""
+    if art == "thema":
+        woerter = [re.escape(wert.replace("_", " "))]
+    elif art == "farbe":
+        woerter = [re.escape(w) for w in {wert, FARB_LABELS.get(wert, wert).lower()}]
+    elif art == "eigenschaft":
+        woerter = list(EIGENSCHAFT_MUSTER.get(wert, ()))
+    else:
+        return None
+    return re.compile(r"\b(?:" + "|".join(woerter) + ")") if woerter else None
+
+
+def _trifft(art: str, wert: str, text: str) -> bool:
+    muster = _muster(art, wert)
+    return muster is not None and muster.search(text) is not None
 
 
 def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> bool:
     """Hart: Tags UND Text werden geprüft, damit ein Ausschluss nicht allein an der KI hängt."""
-    titel = p.titel.lower()
-    text = f"{titel} {p.beschreibung.lower()}"
+    titel, text = _klein(p.titel, p.beschreibung)
     for a in ausschluesse:
         art, _, wert = a.schluessel.partition(":")
         wert = wert.strip().lower()
         if not wert:
             continue
-        if art == "thema" and (wert in p.themen or wert in p.lebenslagen
-                               or _wort_im_text(re.escape(wert.replace("_", " ")), text)):
+        if art == "thema" and (wert in mit_gruppen(p.themen) or wert in p.lebenslagen
+                               or _trifft(art, wert, text)):
             return True
-        if art == "farbe" and (wert in p.farben or _farbe_im_text(wert, titel)):
+        if art == "farbe" and (wert in p.farben or _trifft(art, wert, titel)):
             return True
-        if art == "eigenschaft" and (wert in p.eigenschaften or any(
-                _wort_im_text(m, text) for m in EIGENSCHAFT_MUSTER.get(wert, ()))):
+        if art == "eigenschaft" and (wert in p.eigenschaften or _trifft(art, wert, text)):
             return True
         if art == "wort" and wert in text:
             return True
@@ -48,11 +66,15 @@ def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> boo
 
 
 def bewerte(p: KatalogProdukt, profil: Profil) -> float:
-    """Direkte Treffer zählen voll. Nur ohne jeden direkten Treffer zählt der Oberbereich – und
+    """Direkte Treffer zählen voll (ein Stiefel ist auch ein direkter Treffer für „schuhe“). Ohne
+    direkten Treffer zählt erst die Gruppe (Stiefel-Wunsch → Sneaker), dann der Oberbereich – und
     dann nur der stärkste Wunsch mal BEREICH_ANTEIL, damit sich verwandte Wünsche (grillen,
     kochen, backen) nicht zu einem Wert über echten Treffern aufsummieren."""
-    tags = set(p.themen) | set(p.lebenslagen)
+    tags = mit_gruppen(p.themen) | set(p.lebenslagen)
     punkte = sum(w.gewicht for w in profil.wuensche if w.tag in tags)
+    if punkte == 0:
+        punkte = max((w.gewicht * GRUPPE_ANTEIL for w in profil.wuensche
+                      if THEMA_GRUPPE.get(w.tag) in tags), default=0.0)
     if punkte == 0:
         bereiche = {THEMA_BEREICH[t] for t in p.themen if t in THEMA_BEREICH}
         punkte = max((w.gewicht * BEREICH_ANTEIL for w in profil.wuensche

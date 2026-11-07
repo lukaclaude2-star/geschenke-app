@@ -6,7 +6,7 @@ und Gesprächs-Schlagwörter garantiert zusammen.
 
 # Version des Vokabulars: steckt im Inhalts-Hash, damit der Katalog nach einer Änderung
 # einmal komplett neu verschlagwortet wird.
-VOKABULAR_VERSION = 3
+VOKABULAR_VERSION = 4
 
 # Oberbereiche: Gibt es zu einem Stichwort zu wenig, zählen Produkte aus demselben Bereich
 # als schwächere Treffer (Whisky-Fan → auch Wein, Gin, Feinkost).
@@ -18,7 +18,7 @@ BEREICHE: dict[str, str] = {
     "fahrzeuge": "🚗 Fahrzeuge & Motor",
     "wellness": "🧘 Wellness & Gesundheit",
     "beauty": "💄 Beauty & Pflege",
-    "mode": "👗 Mode & Stil",
+    "mode": "👕 Kleidung & Mode",
     "wohnen": "🛋️ Wohnen & Zuhause",
     "garten": "🌱 Garten & Pflanzen",
     "handwerk": "🔨 Handwerk & DIY",
@@ -26,6 +26,7 @@ BEREICHE: dict[str, str] = {
     "musik": "🎵 Musik",
     "gaming": "🎮 Gaming & Technik",
     "popkultur": "🎬 Film & Popkultur",
+    "franchises": "⭐ Franchises & Fanwelten",
     "spiele": "🎲 Spiele & Rätsel",
     "wissen": "📚 Wissen & Lesen",
     "tiere": "🐾 Tiere",
@@ -118,6 +119,25 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "schals_muetzen": "🧣 Schals & Mützen", "geldboersen": "👛 Geldbörsen",
         "manschettenknoepfe": "🤵 Manschettenknöpfe", "tracht": "🥨 Tracht", "jacken": "🧥 Jacken",
         "schuhe": "👞 Schuhe", "pyjamas": "🩳 Pyjamas & Loungewear",
+        "stiefel": "👢 Stiefel", "sandalen": "🩴 Sandalen", "pumps": "👠 Pumps & High Heels",
+        "hausschuhe": "🥿 Hausschuhe", "laufschuhe": "👟 Laufschuhe", "ballerinas": "🩰 Ballerinas",
+        "business_schuhe": "👞 Business-Schuhe",
+        "winterjacken": "🧥 Winterjacken", "lederjacken": "🧥 Lederjacken",
+        "regenjacken": "☔ Regenjacken", "jeansjacken": "🧥 Jeansjacken", "maentel": "🧥 Mäntel",
+        "westen": "🦺 Westen",
+        "oberteile": "👕 Oberteile & Shirts", "t_shirts": "👕 T-Shirts", "hemden": "👔 Hemden",
+        "blusen": "👚 Blusen", "pullover": "🧶 Pullover", "hoodies": "🧥 Hoodies",
+        "poloshirts": "👕 Poloshirts", "strickjacken": "🧶 Strickjacken",
+        "hosen_roecke": "👖 Hosen & Röcke", "jeans": "👖 Jeans", "jogginghosen": "🩳 Jogginghosen",
+        "shorts": "🩳 Shorts", "roecke": "👗 Röcke",
+        "kleider": "👗 Kleider", "abendkleider": "👗 Abendkleider", "sommerkleider": "👗 Sommerkleider",
+        "ketten": "📿 Ketten & Anhänger", "ringe": "💍 Ringe", "ohrringe": "✨ Ohrringe",
+        "armbaender": "📿 Armbänder", "charms": "🍀 Charms",
+        "handtaschen": "👜 Handtaschen", "umhaengetaschen": "👝 Umhängetaschen",
+        "sporttaschen": "🎽 Sporttaschen",
+        "kopfbedeckungen": "🧢 Kopfbedeckungen", "caps": "🧢 Caps", "beanies": "🧶 Beanies",
+        "accessoires": "🕶️ Accessoires", "guertel": "🪢 Gürtel", "handschuhe": "🧤 Handschuhe",
+        "waesche": "🩲 Wäsche & Bademode", "bademode": "👙 Bademode", "bademaentel": "🛁 Bademäntel",
     },
     "wohnen": {
         "deko": "🕯️ Deko", "wohnen": "🛋️ Wohnen", "smart_home": "🏠 Smart Home",
@@ -175,7 +195,7 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "virtual_reality": "🥽 Virtual Reality", "e_sport": "🏆 E-Sport", "gadgets": "🔋 Gadgets",
         "drohnen": "🚁 Drohnen", "programmieren": "💻 Programmieren", "smartphone": "📱 Smartphone",
         "smartwatch": "⌚ Smartwatch", "lautsprecher": "🔊 Lautsprecher",
-        "minecraft": "⛏️ Minecraft", "pokemon": "⚡ Pokémon", "gaming_setup": "🪑 Gaming-Setup",
+        "gaming_setup": "🪑 Gaming-Setup",
         "streaming": "📹 Streaming", "simracing": "🏎️ Sim-Racing",
         "tastaturen": "⌨️ Mechanische Tastaturen", "robotik": "🤖 Robotik & KI",
         "e_reader": "📖 E-Reader",
@@ -185,10 +205,23 @@ THEMEN_NACH_BEREICH: dict[str, dict[str, str]] = {
         "superhelden": "🦸 Superhelden", "fantasy": "🐉 Fantasy", "science_fiction": "🚀 Science-Fiction",
         "horror": "👻 Horror", "true_crime": "🕵️ True Crime", "podcasts": "🎙️ Podcasts",
         "k_pop": "💜 K-Pop", "cosplay": "🎭 Cosplay", "achtziger_neunziger": "📼 80er & 90er",
-        "harry_potter": "🪄 Harry Potter", "star_wars": "🌌 Star Wars",
-        "herr_der_ringe": "💍 Herr der Ringe", "disney": "🏰 Disney", "star_trek": "🖖 Star Trek",
         "kultfilme": "🎞️ Kultfilme", "sammelfiguren": "🗿 Sammelfiguren", "gothic": "🖤 Gothic",
         "steampunk": "⚙️ Steampunk", "wrestling": "🤼 Wrestling",
+    },
+    "franchises": {
+        "harry_potter": "🪄 Harry Potter", "star_wars": "🌌 Star Wars",
+        "herr_der_ringe": "💍 Herr der Ringe", "disney": "🏰 Disney", "star_trek": "🖖 Star Trek",
+        "pokemon": "⚡ Pokémon", "minecraft": "⛏️ Minecraft",
+        "hello_kitty": "🎀 Hello Kitty", "marvel": "🦸 Marvel", "dc_comics": "🦇 DC & Batman",
+        "minions": "🍌 Minions", "barbie": "👛 Barbie", "super_mario": "🍄 Super Mario",
+        "zelda": "🗡️ Zelda", "peanuts": "🐶 Peanuts & Snoopy", "simpsons": "🍩 Simpsons",
+        "one_piece": "🏴‍☠️ One Piece", "stranger_things": "🔦 Stranger Things", "friends": "☕ Friends",
+        "paw_patrol": "🐾 Paw Patrol", "peppa_wutz": "🐷 Peppa Wutz", "die_maus": "🐭 Die Maus",
+        "sailor_moon": "🌙 Sailor Moon", "studio_ghibli": "🌳 Studio Ghibli", "naruto": "🍥 Naruto",
+        "dragon_ball": "🐉 Dragon Ball", "fortnite": "🪂 Fortnite", "sonic": "🦔 Sonic",
+        "game_of_thrones": "🐺 Game of Thrones", "winnie_puuh": "🍯 Winnie Puuh",
+        "eiskoenigin": "❄️ Die Eiskönigin", "toy_story": "🤠 Toy Story",
+        "jurassic_park": "🦖 Jurassic Park", "sesamstrasse": "🍪 Sesamstraße",
     },
     "spiele": {
         "spiele": "🎲 Spiele", "puzzle": "🧩 Puzzle", "kinder": "🧸 Kinder",
@@ -268,6 +301,31 @@ THEMEN: dict[str, str] = {tag: label for themen in THEMEN_NACH_BEREICH.values()
                           for tag, label in themen.items()}
 THEMA_BEREICH: dict[str, str] = {tag: bereich for bereich, themen in THEMEN_NACH_BEREICH.items()
                                  for tag in themen}
+
+# Dritte Stufe, bisher nur bei Kleidung: Gruppen-Stichwort → genauere Stichwörter darunter.
+# Die KI vergibt das genaueste Stichwort; Ranking und Ausschluss ergänzen die Gruppe selbst
+# (mit_gruppen), damit „Schuhe“ jeden Stiefel trifft, „Stiefel“ aber nicht jeden Sneaker.
+GRUPPEN: dict[str, tuple[str, ...]] = {
+    "schuhe": ("sneaker", "stiefel", "sandalen", "pumps", "hausschuhe", "laufschuhe", "ballerinas",
+               "business_schuhe"),
+    "jacken": ("winterjacken", "lederjacken", "regenjacken", "jeansjacken", "maentel", "westen"),
+    "oberteile": ("t_shirts", "hemden", "blusen", "pullover", "hoodies", "poloshirts", "strickjacken"),
+    "hosen_roecke": ("jeans", "jogginghosen", "shorts", "roecke"),
+    "kleider": ("abendkleider", "sommerkleider"),
+    "schmuck": ("ketten", "ringe", "ohrringe", "armbaender", "charms"),
+    "taschen": ("rucksaecke", "geldboersen", "handtaschen", "umhaengetaschen", "sporttaschen"),
+    "kopfbedeckungen": ("huete", "caps", "beanies"),
+    "accessoires": ("uhren", "sonnenbrillen", "krawatten", "manschettenknoepfe", "schals_muetzen",
+                    "socken", "guertel", "handschuhe"),
+    "waesche": ("pyjamas", "bademode", "bademaentel"),
+}
+THEMA_GRUPPE: dict[str, str] = {tag: gruppe for gruppe, tags in GRUPPEN.items() for tag in tags}
+
+
+def mit_gruppen(tags) -> set[str]:
+    """Stichwörter plus ihre Gruppen: ["stiefel"] → {"stiefel", "schuhe"}."""
+    return set(tags) | {THEMA_GRUPPE[t] for t in tags if t in THEMA_GRUPPE}
+
 
 LEBENSLAGEN: dict[str, str] = {
     "umzug": "📦 Umzug",
