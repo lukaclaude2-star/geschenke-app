@@ -13,6 +13,12 @@ class Settings(BaseSettings):
         "openai/gpt-oss-20b",
         "qwen/qwen3.8-27b",
     ]
+    # Zusätzlicher Verschlagworter nur für den Katalog. Ohne Schlüssel läuft der Katalogbau wie
+    # vorher nur mit Groq. NVIDIA NIM (build.nvidia.com, gratis ohne Karte). Beide Modelle 07.11.2026 an echten Stapeln
+    # getestet; ein Stapel dauert ~100 s, deshalb mehrere Arbeiter je Modell.
+    nvidia_api_key: str = ""
+    nvidia_modelle: list[str] = ["minimaxai/minimax-m3.1-flash", "google/gemma-4-31b-it"]
+    nvidia_arbeiter_je_modell: int = 4
     katalog_pfad: str = "katalog/katalog.json"
     amazon_tag: str = ""
 

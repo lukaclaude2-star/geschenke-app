@@ -10,6 +10,7 @@ import hashlib
 import json
 import logging
 
+from app.katalog.extern import frage_json_extern
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import KatalogProdukt, QuellProdukt
 from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, VOKABULAR_VERSION, vokabular_text
@@ -99,9 +100,13 @@ def _hat_note(e: dict) -> bool:
 
 
 async def _stapel(ps: list[QuellProdukt], modell: str | None = None) -> list[KatalogProdukt]:
-    antwort = await frage_json(SYSTEM, json.dumps({"produkte": [_fuer_ki(p) for p in ps]},
-                                                  ensure_ascii=False), max_tokens=4000,
-                               modelle=[modell] if modell else None, zeitlimit=120)
+    nutzer = json.dumps({"produkte": [_fuer_ki(p) for p in ps]}, ensure_ascii=False)
+    if modell and ":" in modell:  # Arbeiter-Schlüssel „<anbieter>:<modell>#<n>“, Groq-Namen haben keinen Doppelpunkt
+        anbieter, rest = modell.split(":", 1)
+        antwort = await frage_json_extern(SYSTEM, nutzer, anbieter=anbieter, modell=rest.split("#")[0])
+    else:
+        antwort = await frage_json(SYSTEM, nutzer, max_tokens=4000,
+                                   modelle=[modell] if modell else None, zeitlimit=120)
     eintraege = antwort.get("produkte")
     nach_id: dict[str, dict] = {}
     if isinstance(eintraege, list):
