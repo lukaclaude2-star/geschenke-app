@@ -638,5 +638,380 @@
   "name": "Zwilling",
   "url": "https://www.zwilling.com/de/",
   "bereich": "kueche"
+ },
+ {
+  "name": "Marc O'Polo",
+  "url": "https://www.marc-o-polo.com/de-de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Reno",
+  "url": "https://www.reno.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "s.Oliver",
+  "url": "https://www.soliver.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Think! Schuhe",
+  "url": "https://www.thinkshoes.com/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Birkenstock",
+  "url": "https://www.birkenstock.com/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Christ",
+  "url": "https://www.christ.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "ECCO",
+  "url": "https://de.ecco.com/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Triumph",
+  "url": "https://de.triumph.com/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Hugo Boss",
+  "url": "https://www.hugoboss.com/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Walbusch",
+  "url": "https://www.walbusch.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Mey",
+  "url": "https://www.mey.com/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Seidensticker",
+  "url": "https://www.seidensticker.com/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "bonprix",
+  "url": "https://www.bonprix.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Roeckl",
+  "url": "https://www.roeckl.com/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Witt Weiden",
+  "url": "https://www.witt-weiden.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Hutshopping",
+  "url": "https://www.hutshopping.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "baby-walz",
+  "url": "https://www.baby-walz.de/",
+  "bereich": "baby_kind"
+ },
+ {
+  "name": "sigikid",
+  "url": "https://www.sigikid.de/",
+  "bereich": "baby_kind"
+ },
+ {
+  "name": "G-Star",
+  "url": "https://www.g-star.com/de_de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "JOOP!",
+  "url": "https://www.joop.com/de/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Strellson",
+  "url": "https://www.strellson.com/de/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Hunkemöller",
+  "url": "https://www.hunkemoller.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Zumnorde",
+  "url": "https://www.zumnorde.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Schuhcenter",
+  "url": "https://www.schuhcenter.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Deichmann",
+  "url": "https://www.deichmann.com/de-de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "SportScheck",
+  "url": "https://www.sportscheck.com/",
+  "bereich": "sport"
+ },
+ {
+  "name": "Foot Locker",
+  "url": "https://www.footlocker.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Goldmaid",
+  "url": "https://www.goldmaid.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "blomus",
+  "url": "https://www.blomus.com/de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Juwelier Krämer",
+  "url": "https://www.juwelier-kraemer.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Weleda",
+  "url": "https://www.weleda.de/",
+  "bereich": "beauty"
+ },
+ {
+  "name": "ebook.de",
+  "url": "https://www.ebook.de/",
+  "bereich": "wissen"
+ },
+ {
+  "name": "Tamiya",
+  "url": "https://www.tamiya.de/",
+  "bereich": "spiele"
+ },
+ {
+  "name": "Werkzeugstore24",
+  "url": "https://www.werkzeugstore24.de/",
+  "bereich": "handwerk"
+ },
+ {
+  "name": "Notino",
+  "url": "https://www.notino.de/",
+  "bereich": "beauty"
+ },
+ {
+  "name": "Fackelmann",
+  "url": "https://www.fackelmann.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "Moleskine",
+  "url": "https://www.moleskine.com/de-de/",
+  "bereich": "alltag"
+ },
+ {
+  "name": "Kaweco",
+  "url": "https://www.kaweco-pen.com/",
+  "bereich": "alltag"
+ },
+ {
+  "name": "OBI",
+  "url": "https://www.obi.de/",
+  "bereich": "handwerk"
+ },
+ {
+  "name": "Spielwaren Express",
+  "url": "https://www.spielwaren-express.de/",
+  "bereich": "franchises"
+ },
+ {
+  "name": "fashionette",
+  "url": "https://www.fashionette.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Hirmer",
+  "url": "https://www.hirmer.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "tonies",
+  "url": "https://www.tonies.com/de-de/",
+  "bereich": "franchises"
+ },
+ {
+  "name": "Josef Seibel",
+  "url": "https://www.josef-seibel.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Jacques Lemans",
+  "url": "https://www.jacques-lemans.com/de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Skechers",
+  "url": "https://www.skechers.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Samsonite",
+  "url": "https://www.samsonite.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Carlsen",
+  "url": "https://www.carlsen.de/",
+  "bereich": "franchises"
+ },
+ {
+  "name": "hut.de",
+  "url": "https://www.hut.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Ludwig Beck",
+  "url": "https://www.ludwigbeck.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Jack & Jones",
+  "url": "https://www.jackjones.com/de-de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Tissot",
+  "url": "https://www.tissotwatches.com/de-de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Superdry",
+  "url": "https://www.superdry.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Mammut",
+  "url": "https://www.mammut.com/de/de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Blutsgeschwister",
+  "url": "https://www.blutsgeschwister.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Selected",
+  "url": "https://www.selected.com/de-de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Salewa",
+  "url": "https://www.salewa.com/de-de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Erima",
+  "url": "https://www.erima.de/",
+  "bereich": "sport"
+ },
+ {
+  "name": "GANT",
+  "url": "https://www.gant.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "Bruder Spielwaren",
+  "url": "https://www.bruder.de/",
+  "bereich": "baby_kind"
+ },
+ {
+  "name": "Ortovox",
+  "url": "https://www.ortovox.com/de-de/",
+  "bereich": "outdoor"
+ },
+ {
+  "name": "Leifheit",
+  "url": "https://www.leifheit.de/",
+  "bereich": "kueche"
+ },
+ {
+  "name": "Globus Baumarkt",
+  "url": "https://www.globus-baumarkt.de/",
+  "bereich": "handwerk"
+ },
+ {
+  "name": "Fatboy",
+  "url": "https://www.fatboy.com/de-de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Sompex",
+  "url": "https://www.sompex.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Blumen Risse",
+  "url": "https://www.blumen-risse.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "hagebau",
+  "url": "https://www.hagebau.de/",
+  "bereich": "handwerk"
+ },
+ {
+  "name": "Kiepenkerl",
+  "url": "https://www.kiepenkerl.de/",
+  "bereich": "garten"
+ },
+ {
+  "name": "Egmont Shop",
+  "url": "https://www.egmont-shop.de/",
+  "bereich": "franchises"
+ },
+ {
+  "name": "TOKYOPOP",
+  "url": "https://www.tokyopop.de/",
+  "bereich": "popkultur"
+ },
+ {
+  "name": "wall-art",
+  "url": "https://www.wall-art.de/",
+  "bereich": "wohnen"
+ },
+ {
+  "name": "Splitter Verlag",
+  "url": "https://www.splitter-verlag.de/",
+  "bereich": "popkultur"
+ },
+ {
+  "name": "sebamed",
+  "url": "https://www.sebamed.de/",
+  "bereich": "beauty"
+ },
+ {
+  "name": "Shirtinator",
+  "url": "https://www.shirtinator.de/",
+  "bereich": "mode"
+ },
+ {
+  "name": "erlebnisgeschenke.de",
+  "url": "https://www.erlebnisgeschenke.de/",
+  "bereich": "kultur"
  }
 ]
