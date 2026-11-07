@@ -45,6 +45,12 @@ def arbeiter() -> dict[str, float]:
     return modelle
 
 
+def frist_aus_umgebung() -> float | None:
+    """KATALOG_MAX_MINUTEN: Danach keine neuen Stapel mehr, damit noch Zeit zum Speichern bleibt."""
+    minuten = os.environ.get("KATALOG_MAX_MINUTEN")
+    return float(minuten) * 60 if minuten else None
+
+
 def katalog_text(katalog: list[KatalogProdukt]) -> str:
     """Ein Produkt pro Zeile, ohne Einrückung: bei ~50.000 Produkten deutlich unter GitHubs 50-MB-Warnung,
     und Git speichert nachts trotzdem nur die geänderten Zeilen."""
@@ -60,7 +66,8 @@ async def main() -> None:
     modelle = arbeiter()
     print("Arbeiter:", ", ".join(modelle))
     katalog, bericht = await baue_katalog(lade_quellen(), lade_alle(str(ziel)),
-                                          max_stapel=max_stapel, arbeiter=modelle)
+                                          max_stapel=max_stapel, arbeiter=modelle,
+                                          frist_sekunden=frist_aus_umgebung())
     ziel.parent.mkdir(parents=True, exist_ok=True)
     ziel.write_text(katalog_text(katalog), encoding="utf-8", newline="\n")
     for schluessel, wert in bericht.items():

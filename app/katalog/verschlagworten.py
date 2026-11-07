@@ -9,6 +9,7 @@ import asyncio
 import hashlib
 import json
 import logging
+import time
 
 from app.katalog.extern import frage_json_extern
 from app.ki import KiUeberlastet, frage_json
@@ -140,7 +141,8 @@ async def _stapel(ps: list[QuellProdukt], modell: str | None = None) -> list[Kat
 
 async def verschlagworte(ps: list[QuellProdukt], pause_sekunden: float = 0,
                          max_stapel: int | None = None,
-                         arbeiter: dict[str, float] | None = None) -> list[KatalogProdukt]:
+                         arbeiter: dict[str, float] | None = None,
+                         frist_sekunden: float | None = None) -> list[KatalogProdukt]:
     """pause_sekunden zwischen Stapeln: Groq erlaubt im Gratis-Tarif nur ~8.000 Token pro Minute.
 
     max_stapel begrenzt einen Lauf, und nach der ersten Überlastung ist Schluss – sonst verbraucht
@@ -148,14 +150,17 @@ async def verschlagworte(ps: list[QuellProdukt], pause_sekunden: float = 0,
     nächsten Lauf dran.
 
     arbeiter {modell: pause}: Jedes Modell hat ein eigenes Kontingent. Dann fragen alle Modelle
-    gleichzeitig, jedes mit eigener Pause, und holen sich die Stapel aus einer gemeinsamen Schlange."""
+    gleichzeitig, jedes mit eigener Pause, und holen sich die Stapel aus einer gemeinsamen Schlange.
+
+    frist_sekunden: Danach nimmt kein Arbeiter mehr einen neuen Stapel. GitHub bricht einen zu
+    langen Lauf sonst ab, bevor katalog.json gespeichert ist – und alles wäre verloren."""
     stapel = [ps[i:i + STAPELGROESSE] for i in range(0, len(ps), STAPELGROESSE)]
     if max_stapel is not None and len(stapel) > max_stapel:
         logger.warning("Stapelgrenze erreicht – %d Produkte beim nächsten Lauf",
                        sum(len(s) for s in stapel[max_stapel:]))
         stapel = stapel[:max_stapel]
     if arbeiter:
-        return await _parallel(stapel, arbeiter)
+        return await _parallel(stapel, arbeiter, frist_sekunden)
     ergebnis: list[KatalogProdukt] = []
     for nummer, teil in enumerate(stapel):
         if nummer and pause_sekunden:
@@ -169,7 +174,9 @@ async def verschlagworte(ps: list[QuellProdukt], pause_sekunden: float = 0,
     return ergebnis
 
 
-async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float]) -> list[KatalogProdukt]:
+async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float],
+                    frist_sekunden: float | None = None) -> list[KatalogProdukt]:
+    ende = None if frist_sekunden is None else time.monotonic() + frist_sekunden
     schlange: asyncio.Queue[list[QuellProdukt]] = asyncio.Queue()
     for teil in stapel:
         schlange.put_nowait(teil)
@@ -178,9 +185,11 @@ async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float]
     async def arbeite(modell: str, pause: float) -> None:
         geschafft, erster = 0, True
         while not schlange.empty():
-            teil = schlange.get_nowait()
             if not erster and pause:
                 await asyncio.sleep(pause)
+            if ende is not None and time.monotonic() >= ende or schlange.empty():
+                break
+            teil = schlange.get_nowait()
             erster = False
             try:
                 fertig = await _stapel(teil, modell)
@@ -200,5 +209,5 @@ async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float]
 
     await asyncio.gather(*(arbeite(m, p) for m, p in arbeiter.items()))
     if not schlange.empty():
-        logger.warning("Alle Modelle überlastet – %d Stapel beim nächsten Lauf", schlange.qsize())
+        logger.warning("Frist erreicht oder alle Modelle überlastet – %d Stapel beim nächsten Lauf", schlange.qsize())
     return ergebnis
