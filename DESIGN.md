@@ -47,7 +47,8 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
   Abschnittsüberschriften, die Einführung und Navigationstitel; alles andere `Font.zuhause`.
   Im Code `Font.zuhause(stil, gewicht)` und `Font.titel(stil)`.
 - Immer Textstile (`.headline`, `.body` …), keine festen Größen: Dynamic Type muss gehen.
-- Freundliche, kleingeschriebene Begrüßung („guten abend.“) wie bei stoic.
+- Freundliche, kleingeschriebene Begrüßung („guten abend.“) wie bei stoic. Nur sie ist klein,
+  alle Seitentitel groß („Merkliste“, „Wischen“) (Luka, 08.11.2026).
 - **Keine** kleinen Großbuchstaben mit weitem Abstand über Überschriften („PROFILE“).
 - Überschriften nicht automatisch in Serifenschrift (anders als im swiftui-design-skill).
 - Lange deutsche Wörter („Weihnachtsgeschenk“, „Oma Gertrud“) dürfen nicht abgeschnitten
