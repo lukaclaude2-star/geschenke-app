@@ -110,6 +110,18 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
 - **Logo = App-Icon:** creme Geschenkbox (Seiten schaum) mit rotem Band, auf dem Deckel
   schläft die Coco-Katze (kupfer). Linien 3,5 pt in der Linienfarbe, nur Palettenfarben.
   Die Variante mit Schleife ist verworfen (wirkt wie das 🎁-Emoji).
+- **Neues App-Icon, vorläufig gewählt (Luka, 08.11.2026: „für die Zukunft lass erstmal das
+  nehmen“):** Version 8 aus `.superpowers/zeigen/ansichten/2026-11-08-logo-w-band/`
+  (Quelle `vorlage-v8.html`, Note 7,3 vom Kritiker). Creme Geschenkbox mit einem
+  senkrechten roten Band (kein Kreuz), auf dem Deckel schläft eine für das Icon
+  vereinfachte Katze (kupfer, ohne Fellstriche), ihr Schwanz hängt außen an der Box
+  herunter. Keine Schrift im Icon. Abendlicht-Grund `#452C1B`, Kontur Espresso.
+  Kleinfassung (≤ 60 px): Kontur 5 statt 3,5, ohne Gesichtsstrich. Einfarbige Fassung
+  (getönte iOS-Icons): Band, Deckelfuge und Spalt um die Katze als Aussparung.
+  Verworfen auf dem Weg: W im Icon (wirkt wie Schild/Word), Knoten mit Bandenden
+  (Siegerrosette), Zickzack-Band (Trommel). **Offen:** Startanimation und App-Icon noch
+  nicht auf die neue Katze umgestellt; mögliche Feinschliffe laut Kritik: Kopf stärker
+  vom Körper absetzen, Schwanz etwas einziehen.
 - **Startbildschirm:** das Logo groß in der Mitte, darum ein dünner Ring in creme, der sich
   füllt, während der Server aufwacht (echtes Laden, keine Deko). Darunter „einen Moment …“,
   dann „zum Öffnen tippen“. Lichtinsel oben links wie auf der Startseite, kein Schein
