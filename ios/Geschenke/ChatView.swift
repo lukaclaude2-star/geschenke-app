@@ -49,6 +49,9 @@ struct ChatView: View {
                     }
                     .padding()
                 }
+                // Tastatur schließen: nach unten ziehen oder in den Verlauf tippen
+                .scrollDismissesKeyboard(.interactively)
+                .onTapGesture { fokus = false }
                 .onChange(of: modell.nachrichten.count) {
                     if let letzte = modell.nachrichten.last?.id {
                         withAnimation { leser.scrollTo(letzte, anchor: .bottom) }

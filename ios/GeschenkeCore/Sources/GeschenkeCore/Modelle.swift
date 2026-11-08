@@ -127,6 +127,7 @@ public struct Karte: Codable, Equatable, Identifiable {
             return Self.euro(preis)
         }
         if let von = preisVon, let bis = preisBis {
+            if von == bis { return "ca. \(Self.zahl(von)) €" }
             return "ca. \(Self.zahl(von))–\(Self.zahl(bis)) €"
         }
         if let bis = preisBis {
