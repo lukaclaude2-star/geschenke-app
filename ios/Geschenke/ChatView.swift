@@ -41,7 +41,7 @@ struct ChatView: View {
                         if let fehler = modell.fehler {
                             VStack(alignment: .leading, spacing: 8) {
                                 Text(fehler).foregroundStyle(Look.leise)
-                                Button("Nochmal") { Task { await modell.nochmal() } }
+                                Button("Nochmal versuchen") { Task { await modell.nochmal() } }
                                     .buttonStyle(RandKnopf())
                             }
                             .id("fehler")

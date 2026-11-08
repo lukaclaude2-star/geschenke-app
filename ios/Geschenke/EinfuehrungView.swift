@@ -20,7 +20,7 @@ struct EinfuehrungView: View {
         Seite(titel: "wisch dich durch.",
               text: "Nach rechts merkst du dir ein Geschenk, nach links geht es weiter. Mit jedem Wisch lerne ich dazu. Probier es mit der Karte aus."),
         Seite(titel: "gespeichert wird nur bei dir.",
-              text: "Deine Leute und deine Merkliste liegen nur auf diesem iPhone. Für Vorschläge schickt die App nur, was du über die Person erzählst, ohne Gerätekennung. Kein Konto, kein Login."),
+              text: "Deine Leute und deine Merkliste liegen nur auf diesem iPhone. Für Vorschläge geht nur raus, was du über die Person erzählst. Kein Konto, keine Gerätekennung."),
     ]
 
     private var istLetzte: Bool { seite == seiten.count - 1 }
