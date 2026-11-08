@@ -196,6 +196,7 @@ struct MerklisteView: View {
                 .strikethrough(eintrag.gekauft, color: Look.leise)
                 .lineLimit(schriftgroesse >= .xLarge ? nil : 3)
             (Text(karte.preisText).font(.zuhause(.footnote, .fett)).foregroundStyle(Look.preis)
+                + Text(karte.versandHinweis.isEmpty ? "" : " \(karte.versandHinweis)").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
                 + Text(karte.preisText.isEmpty ? neben : " · \(neben)").font(.zuhause(.footnote)).foregroundStyle(Look.leise)
                 // Partnerlink: auch in der Merkliste als Werbung erkennbar (§ 5a Abs. 4 UWG).
                 + Text(karte.istAnzeige ? " · Anzeige" : "").font(.zuhause(.footnote)).foregroundStyle(Look.leise))
