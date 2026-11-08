@@ -116,6 +116,7 @@ struct MerklisteView: View {
             Text("Noch nichts gemerkt. Was du beim Wischen nach rechts schiebst, landet hier.")
                 .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
             if let zumWischen {
                 Button("Zum Wischen", action: zumWischen)
                     .font(.zuhause(.headline, .fett))
@@ -127,9 +128,10 @@ struct MerklisteView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        // mittig im freien Raum statt oben unter dem Titel
-        .containerRelativeFrame(.vertical, alignment: .center) { hoehe, _ in hoehe * 0.6 }
+        // Fester Abstand statt containerRelativeFrame: In einer List-Zeile misst der die Zeile
+        // selbst, nicht den Bildschirm, und schnitt Motiv, Text und Knopf ab (iPhone, 08.11.2026).
+        .padding(.top, 72)
+        .padding(.bottom, 12)
     }
 
     // MARK: Gruppen und Zeilen
