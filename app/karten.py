@@ -1,5 +1,6 @@
 import asyncio
 import math
+import re
 
 from app.ideen import ideen_karten
 from app.modelle import (Karte, KartenAnfrage, KartenAntwort, KartenSammelAnfrage, KartenSammelAntwort,
@@ -9,9 +10,21 @@ from app.ranking import kandidaten, waehle_aus
 from app.vokabular import tag_label
 
 
+# Shops hängen SEO-Floskeln an ihre Titel („… online kaufen“); nur am Ende abschneiden.
+_SHOP_FLOSKEL = re.compile(r"[\s\-–|:,]*\b(?:(?:jetzt|online|günstig)\s+)+(?:kaufen|bestellen)\s*$",
+                           re.IGNORECASE)
+
+
+def ohne_shop_floskel(titel: str, shop: str = "") -> str:
+    sauber = _SHOP_FLOSKEL.sub("", titel).strip()
+    if shop:
+        sauber = re.sub(rf"\s+bei\s+{re.escape(shop)}\s*$", "", sauber, flags=re.IGNORECASE).strip()
+    return sauber or titel
+
+
 def produkt_zu_karte(p: KatalogProdukt) -> Karte:
     return Karte(
-        id=p.id, art="produkt", titel=p.titel, preis=p.preis, bild_url=p.bild_url,
+        id=p.id, art="produkt", titel=ohne_shop_floskel(p.titel, p.shop), preis=p.preis, bild_url=p.bild_url,
         shop=p.shop, link=p.link, tags=p.themen + p.lebenslagen, anzeige=ist_partnerlink(p.link),
     )
 

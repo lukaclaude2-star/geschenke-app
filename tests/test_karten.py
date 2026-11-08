@@ -128,3 +128,19 @@ def test_route_liefert_karten(client, auth, monkeypatch):
     body = {"profil": profil().model_dump(), "gesehen": [], "anzahl": 10}
     r = client.post("/karten", json=body, headers=auth)
     assert r.status_code == 200 and len(r.json()["karten"]) == 10
+
+
+@pytest.mark.parametrize("roh, sauber", [
+    ("Bogenhanf in Übertopf Vibes rosa, Höhe ca. 45 cm online kaufen", "Bogenhanf in Übertopf Vibes rosa, Höhe ca. 45 cm"),
+    ("Gartenschere Profi - jetzt bestellen", "Gartenschere Profi"),
+    ("Teeset | günstig kaufen", "Teeset"),
+    ("Kaufen Sie Bücher", "Kaufen Sie Bücher"),
+    ("Krimi-Dinner Gutschein", "Krimi-Dinner Gutschein"),
+])
+def test_titel_ohne_shop_floskel(roh, sauber):
+    assert produkt_zu_karte(produkt("1", titel=roh)).titel == sauber
+
+
+def test_titel_ohne_shopname_am_ende():
+    karte = produkt_zu_karte(produkt("1", titel="Solar-Häuschen bei Pflanzen-Kölle online kaufen", shop="Pflanzen-Kölle"))
+    assert karte.titel == "Solar-Häuschen"

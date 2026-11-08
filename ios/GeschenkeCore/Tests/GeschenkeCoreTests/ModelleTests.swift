@@ -36,6 +36,9 @@ final class ModelleTests: XCTestCase {
         let idee = Karte(id: "i", art: "idee", titel: "x", preis: nil, preisVon: 20, preisBis: 30,
                          bildURL: nil, emoji: "🎁", shop: "Amazon", link: "https://a", tags: [])
         XCTAssertEqual(idee.preisText, "ca. 20–30 €")
+        let gleich = Karte(id: "g", art: "idee", titel: "x", preis: nil, preisVon: 320, preisBis: 320,
+                           bildURL: nil, emoji: "🎁", shop: "Amazon", link: "https://a", tags: [])
+        XCTAssertEqual(gleich.preisText, "ca. 320 €")
     }
 
     func testVersandHinweisNurBeiFestemPreis() {
