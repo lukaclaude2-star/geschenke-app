@@ -195,10 +195,10 @@ struct ZuhauseWischView: View {
                     .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
             } else if let fehler = modell.fehler {
                 Text(fehler).font(.zuhause(.subheadline)).foregroundStyle(Look.leise).multilineTextAlignment(.center)
-                Button("Nochmal") { Task { await modell.nachladen() } }.buttonStyle(RandKnopf())
+                Button("Nochmal versuchen") { Task { await modell.nachladen() } }.buttonStyle(RandKnopf())
             } else {
                 Image("coco-geschenk").resizable().scaledToFit().frame(width: 120).accessibilityHidden(true)
-                Text("Mehr passende Geschenke habe ich gerade nicht. Vielleicht schränken Budget oder Ausschlüsse stark ein. Ändere das im Profil oder die Gewichtung oben rechts.")
+                Text("Mehr passende Geschenke habe ich gerade nicht. Lockere Budget oder Ausschlüsse im Profil oder ändere die Gewichtung oben rechts.")
                     .font(.zuhause(.subheadline)).foregroundStyle(Look.leise).multilineTextAlignment(.center)
             }
         }
@@ -360,6 +360,9 @@ struct ZuhauseKarte: View {
                 Text(karte.titel).font(.zuhause(.headline, .halbfett)).foregroundStyle(Look.text).lineLimit(2)
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(karte.preisText).font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.preis)
+                    if !karte.versandHinweis.isEmpty {
+                        Text(karte.versandHinweis).font(.zuhause(.caption)).foregroundStyle(Look.leise).fixedSize()
+                    }
                     Text(karte.shop).font(.zuhause(.footnote)).foregroundStyle(Look.leise).lineLimit(1)
                 }
                 if istTreffer {

@@ -44,7 +44,7 @@ final class RechtTests: XCTestCase {
         {"stand": "", "angaben": {"name": "[Vor- und Nachname]", "email": "max@example.org"}, "dokumente": []}
         """
         XCTAssertEqual(try Rechtstexte.laden(Data(json.utf8)).offeneAngaben, ["name"])
-        // Seit 06.11.2026 ist das Impressum vollständig: in den echten Texten darf nichts mehr offen sein.
+        // Seit 06.11.2026 sind alle Angaben ausgefüllt; ein neuer Platzhalter soll auffallen.
         XCTAssertEqual(try echteTexte().offeneAngaben, [])
     }
 

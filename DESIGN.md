@@ -47,7 +47,8 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
   Abschnittsüberschriften, die Einführung und Navigationstitel; alles andere `Font.zuhause`.
   Im Code `Font.zuhause(stil, gewicht)` und `Font.titel(stil)`.
 - Immer Textstile (`.headline`, `.body` …), keine festen Größen: Dynamic Type muss gehen.
-- Freundliche, kleingeschriebene Begrüßung („guten abend.“) wie bei stoic.
+- Freundliche, kleingeschriebene Begrüßung („guten abend.“) wie bei stoic. Nur sie ist klein,
+  alle Seitentitel groß („Merkliste“, „Wischen“) (Luka, 08.11.2026).
 - **Keine** kleinen Großbuchstaben mit weitem Abstand über Überschriften („PROFILE“).
 - Überschriften nicht automatisch in Serifenschrift (anders als im swiftui-design-skill).
 - Lange deutsche Wörter („Weihnachtsgeschenk“, „Oma Gertrud“) dürfen nicht abgeschnitten
@@ -110,6 +111,19 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
 - **Logo = App-Icon:** creme Geschenkbox (Seiten schaum) mit rotem Band, auf dem Deckel
   schläft die Coco-Katze (kupfer). Linien 3,5 pt in der Linienfarbe, nur Palettenfarben.
   Die Variante mit Schleife ist verworfen (wirkt wie das 🎁-Emoji).
+- **Neues App-Icon, vorläufig gewählt (Luka, 08.11.2026: „für die Zukunft lass erstmal das
+  nehmen“):** Version 8 aus `.superpowers/zeigen/ansichten/2026-11-08-logo-w-band/`
+  (Quelle `vorlage-v8.html`, Note 7,3 vom Kritiker). Creme Geschenkbox mit einem
+  senkrechten roten Band (kein Kreuz), auf dem Deckel schläft eine für das Icon
+  vereinfachte Katze (kupfer, ohne Fellstriche), ihr Schwanz hängt außen an der Box
+  herunter. Keine Schrift im Icon. Abendlicht-Grund `#452C1B`, Kontur Espresso.
+  Kleinfassung (≤ 60 px): Kontur 5 statt 3,5, ohne Gesichtsstrich. Einfarbige Fassung
+  (getönte iOS-Icons): Band, Deckelfuge und Spalt um die Katze als Aussparung.
+  Verworfen auf dem Weg: W im Icon (wirkt wie Schild/Word), Knoten mit Bandenden
+  (Siegerrosette), Zickzack-Band (Trommel). **Eingebaut (08.11.):** `AppIcon.appiconset`:
+  Standard = Abendlicht (Luka, 08.11.: auch im App Store das dunkle Logo; deshalb keine
+  helle Fassung), Getönt = Graustufen (iOS färbt ein). **Offen:** Startanimation noch mit dem alten Logo; mögliche Feinschliffe laut
+  Kritik: Kopf stärker vom Körper absetzen, Schwanz etwas einziehen.
 - **Startbildschirm:** das Logo groß in der Mitte, darum ein dünner Ring in creme, der sich
   füllt, während der Server aufwacht (echtes Laden, keine Deko). Darunter „einen Moment …“,
   dann „zum Öffnen tippen“. Lichtinsel oben links wie auf der Startseite, kein Schein

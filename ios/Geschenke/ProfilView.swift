@@ -19,7 +19,7 @@ struct ProfilView: View {
         if let eintrag = zustand.profil(profilID) {
             inhalt(eintrag)
         } else {
-            Text("Profil nicht gefunden.").zuhauseHintergrund()
+            Text("Diese Person gibt es nicht mehr. Geh zurück zu „Deine Leute“.").zuhauseHintergrund()
         }
     }
 

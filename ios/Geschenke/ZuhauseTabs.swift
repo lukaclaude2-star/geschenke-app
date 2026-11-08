@@ -37,7 +37,7 @@ struct ZuhauseWischenListe: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("wischen").font(.titel(.largeTitle))
+                    Text("Wischen").font(.titel(.largeTitle))
                     Text(profile.isEmpty ? "noch niemand gespeichert" : "für wen soll ich weitersuchen?")
                         .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                 }

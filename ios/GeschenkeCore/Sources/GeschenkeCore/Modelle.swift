@@ -135,6 +135,11 @@ public struct Karte: Codable, Equatable, Identifiable {
         return ""
     }
 
+    /// Versandkosten gehören direkt an den Preis (BGH, Froogle II). Ideenkarten haben keinen festen Preis.
+    public var versandHinweis: String {
+        preis != nil && !istIdee ? "zzgl. Versand" : ""
+    }
+
     static func euro(_ wert: Double) -> String {
         String(format: "%.2f", wert).replacingOccurrences(of: ".", with: ",") + " €"
     }
