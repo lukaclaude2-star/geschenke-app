@@ -74,7 +74,7 @@ struct MerklisteView: View {
     private func kopf(_ liste: [MerkEintrag]) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .bottom, spacing: 10) {
-                Text("merkliste").font(.titel(.largeTitle)).foregroundStyle(Look.text)
+                Text("Merkliste").font(.titel(.largeTitle)).foregroundStyle(Look.text)
                 // leer trägt das Auspack-Motiv; pro Ansicht nur ein Motiv (DESIGN.md 5)
                 if !liste.isEmpty {
                     Image("coco-stapel").resizable().scaledToFit().frame(width: 44, height: 44)
@@ -116,6 +116,7 @@ struct MerklisteView: View {
             Text("Noch nichts gemerkt. Was du beim Wischen nach rechts schiebst, landet hier.")
                 .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
                 .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
             if let zumWischen {
                 Button("Zum Wischen", action: zumWischen)
                     .font(.zuhause(.headline, .fett))
@@ -127,9 +128,10 @@ struct MerklisteView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 12)
-        // mittig im freien Raum statt oben unter dem Titel
-        .containerRelativeFrame(.vertical, alignment: .center) { hoehe, _ in hoehe * 0.6 }
+        // Fester Abstand statt containerRelativeFrame: In einer List-Zeile misst der die Zeile
+        // selbst, nicht den Bildschirm, und schnitt Motiv, Text und Knopf ab (iPhone, 08.11.2026).
+        .padding(.top, 72)
+        .padding(.bottom, 12)
     }
 
     // MARK: Gruppen und Zeilen

@@ -25,7 +25,7 @@ struct KiEinwilligungView: View {
                         Image("coco-katze").resizable().scaledToFit().frame(height: 110)
                             .frame(maxWidth: .infinity).accessibilityHidden(true)
                     }
-                    Text("bevor wir loslegen.").font(.titel(.title)).foregroundStyle(Look.text)
+                    Text("Bevor wir loslegen.").font(.titel(.title)).foregroundStyle(Look.text)
                         .accessibilityAddTraits(.isHeader)
                     ForEach(punkte, id: \.self) { ZuhauseMarkdown(text: $0) }
                     Text("Du kannst die Zustimmung jederzeit in den Einstellungen widerrufen.")
