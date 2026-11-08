@@ -18,7 +18,9 @@ anpassen.
 1. **Nur echte, kaufbare Dinge.** Die KI erfindet keine Produkte. Jede Karte stammt
    aus einer echten Quelle (Feed, später Amazon-API). Einzige Ausnahme: als „Idee“
    gekennzeichnete Amazon-Ideenkarten mit Suchlink.
-2. **Jede Karte hat einen funktionierenden Partnerlink.** Ohne Link keine Karte.
+2. **Jede Karte hat einen funktionierenden Link zum Shop.** Ohne Link keine Karte.
+   Gibt es für den Shop ein Partnerprogramm, ist es ein Partnerlink. (Von Luka am
+   08.11.2026 gelockert: Start ohne Gewerbe/Awin mit normalen Shop-Links.)
 3. **Ausschlüsse sind hart.** Was der Kunde ausschließt („nichts in Schwarz“,
    „kein Alkohol“), wird nie gezeigt – auch nicht bei schwachen Treffern, nicht bei
    Ideenkarten, nicht durch Gewichtung.

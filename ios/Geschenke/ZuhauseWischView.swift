@@ -360,6 +360,9 @@ struct ZuhauseKarte: View {
                 Text(karte.titel).font(.zuhause(.headline, .halbfett)).foregroundStyle(Look.text).lineLimit(2)
                 HStack(alignment: .firstTextBaseline, spacing: 8) {
                     Text(karte.preisText).font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.preis)
+                    if !karte.versandHinweis.isEmpty {
+                        Text(karte.versandHinweis).font(.zuhause(.caption)).foregroundStyle(Look.leise).fixedSize()
+                    }
                     Text(karte.shop).font(.zuhause(.footnote)).foregroundStyle(Look.leise).lineLimit(1)
                 }
                 if istTreffer {

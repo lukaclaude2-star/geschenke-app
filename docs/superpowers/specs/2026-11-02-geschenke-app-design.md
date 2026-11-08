@@ -19,7 +19,8 @@ den Shop, Luka bekommt bei einem Kauf ein paar Prozent.
 - Vorschläge, die spürbar zur beschriebenen Person passen.
 - Nur echte, kaufbare Dinge – Produkte **und** kaufbare Erlebnisse
   (z. B. Kochkurs, Krimi-Dinner) und personalisierte Sachen (z. B. Gravur).
-- Jede gezeigte Karte hat einen funktionierenden Partnerlink.
+- Jede gezeigte Karte hat einen funktionierenden Link zum Shop, mit Partnerprogramm ein
+  Partnerlink (gelockert am 08.11.2026: Start ohne Gewerbe mit normalen Shop-Links).
 
 ## Nicht-Ziele (erste Version)
 
