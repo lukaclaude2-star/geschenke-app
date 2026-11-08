@@ -81,6 +81,15 @@ final class GeschenkeAPITests: XCTestCase {
         await XCTAssertThrowsFehler(.kiUeberlastet) { _ = try await self.api(t).profilAusGespraech([]) }
     }
 
+    func testOhneEinwilligungGehtNichtsRaus() async {
+        let t = FakeTransport()
+        let api = GeschenkeAPI(basis: URL(string: "https://server.test")!, token: "geheim", transport: t,
+                               darfSenden: { false })
+        await XCTAssertThrowsFehler(.keineEinwilligung) { _ = try await api.naechsteFrage(laenge: "normal", nachrichten: []) }
+        await XCTAssertThrowsFehler(.keineEinwilligung) { _ = try await api.karten(profil: testProfil(), gesehen: [], anzahl: 5) }
+        XCTAssertTrue(t.anfragen.isEmpty)
+    }
+
     func testStatus500WirdServerFehler() async {
         let t = FakeTransport(status: 500)
         await XCTAssertThrowsFehler(.server(500)) { _ = try await self.api(t).profilAusGespraech([]) }

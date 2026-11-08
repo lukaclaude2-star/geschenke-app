@@ -11,11 +11,10 @@ final class AppZustand: ObservableObject {
         let ordner = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         speicher = AppDatenSpeicher(datei: ordner.appendingPathComponent("appdaten.json"))
         daten = speicher.laden()
+        spiegleEinwilligung()
     }
 
-    var api: GeschenkeAPI {
-        GeschenkeAPI(basis: Konfiguration.serverURL, token: Konfiguration.token, transport: URLSessionTransport())
-    }
+    var api: GeschenkeAPI { Konfiguration.api() }
 
     func setzeSchrift(_ stufe: Schriftstufe) {
         daten.schriftgroesse = stufe.rawValue
@@ -123,9 +122,12 @@ final class AppZustand: ObservableObject {
     }
 
     /// „Alle Daten löschen“ (nur nach Bestätigung aufrufen): Profile, Merkliste, Gelerntes,
-    /// Einstellungen, Zustimmung und beiseitegelegte alte Dateien. Die Einführung kommt nicht wieder.
+    /// Einstellungen, Zustimmung, beiseitegelegte alte Dateien und zwischengespeicherte Produktbilder.
+    /// Die Einführung kommt nicht wieder.
     func loescheAlles() {
         try? speicher.loescheAlles()
+        // AsyncImage legt Bilder in URLCache.shared ab; sie verraten, was man sich angesehen hat.
+        URLCache.shared.removeAllCachedResponses()
         var neu = AppDaten()
         neu.einfuehrungGesehen = true
         daten = neu
@@ -141,5 +143,10 @@ final class AppZustand: ObservableObject {
 
     private func sichern() {
         try? speicher.speichern(daten)
+        spiegleEinwilligung()
+    }
+
+    private func spiegleEinwilligung() {
+        UserDefaults.standard.set(daten.hatKiEinwilligung, forKey: Konfiguration.einwilligungSchluessel)
     }
 }

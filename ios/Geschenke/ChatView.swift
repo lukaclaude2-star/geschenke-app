@@ -137,7 +137,7 @@ struct ChatView: View {
 extension AppZustand {
     /// Chat und Stapel brauchen nur die Server-Verbindung, nicht den gespeicherten Zustand.
     nonisolated static func apiOhneZustand() -> GeschenkeAPI {
-        GeschenkeAPI(basis: Konfiguration.serverURL, token: Konfiguration.token, transport: URLSessionTransport())
+        Konfiguration.api()
     }
 }
 

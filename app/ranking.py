@@ -25,6 +25,11 @@ def _wort_im_text(muster: str, text: str) -> bool:
     return re.search(r"\b" + muster, text) is not None
 
 
+# Je Eigenschaft eine Regex statt einer Suche je Muster: gleiches Ergebnis, ein Durchlauf über den Text.
+_EIGENSCHAFT_REGEX = {name: re.compile(r"\b(?:" + "|".join(muster) + ")")
+                      for name, muster in EIGENSCHAFT_MUSTER.items()}
+
+
 def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> bool:
     """Hart: Tags UND Text werden geprüft, damit ein Ausschluss nicht allein an der KI hängt."""
     titel = p.titel.lower()
@@ -39,8 +44,8 @@ def ist_ausgeschlossen(p: KatalogProdukt, ausschluesse: list[Ausschluss]) -> boo
             return True
         if art == "farbe" and (wert in p.farben or _farbe_im_text(wert, titel)):
             return True
-        if art == "eigenschaft" and (wert in p.eigenschaften or any(
-                _wort_im_text(m, text) for m in EIGENSCHAFT_MUSTER.get(wert, ()))):
+        if art == "eigenschaft" and (wert in p.eigenschaften or (
+                wert in _EIGENSCHAFT_REGEX and _EIGENSCHAFT_REGEX[wert].search(text) is not None)):
             return True
         if art == "wort" and wert in text:
             return True
