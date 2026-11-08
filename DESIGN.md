@@ -119,9 +119,10 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
   Kleinfassung (≤ 60 px): Kontur 5 statt 3,5, ohne Gesichtsstrich. Einfarbige Fassung
   (getönte iOS-Icons): Band, Deckelfuge und Spalt um die Katze als Aussparung.
   Verworfen auf dem Weg: W im Icon (wirkt wie Schild/Word), Knoten mit Bandenden
-  (Siegerrosette), Zickzack-Band (Trommel). **Offen:** Startanimation und App-Icon noch
-  nicht auf die neue Katze umgestellt; mögliche Feinschliffe laut Kritik: Kopf stärker
-  vom Körper absetzen, Schwanz etwas einziehen.
+  (Siegerrosette), Zickzack-Band (Trommel). **Eingebaut (08.11.):** `AppIcon.appiconset`
+  mit drei Fassungen: Standard = Hell, Dunkel = Abendlicht, Getönt = Graustufen (iOS färbt
+  ein). **Offen:** Startanimation noch mit dem alten Logo; mögliche Feinschliffe laut
+  Kritik: Kopf stärker vom Körper absetzen, Schwanz etwas einziehen.
 - **Startbildschirm:** das Logo groß in der Mitte, darum ein dünner Ring in creme, der sich
   füllt, während der Server aufwacht (echtes Laden, keine Deko). Darunter „einen Moment …“,
   dann „zum Öffnen tippen“. Lichtinsel oben links wie auf der Startseite, kein Schein
