@@ -44,7 +44,8 @@ final class RechtTests: XCTestCase {
         {"stand": "", "angaben": {"name": "[Vor- und Nachname]", "email": "max@example.org"}, "dokumente": []}
         """
         XCTAssertEqual(try Rechtstexte.laden(Data(json.utf8)).offeneAngaben, ["name"])
-        XCTAssertFalse(try echteTexte().offeneAngaben.isEmpty)
+        // Seit 06.11.2026 ist das Impressum vollständig: in den echten Texten darf nichts mehr offen sein.
+        XCTAssertEqual(try echteTexte().offeneAngaben, [])
     }
 
     func testAlteDatenOhneZustimmung() throws {
