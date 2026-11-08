@@ -39,7 +39,7 @@ struct EinstellungenView: View {
                 } header: {
                     kopf("Erscheinung")
                 } footer: {
-                    Text("Automatisch folgt dem Dunkelmodus des iPhones.")
+                    Text("„Automatisch“ folgt dem Dunkelmodus des iPhones.")
                 }
                 .offeneZeilen()
 
@@ -172,7 +172,7 @@ struct EinstellungenView: View {
         } header: {
             kopf("Geschenk")
         } footer: {
-            Text("Ohne Tippen öffnet sich das Geschenk beim Start von selbst. Bei „aus“ verlieren auch gute Treffer ihre Verpackung nur mit dem Wischen.")
+            Text("Ohne Tippen öffnet sich das Geschenk beim Start von selbst. Bei „aus“ packen sich gute Treffer nicht selbst aus. Das Papier geht erst beim Wischen weg.")
         }
         .offeneZeilen()
     }

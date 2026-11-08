@@ -195,10 +195,10 @@ struct ZuhauseWischView: View {
                     .font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
             } else if let fehler = modell.fehler {
                 Text(fehler).font(.zuhause(.subheadline)).foregroundStyle(Look.leise).multilineTextAlignment(.center)
-                Button("Nochmal") { Task { await modell.nachladen() } }.buttonStyle(RandKnopf())
+                Button("Nochmal versuchen") { Task { await modell.nachladen() } }.buttonStyle(RandKnopf())
             } else {
                 Image("coco-geschenk").resizable().scaledToFit().frame(width: 120).accessibilityHidden(true)
-                Text("Mehr passende Geschenke habe ich gerade nicht. Vielleicht schränken Budget oder Ausschlüsse stark ein. Ändere das im Profil oder die Gewichtung oben rechts.")
+                Text("Mehr passende Geschenke habe ich gerade nicht. Lockere Budget oder Ausschlüsse im Profil oder ändere die Gewichtung oben rechts.")
                     .font(.zuhause(.subheadline)).foregroundStyle(Look.leise).multilineTextAlignment(.center)
             }
         }

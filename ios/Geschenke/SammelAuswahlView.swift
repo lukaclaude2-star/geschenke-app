@@ -41,7 +41,7 @@ struct SammelAuswahlView: View {
                 .offeneZeilen()
             }
             .textCase(nil)
-            Button("Los (\(gewaehlt.count))") {
+            Button("Für \(gewaehlt.count) suchen") {
                 // Reihenfolge wie in der Profilliste, damit „für …“ stabil bleibt.
                 let personen = zustand.daten.profile.filter { gewaehlt.contains($0.id) }.map(WischPerson.init)
                 ziel = WischZiel(personen: personen)

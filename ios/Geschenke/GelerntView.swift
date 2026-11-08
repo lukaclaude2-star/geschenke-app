@@ -79,7 +79,7 @@ struct GelerntView: View {
                             .foregroundStyle(Look.akzentText)
                     }
                 } footer: {
-                    Text("Bereits gewischte Karten dürfen dann wieder auftauchen.")
+                    Text("Karten, die du schon gewischt hast, kommen dann wieder.")
                 }
                 .offeneZeilen()
             }

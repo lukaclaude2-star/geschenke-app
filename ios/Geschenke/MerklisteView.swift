@@ -64,8 +64,8 @@ struct MerklisteView: View {
             Button("Abbrechen", role: .cancel) {}
         } message: {
             Text(liste.count == 1
-                 ? "Die Idee wird gelöscht. Das lässt sich nicht rückgängig machen."
-                 : "Alle \(liste.count) Ideen werden gelöscht. Das lässt sich nicht rückgängig machen.")
+                 ? "Du löschst diese Idee. Das lässt sich nicht rückgängig machen."
+                 : "Du löschst alle \(liste.count) Ideen. Das lässt sich nicht rückgängig machen.")
         }
     }
 
@@ -178,7 +178,7 @@ struct MerklisteView: View {
                     Label("Teilen", systemImage: "square.and.arrow.up")
                 }
             }
-            Button(eintrag.gekauft ? "Nicht mehr gekauft" : "Als gekauft abhaken",
+            Button(eintrag.gekauft ? "Nicht gekauft" : "Als gekauft abhaken",
                    systemImage: eintrag.gekauft ? "arrow.uturn.backward" : "checkmark") {
                 zustand.setzeGekauft(eintrag.id, !eintrag.gekauft)
             }
