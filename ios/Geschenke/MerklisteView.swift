@@ -74,7 +74,7 @@ struct MerklisteView: View {
     private func kopf(_ liste: [MerkEintrag]) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .bottom, spacing: 10) {
-                Text("merkliste").font(.titel(.largeTitle)).foregroundStyle(Look.text)
+                Text("Merkliste").font(.titel(.largeTitle)).foregroundStyle(Look.text)
                 // leer trägt das Auspack-Motiv; pro Ansicht nur ein Motiv (DESIGN.md 5)
                 if !liste.isEmpty {
                     Image("coco-stapel").resizable().scaledToFit().frame(width: 44, height: 44)
