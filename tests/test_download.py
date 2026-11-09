@@ -98,3 +98,38 @@ def test_icon_wird_ausgeliefert(client, konfiguriert):
     assert r.status_code == 200 and r.headers["content-type"] == "image/png"
     assert r.content.startswith(b"\x89PNG")
     assert client.get("/dl/falsch/icon.png").status_code == 404
+
+
+def test_andere_methoden_verraten_den_pfad_nicht(client, konfiguriert):
+    # 405 würde zeigen, dass es den Pfad gibt – auch ohne Geheimnis.
+    for pfad in ("/dl/geheim/source.json", "/dl/falsch/Geschenke.ipa", "/dl/geheim/icon.png"):
+        assert client.post(pfad).status_code == 404
+        assert client.put(pfad).status_code == 404
+        assert client.delete(pfad).status_code == 404
+
+
+def test_head_mit_falschem_geheimnis_404(client, konfiguriert):
+    assert client.head("/dl/falsch/source.json").status_code == 404
+
+
+def test_head_auf_icon_geht(client, konfiguriert):
+    assert client.head("/dl/geheim/icon.png").status_code == 200
+
+
+@respx.mock
+def test_kaputtes_json_von_github_503(client, konfiguriert):
+    respx.get(LATEST).mock(return_value=httpx.Response(200, content=b"<html>kaputt"))
+    assert client.get("/dl/geheim/source.json").status_code == 503
+
+
+@respx.mock
+def test_release_als_liste_503(client, konfiguriert):
+    respx.get(LATEST).mock(return_value=httpx.Response(200, json=["kein", "objekt"]))
+    assert client.get("/dl/geheim/source.json").status_code == 503
+
+
+@respx.mock
+def test_weiterleitung_ohne_ziel_503(client, konfiguriert):
+    respx.get(LATEST).mock(return_value=httpx.Response(200, json=RELEASE))
+    respx.get(ASSET).mock(return_value=httpx.Response(302))
+    assert client.get("/dl/geheim/Geschenke.ipa").status_code == 503
