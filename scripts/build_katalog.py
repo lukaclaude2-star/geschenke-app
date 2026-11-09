@@ -8,6 +8,7 @@ import json
 import logging
 import os
 import sys
+import time
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -33,16 +34,24 @@ PAUSE_GROQ = 55
 PAUSE_EXTERN = 5
 
 
-def arbeiter() -> dict[str, float]:
-    """Jedes Modell mit eigenem Gratis-Kontingent bekommt einen Arbeiter; alle laufen gleichzeitig.
+def groq_arbeiter() -> dict[str, float]:
+    """Das erste Groq-Modell bleibt für Chat, Profil und Ideen der App reserviert."""
+    return {m: PAUSE_GROQ for m in settings.ki_modelle[1:]}
 
-    Das erste Groq-Modell bleibt für Chat, Profil und Ideen der App reserviert. (GitHub Models war
-    als dritte Quelle geplant, ist aber seit 30.07.2026 eingestellt.)"""
-    modelle = {m: PAUSE_GROQ for m in settings.ki_modelle[1:]}
-    if settings.nvidia_api_key:
-        modelle |= {f"nvidia:{m}#{n}": PAUSE_EXTERN
-                    for m in settings.nvidia_modelle for n in range(settings.nvidia_arbeiter_je_modell)}
-    return modelle
+
+def arbeiter() -> dict[str, float]:
+    """Mit NVIDIA-Schlüssel nur NVIDIA (kein Tageslimit, Groq-Kontingent bleibt für die App frei),
+    sonst Groq. (GitHub Models ist seit 30.07.2026 eingestellt.)"""
+    if not settings.nvidia_api_key:
+        return groq_arbeiter()
+    return {f"nvidia:{m}#{n}": PAUSE_EXTERN
+            for m in settings.nvidia_modelle for n in range(settings.nvidia_arbeiter_je_modell)}
+
+
+def braucht_ersatz(modelle: dict[str, float], bericht: dict[str, int]) -> bool:
+    """Groq nur, wenn NVIDIA lief, aber kein einziges Produkt geschafft hat (Ausfall, Schlüssel ungültig)."""
+    nur_nvidia = bool(modelle) and all(m.startswith("nvidia:") for m in modelle)
+    return nur_nvidia and bericht["neu_verschlagwortet"] == 0 and bericht["noch_offen"] > 0
 
 
 def frist_aus_umgebung() -> float | None:
@@ -65,9 +74,16 @@ async def main() -> None:
     max_stapel = int(os.environ.get("KATALOG_MAX_STAPEL", "250"))
     modelle = arbeiter()
     print("Arbeiter:", ", ".join(modelle))
-    katalog, bericht = await baue_katalog(lade_quellen(), lade_alle(str(ziel)),
-                                          max_stapel=max_stapel, arbeiter=modelle,
-                                          frist_sekunden=frist_aus_umgebung())
+    frist = frist_aus_umgebung()
+    start = time.monotonic()
+    quellen = lade_quellen()
+    katalog, bericht = await baue_katalog(quellen, lade_alle(str(ziel)), max_stapel=max_stapel,
+                                          arbeiter=modelle, frist_sekunden=frist)
+    if braucht_ersatz(modelle, bericht):
+        print("NVIDIA hat nichts geschafft – Groq springt ein")
+        rest = None if frist is None else max(0.0, frist - (time.monotonic() - start))
+        katalog, bericht = await baue_katalog(quellen, katalog, max_stapel=max_stapel,
+                                              arbeiter=groq_arbeiter(), frist_sekunden=rest)
     ziel.parent.mkdir(parents=True, exist_ok=True)
     ziel.write_text(katalog_text(katalog), encoding="utf-8", newline="\n")
     for schluessel, wert in bericht.items():

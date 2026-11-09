@@ -84,8 +84,16 @@ def test_arbeiter_ohne_nvidia_schluessel_wie_bisher(monkeypatch):
 def test_arbeiter_mit_nvidia_schluessel(monkeypatch):
     from scripts.build_katalog import PAUSE_EXTERN, arbeiter
     monkeypatch.setattr(settings, "nvidia_api_key", "geheim")
-    extern = {k: v for k, v in arbeiter().items() if k.startswith("nvidia:")}
-    assert settings.nvidia_modelle == ["minimaxai/minimax-m3.1-flash", "google/gemma-4-31b-it"]
-    assert extern == {f"nvidia:{m}#{n}": PAUSE_EXTERN
-                      for m in settings.nvidia_modelle for n in range(settings.nvidia_arbeiter_je_modell)}
-    assert settings.nvidia_arbeiter_je_modell == 4
+    assert settings.nvidia_modelle == ["minimaxai/minimax-m3.1-flash"]
+    assert settings.nvidia_arbeiter_je_modell == 3
+    # Nur NVIDIA: Groq-Kontingent bleibt für die App frei
+    assert arbeiter() == {f"nvidia:minimaxai/minimax-m3.1-flash#{n}": PAUSE_EXTERN for n in range(3)}
+
+
+def test_groq_nur_als_ersatz_wenn_nvidia_nichts_schafft():
+    from scripts.build_katalog import braucht_ersatz
+    nvidia = {"nvidia:m#0": 5}
+    assert braucht_ersatz(nvidia, {"neu_verschlagwortet": 0, "noch_offen": 40})
+    assert not braucht_ersatz(nvidia, {"neu_verschlagwortet": 20, "noch_offen": 20})
+    assert not braucht_ersatz(nvidia, {"neu_verschlagwortet": 0, "noch_offen": 0})
+    assert not braucht_ersatz({"openai/gpt-oss-20b": 55}, {"neu_verschlagwortet": 0, "noch_offen": 40})

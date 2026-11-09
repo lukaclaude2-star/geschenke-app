@@ -3,6 +3,9 @@ name: Katalog bauen
 # Einmal am Tag: neue/geänderte Produkte durch den Ramsch-Filter schicken und von der KI
 # verschlagworten lassen. Unveränderte Produkte werden wiederverwendet (kostet nichts).
 # Ändert sich katalog.json, wird committet – Render baut daraufhin neu.
+#
+# Kostet GitHub-Actions-Minuten (Gratis: 2.000/Monat). Nur im Notfall von Hand starten:
+# Die vier Läufe von Hand am 07./08.11.2026 haben zusammen ~1.100 Minuten verbraucht.
 
 on:
   schedule:
@@ -15,7 +18,7 @@ permissions:
 jobs:
   bauen:
     runs-on: ubuntu-latest
-    timeout-minutes: 350
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -27,8 +30,9 @@ jobs:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
           NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
           KATALOG_MAX_STAPEL: "3000"
-          # Job-Grenze 350 min; nach 300 min keine neuen Stapel, ein laufender braucht höchstens 4 min.
-          KATALOG_MAX_MINUTEN: "300"
+          # Job-Grenze 60 min; nach 45 min keine neuen Stapel, ein laufender braucht höchstens 4 min.
+          # Was offen bleibt, kommt beim nächsten Nachtlauf dran.
+          KATALOG_MAX_MINUTEN: "45"
         run: python scripts/build_katalog.py
       - name: Committen, falls geändert
         run: |
