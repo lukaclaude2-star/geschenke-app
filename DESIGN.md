@@ -103,8 +103,13 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 
 ## 6a. Logo und Startbildschirm (Luka, 04.11.2026)
 
-Demo: `.superpowers/zeigen/ansichten/2026-11-05-startanimation-2/` (v2, vom
-`design-pruefer` freigegeben, alle Punkte 8/10). Vorgänger: `2026-11-04-startanimation/`.
+Demo: `.superpowers/zeigen/ansichten/2026-11-08-startanimation-4/` (v4, Luka 08.11.: Geschenk
+und Katze als 3D-Spielzeugfigur in Blender: abgerundete Box, Kreuzband, glatte, matte Katze ohne
+Texturen, schläft und bewegt sich nicht, Schwanz hängt rechts herunter; bewusst plastisch, nicht wie
+das flache Icon. Vom `design-pruefer` in Runde 3 freigegeben, 8/8/7/8/7). Ablauf, Kamera und
+Lichtflut 1:1 aus v2; Blender rendert nur das Geschenk (`szene.py`), Grund/Lichtinsel/Flut kommen
+aus der HTML-Demo v3 (`ebenen.js`, `zusammensetzen.py`, alles mit `alles.sh`). Vorgänger:
+`2026-11-08-startanimation-3/` (flach, Icon-Katze), `2026-11-05-startanimation-2/`.
 In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert aus der Demo,
 60 fps, BT.709) bis zur vollen Lichtflut; das Zusammenziehen zur Lichtinsel ist nativ.
 
@@ -122,7 +127,7 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
   Verworfen auf dem Weg: W im Icon (wirkt wie Schild/Word), Knoten mit Bandenden
   (Siegerrosette), Zickzack-Band (Trommel). **Eingebaut (08.11.):** `AppIcon.appiconset`:
   Standard = Abendlicht (Luka, 08.11.: auch im App Store das dunkle Logo; deshalb keine
-  helle Fassung), Getönt = Graustufen (iOS färbt ein). **Offen:** Startanimation noch mit dem alten Logo; mögliche Feinschliffe laut
+  helle Fassung), Getönt = Graustufen (iOS färbt ein). Startanimation seit 08.11. als 3D-Version (v4), Icon bleibt flach. Mögliche Feinschliffe am Icon laut
   Kritik: Kopf stärker vom Körper absetzen, Schwanz etwas einziehen.
 - **Startbildschirm:** das Logo groß in der Mitte, darum ein dünner Ring in creme, der sich
   füllt, während der Server aufwacht (echtes Laden, keine Deko). Darunter „einen Moment …“,
