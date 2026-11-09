@@ -26,18 +26,19 @@ def _slug(text: str) -> str:
 
 
 def _objekte(wert) -> list[dict]:
-    """Alle Objekte aus einem JSON-LD-Block – auch in Listen und @graph."""
+    """Alle Objekte aus einem JSON-LD-Block – auch in Listen, @graph und mainEntity (ItemPage)."""
     if isinstance(wert, list):
         return [o for w in wert for o in _objekte(w)]
     if not isinstance(wert, dict):
         return []
-    return [wert] + _objekte(wert.get("@graph", []))
+    return [wert] + _objekte(wert.get("@graph", [])) + _objekte(wert.get("mainEntity", []))
 
 
 def _ist_produkt(o: dict) -> bool:
     typ = o.get("@type")
     typen = typ if isinstance(typ, list) else [typ]
-    return any(isinstance(t, str) and t.split("/")[-1] in ("Product", "ProductGroup") for t in typen)
+    # „Product“, „schema:Product“, „https://schema.org/Product“
+    return any(isinstance(t, str) and re.split(r"[/:#]", t)[-1] in ("Product", "ProductGroup") for t in typen)
 
 
 def _zahl(wert) -> float | None:
