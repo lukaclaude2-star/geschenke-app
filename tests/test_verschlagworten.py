@@ -261,6 +261,21 @@ async def test_arbeiter_alle_leer_nichts_geht_verloren(monkeypatch):
     assert bericht["noch_offen"] == 30
 
 
+async def test_groq_wartet_nach_ueberlastung_nicht(monkeypatch):
+    """Groq-429 heißt Tageskontingent leer: sofort aufhören, Warten kostet nur Actions-Minuten."""
+    from app.ki import KiUeberlastet
+    monkeypatch.setattr(verschlagworten, "WARTEN_NACH_UEBERLASTUNG", 3600)  # würde den Test hängen lassen
+    aufrufe = []
+
+    async def leer(*_, **__):
+        aufrufe.append(1)
+        raise KiUeberlastet()
+    monkeypatch.setattr(verschlagworten, "frage_json", leer)
+    _, bericht = await asyncio.wait_for(
+        baue_katalog([produkt(str(i)) for i in range(30)], [], arbeiter={"x": 0}), timeout=5)
+    assert bericht["noch_offen"] == 30 and aufrufe == [1]
+
+
 async def test_frist_abgelaufen_nimmt_keine_neuen_stapel(monkeypatch):
     """Damit GitHub den Lauf nicht vor dem Speichern abbricht: Nach der Frist bleibt der Rest offen."""
     aufrufe = []

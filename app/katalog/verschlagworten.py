@@ -194,6 +194,11 @@ async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float]
             try:
                 fertig = await _stapel(teil, modell)
             except KiUeberlastet:
+                # Bei Groq heißt 429 meist: Tageskontingent leer – Warten kostet nur Actions-Minuten.
+                # NVIDIA kennt nur ein Minutenlimit, da lohnt ein zweiter Versuch.
+                if ":" not in modell:
+                    schlange.put_nowait(teil)
+                    break
                 await asyncio.sleep(WARTEN_NACH_UEBERLASTUNG)
                 try:
                     fertig = await _stapel(teil, modell)
