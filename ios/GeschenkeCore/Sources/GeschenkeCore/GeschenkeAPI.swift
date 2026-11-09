@@ -14,6 +14,8 @@ public enum APIFehler: Error, Equatable {
     case kiUeberlastet
     case server(Int)
     case unlesbar
+    /// Ohne gültige KI-Zustimmung verlässt keine Anfrage das Handy.
+    case keineEinwilligung
 }
 
 public struct GeschenkeAPI {
@@ -23,11 +25,14 @@ public struct GeschenkeAPI {
     private let basis: URL
     private let token: String
     private let transport: Transport
+    private let darfSenden: @Sendable () -> Bool
 
-    public init(basis: URL, token: String, transport: Transport) {
+    /// `darfSenden` wird vor jeder Anfrage gefragt: die eine Stelle, an der die KI-Zustimmung gilt.
+    public init(basis: URL, token: String, transport: Transport, darfSenden: @escaping @Sendable () -> Bool = { true }) {
         self.basis = basis
         self.token = token
         self.transport = transport
+        self.darfSenden = darfSenden
     }
 
     public func naechsteFrage(laenge: String, nachrichten: [ChatNachricht]) async throws -> ChatAntwort {
@@ -51,6 +56,7 @@ public struct GeschenkeAPI {
     }
 
     private func post<Anfrage: Encodable, Antwort: Decodable>(_ pfad: String, _ inhalt: Anfrage) async throws -> Antwort {
+        guard darfSenden() else { throw APIFehler.keineEinwilligung }
         var anfrage = URLRequest(url: basis.appendingPathComponent(pfad), timeoutInterval: Self.zeitlimit)
         anfrage.httpMethod = "POST"
         anfrage.setValue("application/json", forHTTPHeaderField: "Content-Type")

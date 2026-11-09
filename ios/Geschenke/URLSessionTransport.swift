@@ -17,6 +17,7 @@ extension APIFehler {
         case .server(429): return "Gerade kommen sehr viele Anfragen. Warte eine Minute und versuch es dann nochmal."
         case .server(let status): return "Beim Server ist etwas schiefgelaufen. Versuch es in einer Minute nochmal."
         case .unlesbar: return "Die Antwort kam nicht richtig an. Versuch es nochmal."
+        case .keineEinwilligung: return "Ohne deine Zustimmung zur KI kann die App nichts an den Server schicken."
         }
     }
 }
