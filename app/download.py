@@ -46,7 +46,12 @@ async def _neuestes_release(client: httpx.AsyncClient) -> tuple[str, str, dict]:
                                headers=_github_header("application/vnd.github+json"))
     if antwort.status_code != 200:
         raise GithubFehler(f"Release-Abfrage: Status {antwort.status_code}")
-    release = antwort.json()
+    try:
+        release = antwort.json()
+    except ValueError:
+        raise GithubFehler("Release-Abfrage: kein JSON") from None
+    if not isinstance(release, dict):
+        raise GithubFehler("Release-Abfrage: unerwartete Form")
     treffer = TAG_MUSTER.match(release.get("tag_name") or "")
     asset = next((a for a in release.get("assets") or [] if a.get("name") == ASSET_NAME), None)
     if not treffer or asset is None:
@@ -63,7 +68,7 @@ async def _mit_github(arbeit):
         raise HTTPException(status_code=503, detail="Gerade nicht verfügbar") from None
 
 
-@router.get("/dl/{geheimnis}/source.json")
+@router.api_route("/dl/{geheimnis}/source.json", methods=["GET", "HEAD"])
 async def quelle(geheimnis: str) -> dict:
     _pruefe(geheimnis)
 
@@ -92,7 +97,7 @@ async def quelle(geheimnis: str) -> dict:
     return await _mit_github(arbeit)
 
 
-@router.get("/dl/{geheimnis}/Geschenke.ipa")
+@router.api_route("/dl/{geheimnis}/Geschenke.ipa", methods=["GET", "HEAD"])
 async def ipa(geheimnis: str) -> Response:
     _pruefe(geheimnis)
 
@@ -102,7 +107,10 @@ async def ipa(geheimnis: str) -> Response:
                                    headers=_github_header("application/octet-stream"))
         if antwort.status_code in (301, 302, 303, 307, 308):
             # Das Weiterleitungsziel ist ein signierter Link – der GitHub-Token geht dort nicht mit.
-            antwort = await client.get(antwort.headers["Location"])
+            ziel = antwort.headers.get("Location")
+            if not ziel:
+                raise GithubFehler("Weiterleitung ohne Ziel")
+            antwort = await client.get(ziel)
         if antwort.status_code != 200:
             raise GithubFehler(f"Asset-Download: Status {antwort.status_code}")
         return Response(content=antwort.content, media_type="application/octet-stream",
@@ -111,7 +119,14 @@ async def ipa(geheimnis: str) -> Response:
     return await _mit_github(arbeit)
 
 
-@router.get("/dl/{geheimnis}/icon.png")
+@router.api_route("/dl/{geheimnis}/icon.png", methods=["GET", "HEAD"])
 async def icon(geheimnis: str) -> Response:
     _pruefe(geheimnis)
     return Response(content=ICON.read_bytes(), media_type="image/png")
+
+
+@router.api_route("/dl/{rest:path}", methods=["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+                  include_in_schema=False)
+async def alles_andere(rest: str) -> None:
+    # Zuletzt registriert: fängt nur, was keine echte Route trifft. Sonst käme 405 und verriete den Pfad.
+    raise HTTPException(status_code=404, detail="Not Found")

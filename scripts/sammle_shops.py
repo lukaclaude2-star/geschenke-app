@@ -40,6 +40,7 @@ MAX_SEITEN = 120
 AUFGEBEN_NACH = 30  # so viele Seiten ohne ein einziges Produkt → Shop nicht lesbar
 MAX_SITEMAPS = 25
 PAUSE = 0.5
+MAX_CRAWL_DELAY = 10  # Sekunden; wer mehr verlangt, wird übersprungen statt stundenlang gesammelt
 DATEI = re.compile(r"\.(jpe?g|png|gif|webp|svg|pdf|xml|mp4)$", re.I)
 MEDIEN_SITEMAP = re.compile(r"image|bild|video|media", re.I)
 # Startadresse ohne Sprachpfad: Deutsch liegt dann meist ohne Präfix, andere Sprachen unter /en/, /fr/ …
@@ -50,8 +51,8 @@ KEIN_PRODUKT = re.compile(r"/(blog|magazin|ratgeber|news|hilfe|service|kontakt|i
                           r"login|warenkorb|cart|checkout|search|suche)(/|$)", re.I)
 
 
-async def hole(client: httpx.AsyncClient, url: str) -> httpx.Response | None:
-    await asyncio.sleep(PAUSE)
+async def hole(client: httpx.AsyncClient, url: str, pause: float | None = None) -> httpx.Response | None:
+    await asyncio.sleep(PAUSE if pause is None else pause)
     try:
         antwort = await client.get(url)
     except (httpx.HTTPError, ValueError):
@@ -81,16 +82,26 @@ def _sitemap_text(antwort: httpx.Response) -> str:
     return inhalt.decode("utf-8", errors="replace")
 
 
-async def robots(client: httpx.AsyncClient, basis: str) -> tuple[RobotFileParser, list[str]]:
+async def robots(client: httpx.AsyncClient, basis: str) -> tuple[RobotFileParser, list[str], float]:
+    """→ (Regeln, Sitemaps, Pause zwischen Abrufen). Wie RFC 9309: 4xx = keine Regeln, also alles
+    erlaubt; 5xx oder nicht erreichbar = nichts erlaubt (der Shop kann sie gerade nicht sagen)."""
     parser = RobotFileParser()
-    antwort = await hole(client, urljoin(basis, "/robots.txt"))
-    zeilen = antwort.text.splitlines() if antwort is not None else []
+    await asyncio.sleep(PAUSE)
+    try:
+        antwort = await client.get(urljoin(basis, "/robots.txt"))
+    except (httpx.HTTPError, ValueError):
+        antwort = None
+    if antwort is None or antwort.status_code >= 500:
+        parser.disallow_all = True
+        return parser, [], PAUSE
+    zeilen = antwort.text.splitlines() if antwort.status_code == 200 else []
     parser.parse(zeilen)
     sitemaps = [z.split(":", 1)[1].strip() for z in zeilen if z.lower().startswith("sitemap:")]
-    return parser, sitemaps
+    verlangt = parser.crawl_delay(KOPF["User-Agent"])
+    return parser, sitemaps, max(PAUSE, float(verlangt)) if verlangt else PAUSE
 
 
-async def seiten_aus_sitemaps(client: httpx.AsyncClient, start: list[str]) -> list[str]:
+async def seiten_aus_sitemaps(client: httpx.AsyncClient, start: list[str], pause: float | None = None) -> list[str]:
     offen = list(dict.fromkeys(start))
     gelesen = 0
     seiten: list[str] = []
@@ -98,7 +109,7 @@ async def seiten_aus_sitemaps(client: httpx.AsyncClient, start: list[str]) -> li
         # Produkt-Sitemaps zuerst, Bild- und Video-Sitemaps zuletzt
         offen.sort(key=lambda u: 2 if MEDIEN_SITEMAP.search(u) else 0 if PRODUKT_HINWEIS.search(u) else 1)
         url = offen.pop(0)
-        antwort = await hole(client, url)
+        antwort = await hole(client, url, pause)
         gelesen += 1
         if antwort is None:
             continue
@@ -148,7 +159,10 @@ async def sammle(shop: dict, ziel: int = PRODUKTE_JE_SHOP, max_seiten: int = MAX
         if ist_shopify(seitentext(start), start.headers):
             bericht["status"] = "Shopify – abgelehnt"
             return bericht
-        regeln, sitemaps = await robots(client, basis)
+        regeln, sitemaps, pause = await robots(client, basis)
+        if pause > MAX_CRAWL_DELAY:
+            bericht["status"] = f"Crawl-delay {pause:g} s – übersprungen"
+            return bericht
         sitemaps = shop.get("sitemaps") or sitemaps or [urljoin(basis, "/sitemap.xml"),
                                                        urljoin(basis, "/sitemap_index.xml")]
         # Mehrsprachige Shops: nur die Sitemaps der gewählten Sprachversion, sonst ist die Grenze
@@ -156,7 +170,7 @@ async def sammle(shop: dict, ziel: int = PRODUKTE_JE_SHOP, max_seiten: int = MAX
         sprache = urlparse(basis).path.lower().rstrip("/")
         if sprache:
             sitemaps = [s for s in sitemaps if sprache + "/" in s.lower()] or sitemaps
-        seiten = await seiten_aus_sitemaps(client, sitemaps)
+        seiten = await seiten_aus_sitemaps(client, sitemaps, pause)
         kandidaten = [u for u in _kandidaten(seiten, basis) if regeln.can_fetch(KOPF["User-Agent"], u)]
         if not kandidaten:
             bericht["status"] = "keine Sitemap/Seiten"
@@ -167,7 +181,7 @@ async def sammle(shop: dict, ziel: int = PRODUKTE_JE_SHOP, max_seiten: int = MAX
                 break
             if bericht["seiten"] >= AUFGEBEN_NACH and not produkte:
                 break
-            antwort = await hole(client, url)
+            antwort = await hole(client, url, pause)
             bericht["seiten"] += 1
             if antwort is None:
                 continue

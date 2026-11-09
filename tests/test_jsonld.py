@@ -159,3 +159,17 @@ def test_slug_mit_umlauten():
     assert _slug("Krämer Pferdesport") == "kraemer-pferdesport"
     assert _slug("Wolle Rödel") == "wolle-roedel"
     assert _slug("Fuß") == "fuss"
+
+
+def test_produkt_in_main_entity():
+    seite_mit = {"@context": "https://schema.org", "@type": "ItemPage", "mainEntity": PRODUKT}
+    [p] = produkte_aus_html(seite(seite_mit), "https://s.de/a", "S")
+    assert p.titel == "Grillzange Edelstahl"
+    in_graph = {"@graph": [{"@type": "WebPage", "mainEntity": [PRODUKT]}]}
+    assert len(produkte_aus_html(seite(in_graph), "https://s.de/a", "S")) == 1
+
+
+def test_typ_mit_praefix():
+    for typ in ("schema:Product", "http://schema.org/Product", "https://schema.org/ProductGroup"):
+        assert len(produkte_aus_html(seite(dict(PRODUKT, **{"@type": typ})), "https://s.de/a", "S")) == 1, typ
+    assert produkte_aus_html(seite(dict(PRODUKT, **{"@type": "schema:Offer"})), "https://s.de/a", "S") == []
