@@ -75,3 +75,16 @@ def test_ausschluss_gruppe_trifft_altes_produkt():
 
 def test_ausschluss_kind_laesst_geschwister_durch():
     assert not ist_ausgeschlossen(produkt("s", themen=("sneaker",)), aus("thema:stiefel"))
+
+
+def test_ausschluss_gilt_auch_bei_reinem_oberbereich_treffer():
+    """Grundbaustein 3: Ein Produkt, das nur über den Oberbereich passt, bleibt trotzdem weg."""
+    p = profil(wuensche=(("whisky", 1.0),), ausschluesse=("thema:wein",))
+    wein = produkt("v", themen=("wein",))
+    assert bewerte(wein, profil(wuensche=(("whisky", 1.0),))) == 0.4  # wäre sonst ein Kandidat
+    assert kandidaten([wein], p, set()) == []
+
+    ueber_eigenschaft = profil(wuensche=(("whisky", 1.0),), ausschluesse=("eigenschaft:alkohol",))
+    ohne_tag = produkt("r", themen=("wein",), titel="Wein aus der Pfalz")
+    assert kandidaten([ohne_tag, produkt("t", themen=("wein",), eigenschaften=["alkohol"])],
+                      ueber_eigenschaft, set()) == []
