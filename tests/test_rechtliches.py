@@ -1,6 +1,7 @@
 """Rechtstexte aus rechtliches/rechtliches.json als Webseiten (Plan 2026-11-05, Task 4)."""
 
 import copy
+import json
 
 import pytest
 
@@ -132,3 +133,19 @@ def test_app_texte_passen_zur_datenschutzerklaerung():
     swift = "".join(p.read_text(encoding="utf-8") for p in ordner.glob("*.swift"))
     assert "schickt die App nichts mehr" not in swift
     assert "beim Wischen gelernt" in (ordner / "KiEinwilligungView.swift").read_text(encoding="utf-8")
+
+
+def test_repo_enthaelt_nur_platzhalter():
+    """Das Repo ist öffentlich: Name, Adresse und Telefon dürfen nie in rechtliches.json stehen."""
+    from app.rechtliches import PFAD
+    roh = json.loads(PFAD.read_text(encoding="utf-8"))
+    assert sorted(offene_angaben(roh)) == sorted(roh["angaben"])
+
+
+def test_impressum_aus_umgebung_ueberlagert_platzhalter():
+    from app.rechtliches import mit_impressum
+    texte = {"stand": "", "angaben": {"name": "[Vor- und Nachname]", "telefon": "[Telefonnummer]"}}
+    echt = mit_impressum(texte, '{"name": "Max Muster", "fremd": "x"}')
+    assert echt["angaben"] == {"name": "Max Muster", "telefon": "[Telefonnummer]"}
+    assert texte["angaben"]["name"] == "[Vor- und Nachname]"  # Original bleibt unverändert
+    assert mit_impressum(texte, "") is texte

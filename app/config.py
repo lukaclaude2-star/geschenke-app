@@ -22,10 +22,15 @@ class Settings(BaseSettings):
     katalog_pfad: str = "katalog/katalog.json"
     amazon_tag: str = ""
 
+    # Impressum-Angaben (Name, Adresse, Telefon) als JSON-Objekt – nur in Render und als GitHub-Secret,
+    # nie im Repo. rechtliches/rechtliches.json enthält nur Platzhalter, damit das Repo öffentlich sein kann.
+    impressum_json: str = ""
+
     # Update per Fingertipp (SideStore-Quelle): beide Werte nur in Render, nie im Repo.
+    # Die .ipa liegen in einem eigenen privaten Repo: Sie enthalten den App-Token.
     download_geheimnis: str = ""
     github_token: str = ""
-    github_repo: str = "lukaclaude2-star/geschenke-app"
+    github_repo: str = "lukaclaude2-star/geschenke-releases"
     oeffentliche_url: str = "https://geschenke.onrender.com"
 
     # Drosselung der KI-Routen je Verbindung (app/drossel.py). Ein Gespräch braucht rund

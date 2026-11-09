@@ -38,6 +38,24 @@ jobs:
           brew install xcodegen
           xcodegen generate
 
+      # Im Repo stehen nur Platzhalter (es ist öffentlich); die echten Impressum-Angaben kommen
+      # aus dem Secret. Bleibt ein Platzhalter offen, bricht der Build ab.
+      - name: Impressum eintragen
+        env:
+          IMPRESSUM_JSON: ${{ secrets.IMPRESSUM_JSON }}
+        run: |
+          python3 - <<'EOF'
+          import json, os, sys
+          pfad = "../rechtliches/rechtliches.json"
+          texte = json.load(open(pfad, encoding="utf-8"))
+          echte = json.loads(os.environ.get("IMPRESSUM_JSON") or "{}")
+          texte["angaben"].update({k: v for k, v in echte.items() if k in texte["angaben"]})
+          offen = [k for k, v in texte["angaben"].items() if v.startswith("[") and v.endswith("]")]
+          if offen:
+              sys.exit(f"Impressum unvollständig, Secret IMPRESSUM_JSON prüfen: {offen}")
+          json.dump(texte, open(pfad, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+          EOF
+
       - name: Bauen
         env:
           APP_TOKEN: ${{ secrets.APP_TOKEN }}
@@ -64,20 +82,16 @@ jobs:
           cp -R build/Build/Products/Release-iphoneos/Geschenke.app Payload/
           zip -qr Geschenke.ipa Payload
 
-      - uses: actions/upload-artifact@v4
-        with:
-          name: Geschenke-ipa
-          path: ios/Geschenke.ipa
-          retention-days: 14
-
-      # SideStore-Quelle (Server: /dl/<geheimnis>/source.json) liest immer das neueste Release.
+      # Kein Artifact-Upload: Bei einem öffentlichen Repo könnte jeder die .ipa laden – und darin
+      # steht der App-Token. Deshalb landet sie nur im privaten Repo geschenke-releases.
+      # SideStore-Quelle (Server: /dl/<geheimnis>/source.json) liest immer das neueste Release dort.
       # Nur von main – Arbeits-Branches landen nie auf dem Handy.
       - name: Release für Update per Fingertipp
         if: github.ref == 'refs/heads/main'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.RELEASES_TOKEN }}
           NOTIZ: ${{ github.event.head_commit.message || 'manuell gebaut' }}
         run: |
           gh release create "app-${{ github.run_number }}" Geschenke.ipa \
-            --repo "${{ github.repository }}" \
+            --repo lukaclaude2-star/geschenke-releases \
             --title "App 1.0.${{ github.run_number }}" --notes "$NOTIZ"

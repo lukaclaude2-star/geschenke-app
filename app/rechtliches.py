@@ -1,7 +1,8 @@
 """Rechtstexte (Impressum, Datenschutz, …) als Webseiten für App Store Connect.
 
 Die Texte stehen genau einmal in rechtliches/rechtliches.json. Die App bündelt dieselbe Datei
-und zeigt sie offline, der Server zeigt sie hier ohne Token. Erlaubtes Format in den Absätzen:
+und zeigt sie offline, der Server zeigt sie hier ohne Token. Die persönlichen Angaben sind im Repo
+nur Platzhalter; die echten kommen aus IMPRESSUM_JSON (Render bzw. beim iOS-Build). Erlaubtes Format in den Absätzen:
 `**fett**`, `[Text](https://…)` oder `[Text](mailto:…)` und ein „- “ am Anfang für Listenpunkte.
 """
 
@@ -16,6 +17,8 @@ from pathlib import Path
 from fastapi import APIRouter
 from fastapi.responses import HTMLResponse
 
+from app.config import settings
+
 PFAD = Path(__file__).parent.parent / "rechtliches" / "rechtliches.json"
 DOKUMENTE = ("impressum", "datenschutz", "nutzung", "support", "lizenzen")
 
@@ -28,12 +31,22 @@ router = APIRouter()
 
 
 @lru_cache(maxsize=1)
-def _lade_gecacht(pfad: Path) -> dict:
-    return json.loads(pfad.read_text(encoding="utf-8"))
+def _lade_gecacht(pfad: Path, impressum_json: str = "") -> dict:
+    texte = json.loads(pfad.read_text(encoding="utf-8"))
+    return mit_impressum(texte, impressum_json)
+
+
+def mit_impressum(texte: dict, impressum_json: str) -> dict:
+    """Echte Angaben aus IMPRESSUM_JSON über die Platzhalter legen (nur bekannte Schlüssel)."""
+    if not impressum_json:
+        return texte
+    echte = json.loads(impressum_json)
+    angaben = texte.get("angaben", {})
+    return {**texte, "angaben": {**angaben, **{k: v for k, v in echte.items() if k in angaben}}}
 
 
 def lade_texte(pfad: Path = PFAD) -> dict:
-    return _lade_gecacht(pfad)
+    return _lade_gecacht(pfad, settings.impressum_json)
 
 
 def ausfuellen(text: str, texte: dict) -> str:

@@ -44,8 +44,9 @@ final class RechtTests: XCTestCase {
         {"stand": "", "angaben": {"name": "[Vor- und Nachname]", "email": "max@example.org"}, "dokumente": []}
         """
         XCTAssertEqual(try Rechtstexte.laden(Data(json.utf8)).offeneAngaben, ["name"])
-        // Seit 06.11.2026 sind alle Angaben ausgefüllt; ein neuer Platzhalter soll auffallen.
-        XCTAssertEqual(try echteTexte().offeneAngaben, [])
+        // Im Repo stehen nur Platzhalter; der iOS-Build füllt sie aus dem Secret IMPRESSUM_JSON
+        // und bricht ab, wenn einer offen bleibt. Hier: kein zusätzlicher Platzhalter dazugekommen.
+        XCTAssertEqual(Set(try echteTexte().offeneAngaben), ["name", "strasse", "plz_ort", "email", "telefon"])
     }
 
     func testAlteDatenOhneZustimmung() throws {

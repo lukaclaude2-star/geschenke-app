@@ -10,6 +10,7 @@ docs/app-store/checkliste.md; dieses Skript prüft nur, was sich automatisch pr�
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 from pathlib import Path
@@ -21,7 +22,9 @@ SEITEN = ("impressum", "datenschutz", "nutzung", "support", "lizenzen")
 def probleme(wurzel: Path = WURZEL) -> list[str]:
     gefunden: list[str] = []
     texte = json.loads((wurzel / "rechtliches" / "rechtliches.json").read_text(encoding="utf-8"))
-    for schluessel, wert in texte.get("angaben", {}).items():
+    # Im Repo stehen nur Platzhalter; ausgefüllt wird aus IMPRESSUM_JSON (Render, GitHub-Secret).
+    echte = json.loads(os.environ.get("IMPRESSUM_JSON") or "{}")
+    for schluessel, wert in {**texte.get("angaben", {}), **echte}.items():
         if isinstance(wert, str) and wert.startswith("[") and wert.endswith("]"):
             gefunden.append(f"Angabe offen in rechtliches/rechtliches.json: {schluessel}")
     if not (wurzel / "ios" / "Geschenke" / "PrivacyInfo.xcprivacy").exists():
