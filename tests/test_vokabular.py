@@ -37,9 +37,9 @@ from app.vokabular import BEREICHE, THEMA_BEREICH, VOKABULAR_VERSION, vokabular_
 
 
 def test_470_stichwoerter_in_oberbereichen():
-    assert len(THEMEN) == 452
+    assert len(THEMEN) == 525
     assert len(LEBENSLAGEN) == 18
-    assert len(BEREICHE) == 23
+    assert len(BEREICHE) == 24
     assert set(THEMA_BEREICH) == set(THEMEN)
     assert set(THEMA_BEREICH.values()) == set(BEREICHE)
 
@@ -87,3 +87,31 @@ def test_vokabular_text_ohne_bereichsueberschriften():
     assert "baby_kind" not in text and "[" not in text
     assert len(text.splitlines()) == len(BEREICHE)
     assert text.splitlines()[0].strip().startswith("kochen, backen")
+
+
+# --- Runde „Katalog groß“: Kleidung in drei Stufen, Franchises ---
+from app.vokabular import GRUPPEN, THEMA_GRUPPE, mit_gruppen
+
+
+def test_kleidung_drei_stufen():
+    assert THEMA_GRUPPE["stiefel"] == "schuhe"
+    assert THEMA_GRUPPE["sneaker"] == "schuhe"
+    assert THEMA_GRUPPE["t_shirts"] == "oberteile"
+    assert "schuhe" in THEMEN and THEMA_BEREICH["schuhe"] == "mode"
+    assert all(THEMA_BEREICH[g] == "mode" for g in GRUPPEN)
+    assert all(THEMA_BEREICH[t] == THEMA_BEREICH[g] for g, ts in GRUPPEN.items() for t in ts)
+    assert not set(GRUPPEN) & set(THEMA_GRUPPE)  # Gruppe ist nie selbst Kind
+
+
+def test_mit_gruppen():
+    assert mit_gruppen(["stiefel", "grillen"]) == {"stiefel", "schuhe", "grillen"}
+    assert mit_gruppen([]) == set()
+
+
+def test_franchises_und_umzug_alter_schluessel():
+    assert BEREICHE["franchises"]
+    for tag in ("hello_kitty", "marvel", "harry_potter", "pokemon", "star_wars"):
+        assert THEMA_BEREICH[tag] == "franchises"
+    assert THEMA_BEREICH["lego"] == "spiele"
+    assert THEMA_BEREICH["schmuck"] == "mode"  # alter Schlüssel, jetzt Gruppe
+    assert VOKABULAR_VERSION == 4

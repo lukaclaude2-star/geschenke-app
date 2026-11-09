@@ -259,3 +259,30 @@ async def test_arbeiter_alle_leer_nichts_geht_verloren(monkeypatch):
     monkeypatch.setattr(verschlagworten, "frage_json", leer)
     _, bericht = await baue_katalog([produkt(str(i)) for i in range(30)], [], arbeiter={"x": 0, "y": 0})
     assert bericht["noch_offen"] == 30
+
+
+async def test_frist_abgelaufen_nimmt_keine_neuen_stapel(monkeypatch):
+    """Damit GitHub den Lauf nicht vor dem Speichern abbricht: Nach der Frist bleibt der Rest offen."""
+    aufrufe = []
+
+    async def ki(*_, **__):
+        aufrufe.append(1)
+        raise AssertionError("nach der Frist keine Anfrage mehr")
+    monkeypatch.setattr(verschlagworten, "frage_json", ki)
+    _, bericht = await baue_katalog([produkt(str(i)) for i in range(30)], [],
+                                    arbeiter={"x": 0, "y": 0}, frist_sekunden=0)
+    assert bericht["noch_offen"] == 30 and aufrufe == []
+
+
+async def test_frist_nicht_erreicht_schafft_alles(ki):
+    _, bericht = await baue_katalog([produkt(str(i)) for i in range(30)], [],
+                                    arbeiter={"x": 0, "y": 0}, frist_sekunden=3600)
+    assert bericht["noch_offen"] == 0
+
+
+def test_build_frist_aus_umgebung(monkeypatch):
+    from scripts.build_katalog import frist_aus_umgebung
+    monkeypatch.delenv("KATALOG_MAX_MINUTEN", raising=False)
+    assert frist_aus_umgebung() is None
+    monkeypatch.setenv("KATALOG_MAX_MINUTEN", "300")
+    assert frist_aus_umgebung() == 18000
