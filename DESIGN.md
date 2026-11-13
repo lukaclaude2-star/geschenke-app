@@ -116,8 +116,22 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
 - **Logo = App-Icon:** creme Geschenkbox (Seiten schaum) mit rotem Band, auf dem Deckel
   schläft die Coco-Katze (kupfer). Linien 3,5 pt in der Linienfarbe, nur Palettenfarben.
   Die Variante mit Schleife ist verworfen (wirkt wie das 🎁-Emoji).
-- **Neues App-Icon, vorläufig gewählt (Luka, 08.11.2026: „für die Zukunft lass erstmal das
-  nehmen“):** Version 8 aus `.superpowers/zeigen/ansichten/2026-11-08-logo-w-band/`
+- **App-Icon seit 13.11.2026: „Geschenk mit Katzenohren“** (Luka: „ok sehr gut kannst du sie
+  dann als neues App Icon einbauen“). Grund: Version 8 hatte „zu viele Farben, zu viel Detail“,
+  gesucht war etwas, „wo das Auge dran hängen bleibt“. Einfarbig kupferne Geschenkbox
+  `#D7843A` auf Moosgrün `#5F7A33`, zwei Katzenohren wachsen aus dem Deckel (Spitzen
+  gerundet), breites Creme-Band `#EBD9B4`, grüne Fuge zwischen Deckel und Box, zwei schlafende
+  Augen in Espresso `#23160C` (Strich 5,6). Kein Licht, keine Schleife, keine Schrift, keine
+  liegende Katze. Design-Prüfer: Note 9 für die Zweiton-Fassung H3; Luka wollte die Box
+  einfarbig (H2) mit den kräftigen Augen von H3. Quellen und Maße:
+  `docs/superpowers/specs/2026-11-13-app-icon-design.md`, SVGs in `docs/design/icon/`.
+  Gerendert in 4096 px und mit Lanczos auf 1024 px verkleinert (sonst entsteht unter dem Band
+  ein Saum, wo sich zwei weiche Kanten überlagern). Getönt = Graustufen auf Schwarz.
+  Verworfen auf dem Weg: Licht aus der Box, Anhänger (Preisschild), Stapel (Torte), Katze im
+  Lampenlicht („sieht aus wie GitHub“), dunkle Box mit Ohren (Batman), Schwanz (Tasse),
+  Bäckchen/Mund/Zwinkern (Kitsch). Die Startanimation zeigt noch das alte 3D-Geschenk mit
+  liegender Katze, Anpassung offen.
+- **Frühere Fassung (08.11.–13.11.2026), ersetzt:** Version 8 aus `.superpowers/zeigen/ansichten/2026-11-08-logo-w-band/`
   (Quelle `vorlage-v8.html`, Note 7,3 vom Kritiker). Creme Geschenkbox mit einem
   senkrechten roten Band (kein Kreuz), auf dem Deckel schläft eine für das Icon
   vereinfachte Katze (kupfer, ohne Fellstriche), ihr Schwanz hängt außen an der Box
@@ -143,7 +157,7 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
 - **Lukas Änderungen für v2 (04.11.):** In der Draufsicht wirkt das Geschenk dick (tiefe
   Box, 10 pt Kartonrand). Beim Hineinzoomen bleibt das Geschenk sichtbar, bis das Licht es
   auflöst, man fliegt also ins Geschenk hinein.
-- **Offen:** vereinfachte Icon-Fassung für kleine Größen.
+- **Offen:** Startanimation an das neue Icon angleichen (Luka entscheidet).
 
 ## 6b. Wischkarte (Luka, 04.11.2026)
 
