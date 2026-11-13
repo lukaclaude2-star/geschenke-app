@@ -49,8 +49,7 @@ struct ChatView: View {
                     }
                     .padding()
                 }
-                // Tastatur schließen: nach unten ziehen oder in den Verlauf tippen
-                .scrollDismissesKeyboard(.interactively)
+                // Tastatur schließen: in den Verlauf tippen (Ziehen und Knopf: tastaturSchliessbar)
                 .onTapGesture { fokus = false }
                 .onChange(of: modell.nachrichten.count) {
                     if let letzte = modell.nachrichten.last?.id {
@@ -62,6 +61,7 @@ struct ChatView: View {
             unten
         }
         .zuhauseHintergrund()
+        .tastaturSchliessbar()
         .navigationTitle("Erzähl mal")
         .navigationBarTitleDisplayMode(.inline)
         .task { await modell.start() }
@@ -201,6 +201,7 @@ struct ProfilSpeichernView: View {
             .disabled(speichert)
         }
         .padding(24)
+        .tastaturSchliessbar()
         .presentationDetents([.medium, .large])
         .presentationBackground(Look.hintergrund)
     }

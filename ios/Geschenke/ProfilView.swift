@@ -100,6 +100,7 @@ struct ProfilView: View {
             .presentationBackground(Look.hintergrund)
         }
         .zuhauseHintergrund()
+        .tastaturSchliessbar()
         .navigationTitle(eintrag.name)
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $ziel) { WischZielView(ziel: $0) }
