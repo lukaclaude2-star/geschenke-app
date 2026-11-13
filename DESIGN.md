@@ -103,7 +103,12 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 
 ## 6a. Logo und Startbildschirm (Luka, 04.11.2026)
 
-Demo: `.superpowers/zeigen/ansichten/2026-11-08-startanimation-4/` (v4, Luka 08.11.: Geschenk
+Demo: `.superpowers/zeigen/ansichten/2026-11-13-startanimation-5/` (v5, Luka 13.11.: an das
+neue Icon angeglichen. Box und Deckel kupfer, ein Creme-Band (vorn–unten–hinten und über den
+Deckel), zwei Katzenohren auf dem Deckel heben sich mit, zwei schlafende Augen auf der
+Boxfront (flach, damit sie in der Draufsicht nicht herausragen), keine liegende Katze. Ablauf,
+Kamera, Lichtflut und matter Spielzeug-Look wie v4.) Vorgänger v4:
+`.superpowers/zeigen/ansichten/2026-11-08-startanimation-4/` (Luka 08.11.: Geschenk
 und Katze als 3D-Spielzeugfigur in Blender: abgerundete Box, Kreuzband, glatte, matte Katze ohne
 Texturen, schläft und bewegt sich nicht, Schwanz hängt rechts herunter; bewusst plastisch, nicht wie
 das flache Icon. Vom `design-pruefer` in Runde 3 freigegeben, 8/8/7/8/7). Ablauf, Kamera und
@@ -129,8 +134,8 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
   ein Saum, wo sich zwei weiche Kanten überlagern). Getönt = Graustufen auf Schwarz.
   Verworfen auf dem Weg: Licht aus der Box, Anhänger (Preisschild), Stapel (Torte), Katze im
   Lampenlicht („sieht aus wie GitHub“), dunkle Box mit Ohren (Batman), Schwanz (Tasse),
-  Bäckchen/Mund/Zwinkern (Kitsch). Die Startanimation zeigt noch das alte 3D-Geschenk mit
-  liegender Katze, Anpassung offen.
+  Bäckchen/Mund/Zwinkern (Kitsch). Die Startanimation zeigt seit 13.11. dasselbe Geschenk
+  mit Ohren in 3D (v5).
 - **Frühere Fassung (08.11.–13.11.2026), ersetzt:** Version 8 aus `.superpowers/zeigen/ansichten/2026-11-08-logo-w-band/`
   (Quelle `vorlage-v8.html`, Note 7,3 vom Kritiker). Creme Geschenkbox mit einem
   senkrechten roten Band (kein Kreuz), auf dem Deckel schläft eine für das Icon
@@ -150,14 +155,13 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
 - **Tippen** ist Standard. In den Einstellungen abschaltbar, dann öffnet sich das Geschenk
   von selbst, sobald der Ring voll ist.
 - **Animation (ca. 4 s, einmaliger Moment, deshalb nicht an die 300 ms gebunden):** Deckel
-  mit Katze hebt sich, warmes Licht kommt aus der Box, Kamera in die Draufsicht, Deckel
+  mit Katzenohren hebt sich, warmes Licht kommt aus der Box, Kamera in die Draufsicht, Deckel
   blendet aus, man taucht ins Licht, das Licht zieht sich nach oben links zur Lichtinsel
   der Startseite zusammen. Zweites Tippen überspringt. „Bewegung reduzieren“: nur
   Überblenden.
 - **Lukas Änderungen für v2 (04.11.):** In der Draufsicht wirkt das Geschenk dick (tiefe
   Box, 10 pt Kartonrand). Beim Hineinzoomen bleibt das Geschenk sichtbar, bis das Licht es
   auflöst, man fliegt also ins Geschenk hinein.
-- **Offen:** Startanimation an das neue Icon angleichen (Luka entscheidet).
 
 ## 6b. Wischkarte (Luka, 04.11.2026)
 
