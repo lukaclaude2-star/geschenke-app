@@ -103,7 +103,14 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 
 ## 6a. Logo und Startbildschirm (Luka, 04.11.2026)
 
-Demo: `.superpowers/zeigen/ansichten/2026-11-13-startanimation-5/` (v5, Luka 13.11.: an das
+Demo: `.superpowers/zeigen/ansichten/2026-11-13-startanimation-6/` (v6, Luka 13.11.: wie v5, dazu
+ein Querband links – unten – rechts, das auf dem Deckel unter den Ohren verschwindet, also ein
+Kreuzband (bewusste Abweichung vom Icon mit einem Band). Das Band läuft in einer Rundung vom Deckel
+auf die Box (Deckel bewusst nicht schmaler, sonst wirkt er zu flach) und reißt beim Öffnen an einer
+Zackenkante; ein kurzes Reststück bleibt an der Box. Deckelband mit derselben Rundung wie der Deckel
+(sonst kupferne Lücke an der Oberkante). Ohren schlanker mit breiter Basis, Augen gleich dick mit
+runden Enden. Design-Prüfer Runde 3 FREIGEBEN, 8/8/8/8/8.) Vorgänger v5:
+`.superpowers/zeigen/ansichten/2026-11-13-startanimation-5/` (Luka 13.11.: an das
 neue Icon angeglichen. Box und Deckel kupfer, ein Creme-Band (vorn–unten–hinten und über den
 Deckel), zwei Katzenohren auf dem Deckel heben sich mit, zwei schlafende Augen auf der
 Boxfront (flach, damit sie in der Draufsicht nicht herausragen), keine liegende Katze. Ablauf,
@@ -135,7 +142,7 @@ In der App läuft sie als Video (`start-abend.mp4`, `start-hell.mp4`, gerendert 
   Verworfen auf dem Weg: Licht aus der Box, Anhänger (Preisschild), Stapel (Torte), Katze im
   Lampenlicht („sieht aus wie GitHub“), dunkle Box mit Ohren (Batman), Schwanz (Tasse),
   Bäckchen/Mund/Zwinkern (Kitsch). Die Startanimation zeigt seit 13.11. dasselbe Geschenk
-  mit Ohren in 3D (v5).
+  mit Ohren in 3D (v6, mit Kreuzband).
 - **Frühere Fassung (08.11.–13.11.2026), ersetzt:** Version 8 aus `.superpowers/zeigen/ansichten/2026-11-08-logo-w-band/`
   (Quelle `vorlage-v8.html`, Note 7,3 vom Kritiker). Creme Geschenkbox mit einem
   senkrechten roten Band (kein Kreuz), auf dem Deckel schläft eine für das Icon
