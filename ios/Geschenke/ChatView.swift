@@ -115,6 +115,7 @@ struct ChatView: View {
             .background(Look.karte)
         } else {
             HStack(spacing: 8) {
+                TastaturZuKnopf(fokus: $fokus)
                 TextField("", text: $eingabe, prompt: Text(modell.platzhalter).foregroundStyle(Look.leise),
                           axis: .vertical)
                     .lineLimit(1...4)
@@ -182,6 +183,7 @@ struct ProfilSpeichernView: View {
             Text(profil.zusammenfassung).foregroundStyle(Look.leise)
             ErkannteStichwoerter(profil: profil)
             TextField("", text: $name, prompt: Text("z. B. Oma Gerda").foregroundStyle(Look.leise))
+                .submitLabel(.done)
                 .padding(10)
                 .background(Look.karte)
                 .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -201,7 +203,6 @@ struct ProfilSpeichernView: View {
             .disabled(speichert)
         }
         .padding(24)
-        .tastaturSchliessbar()
         .presentationDetents([.medium, .large])
         .presentationBackground(Look.hintergrund)
     }

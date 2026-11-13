@@ -14,6 +14,7 @@ struct ProfilView: View {
     @State private var budgetBis = BudgetSkala.maximum
     @State private var budgetGeaendert = false
     @State private var zeigeEinwilligung = false
+    @FocusState private var fokus: Bool
 
     var body: some View {
         if let eintrag = zustand.profil(profilID) {
@@ -70,9 +71,11 @@ struct ProfilView: View {
                 .padding()
             }
             HStack(spacing: 8) {
+                TastaturZuKnopf(fokus: $fokus)
                 TextField("", text: $anweisung,
                           prompt: Text("z. B. sie hat jetzt einen Hund").foregroundStyle(Look.leise), axis: .vertical)
                     .lineLimit(1...3)
+                    .focused($fokus)
                     .padding(10)
                     .background(Look.karte)
                     .clipShape(RoundedRectangle(cornerRadius: 12))

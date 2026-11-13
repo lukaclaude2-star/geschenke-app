@@ -102,22 +102,9 @@ extension View {
             .scrollContentBackground(.hidden)
     }
 
-    /// Tastatur immer schließbar: Knopf über der Tastatur und Wegziehen beim Scrollen.
-    /// Mehrzeilige Felder haben keine Fertig-Taste – Return macht dort nur eine neue Zeile.
+    /// Tastatur beim Scrollen wegziehen. Den Knopf dazu liefert `TastaturZuKnopf` in der Eingabezeile.
     func tastaturSchliessbar() -> some View {
         self.scrollDismissesKeyboard(.interactively)
-            .toolbar {
-                ToolbarItemGroup(placement: .keyboard) {
-                    Spacer()
-                    Button {
-                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
-                                                        to: nil, from: nil, for: nil)
-                    } label: {
-                        Image(systemName: "keyboard.chevron.compact.down")
-                    }
-                    .accessibilityLabel("Tastatur schließen")
-                }
-            }
     }
 
     /// Listen und Formulare ohne Kachelflächen: Zeilen direkt auf dem Hintergrund, feine Linien
@@ -125,6 +112,25 @@ extension View {
     func offeneZeilen() -> some View {
         self.listRowBackground(Color.clear)
             .listRowSeparatorTint(Look.flaeche)
+    }
+}
+
+/// Schließt die Tastatur; steht links in der Eingabezeile, solange das Feld aktiv ist.
+/// Mehrzeilige Felder haben keine Fertig-Taste, und ein Knopf in der Tastatur-Leiste liegt
+/// unter iOS 26 genau über dem Senden-Knopf.
+struct TastaturZuKnopf: View {
+    var fokus: FocusState<Bool>.Binding
+
+    var body: some View {
+        if fokus.wrappedValue {
+            Button {
+                fokus.wrappedValue = false
+            } label: {
+                Image(systemName: "keyboard.chevron.compact.down").font(.system(size: 22))
+            }
+            .foregroundStyle(Look.leise)
+            .accessibilityLabel("Tastatur schließen")
+        }
     }
 }
 
