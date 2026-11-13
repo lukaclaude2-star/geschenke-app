@@ -15,6 +15,12 @@ on:
     branches: [main]
     paths: [ios/**, rechtliches/**, .github/workflows/ios-build.yml]
 
+# Nacheinander statt gleichzeitig: Sonst kann ein älterer Build nach einem neueren fertig werden
+# und als neuestes Release auf dem Handy landen. Wartet schon einer, ersetzt ihn der neueste.
+concurrency:
+  group: ios-build-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ${{ inputs.runner || 'macos-15' }}

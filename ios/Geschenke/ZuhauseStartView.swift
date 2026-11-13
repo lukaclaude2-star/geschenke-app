@@ -16,7 +16,10 @@ struct ZuhauseStartView: View {
             VStack(alignment: .leading, spacing: 18) {
                 kopf
                 hauptkarte
-                anlassZeile(naechsterAnlass(heute: Date(), profile: zustand.daten.profile))
+                // Jede Minute neu, damit der Countdown nach Mitternacht weiterzählt.
+                TimelineView(.everyMinute) { kontext in
+                    anlassZeile(naechsterAnlass(heute: kontext.date, profile: zustand.daten.profile))
+                }
                 zuletztGemerkt
                 if !zustand.daten.profile.isEmpty { profile }
             }
@@ -34,9 +37,11 @@ struct ZuhauseStartView: View {
 
     private var kopf: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Text(begruessung(stunde: Calendar.current.component(.hour, from: Date())))
-                .font(.titel(.largeTitle))
-                .lineLimit(1).minimumScaleFactor(0.7)
+            TimelineView(.everyMinute) { kontext in
+                Text(begruessung(stunde: Calendar.current.component(.hour, from: kontext.date)))
+                    .font(.titel(.largeTitle))
+                    .lineLimit(1).minimumScaleFactor(0.7)
+            }
             Text("für wen suchst du heute?").font(.zuhause(.subheadline)).foregroundStyle(Look.leise)
         }
         .padding(.top, 8)

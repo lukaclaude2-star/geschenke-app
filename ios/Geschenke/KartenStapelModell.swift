@@ -155,7 +155,10 @@ final class KartenStapelModell: ObservableObject {
     func zurueck() {
         guard let schritt = verlauf.zurueck() else { return }
         let i = schritt.person
+        // Seit dem Wischer neu gelernte Stichwort-Namen behalten, sonst zeigt „Was ich gelernt habe“ nur Kürzel.
+        let namen = personen[i].gewichtung.labels
         personen[i].gewichtung = schritt.gewichtungVorher
+        personen[i].gewichtung.merkeLabels(namen)
         personen[i].gesehen.removeAll { $0 == schritt.karte.id }
         entschieden.remove(schritt.karte.id)
         if let merkID = schritt.merkID { zustand?.entferneMerk([merkID]) }
