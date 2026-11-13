@@ -22,7 +22,7 @@ targets:
     info:
       path: Geschenke/Info.plist
       properties:
-        CFBundleDisplayName: Wunschwisch
+        CFBundleDisplayName: Copperlid
         CFBundleDevelopmentRegion: de
         # Versionsnummer kommt vom CI-Build (1.0.<Lauf>) – SideStore vergleicht sie mit der Quelle.
         CFBundleShortVersionString: $(MARKETING_VERSION)
