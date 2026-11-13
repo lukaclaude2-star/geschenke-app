@@ -102,6 +102,24 @@ extension View {
             .scrollContentBackground(.hidden)
     }
 
+    /// Tastatur immer schließbar: Knopf über der Tastatur und Wegziehen beim Scrollen.
+    /// Mehrzeilige Felder haben keine Fertig-Taste – Return macht dort nur eine neue Zeile.
+    func tastaturSchliessbar() -> some View {
+        self.scrollDismissesKeyboard(.interactively)
+            .toolbar {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button {
+                        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                                        to: nil, from: nil, for: nil)
+                    } label: {
+                        Image(systemName: "keyboard.chevron.compact.down")
+                    }
+                    .accessibilityLabel("Tastatur schließen")
+                }
+            }
+    }
+
     /// Listen und Formulare ohne Kachelflächen: Zeilen direkt auf dem Hintergrund, feine Linien
     /// dazwischen (Luka, 05.11.2026: „die Kacheln weglassen“).
     func offeneZeilen() -> some View {
