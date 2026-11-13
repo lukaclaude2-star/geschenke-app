@@ -276,6 +276,37 @@ async def test_groq_wartet_nach_ueberlastung_nicht(monkeypatch):
     assert bericht["noch_offen"] == 30 and aufrufe == [1]
 
 
+async def test_nvidia_macht_nach_ueberlastung_weiter(monkeypatch):
+    """NVIDIA kennt nur ein Minutenlimit: ein Arbeiter steigt nach zwei Fehlern nicht aus."""
+    from app.ki import KiUeberlastet
+    monkeypatch.setattr(verschlagworten, "WARTEN_NACH_UEBERLASTUNG", 0)
+    fake = FakeKi()
+    fehler = iter([True, True, False, True, True, False])
+
+    async def ki(system, nutzer, **kw):
+        if next(fehler, False):
+            raise KiUeberlastet()
+        return await fake(system, nutzer)
+    monkeypatch.setattr(verschlagworten, "frage_json_extern", ki)
+    _, bericht = await baue_katalog([produkt(str(i)) for i in range(60)], [], arbeiter={"nv:x": 0})
+    assert bericht["noch_offen"] == 0
+
+
+async def test_nvidia_gibt_bei_dauerfehlern_auf(monkeypatch):
+    from app.ki import KiUeberlastet
+    monkeypatch.setattr(verschlagworten, "WARTEN_NACH_UEBERLASTUNG", 0)
+    aufrufe = []
+
+    async def leer(*_, **__):
+        aufrufe.append(1)
+        raise KiUeberlastet()
+    monkeypatch.setattr(verschlagworten, "frage_json_extern", leer)
+    _, bericht = await asyncio.wait_for(
+        baue_katalog([produkt(str(i)) for i in range(60)], [], arbeiter={"nv:x": 0}), timeout=5)
+    assert bericht["noch_offen"] == 60
+    assert len(aufrufe) == verschlagworten.MAX_FEHLER_IN_FOLGE
+
+
 async def test_frist_abgelaufen_nimmt_keine_neuen_stapel(monkeypatch):
     """Damit GitHub den Lauf nicht vor dem Speichern abbricht: Nach der Frist bleibt der Rest offen."""
     aufrufe = []

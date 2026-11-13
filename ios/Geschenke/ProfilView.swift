@@ -39,6 +39,8 @@ struct ProfilView: View {
                     }
                     GeburtstagZeile(geburtstag: eintrag.geburtstag) { zustand.setzeGeburtstag(profilID, $0) }
                     Button("Geschenke wischen") {
+                        // Verschobener Regler ohne „Übernehmen“ soll trotzdem gelten.
+                        if budgetGeaendert { budgetUebernehmen() }
                         // Immer die aktuelle Fassung aus dem Speicher nehmen (inkl. Gesehen-Liste).
                         if let aktuell = zustand.profil(profilID) {
                             ziel = WischZiel(personen: [WischPerson(aktuell)])

@@ -7,6 +7,8 @@ struct SammelAuswahlView: View {
     @EnvironmentObject private var zustand: AppZustand
     @State private var gewaehlt: Set<UUID>
     @State private var ziel: WischZiel?
+    /// Mehr nimmt der Server nicht an (SammelAnfrage.personen in app/modelle.py).
+    private let hoechstens = 12
 
     /// Vom Weihnachts-Countdown kommen alle Profile vorausgewählt.
     init(vorauswahl: Set<UUID> = []) {
@@ -36,7 +38,7 @@ struct SammelAuswahlView: View {
                         }
                     }
                 } footer: {
-                    Text("Jede Karte zeigt, für wen sie gedacht ist. Ausschlüsse und Budget gelten pro Person.")
+                    Text("Jede Karte zeigt, für wen sie gedacht ist. Ausschlüsse und Budget gelten pro Person. Höchstens \(hoechstens) Personen auf einmal.")
                 }
                 .offeneZeilen()
             }
@@ -47,8 +49,8 @@ struct SammelAuswahlView: View {
                 ziel = WischZiel(personen: personen)
             }
             .buttonStyle(GoldKnopf())
-            .disabled(gewaehlt.count < 2)
-            .opacity(gewaehlt.count < 2 ? 0.5 : 1)
+            .disabled(!auswahlPasst)
+            .opacity(auswahlPasst ? 1 : 0.5)
             .padding()
         }
         .zuhauseHintergrund()
@@ -56,4 +58,6 @@ struct SammelAuswahlView: View {
         .navigationBarTitleDisplayMode(.inline)
         .navigationDestination(item: $ziel) { WischZielView(ziel: $0) }
     }
+
+    private var auswahlPasst: Bool { (2...hoechstens).contains(gewaehlt.count) }
 }

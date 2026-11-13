@@ -25,6 +25,8 @@ STAPELGROESSE = 20
 # Ein Arbeiter, dessen Modell überlastet ist, wartet einmal so lange – oft war es nur die
 # Minutengrenze. Klappt es danach wieder nicht, ist das Tageskontingent leer.
 WARTEN_NACH_UEBERLASTUNG = 65
+# So viele Fehlschläge hintereinander, dann gibt ein NVIDIA-Arbeiter auf (Störung statt Minutenlimit).
+MAX_FEHLER_IN_FOLGE = 3
 
 SYSTEM = f"""Du verschlagwortest Produkte für eine Geschenke-App.
 Antworte nur mit JSON: {{"produkte": [{{"id": "...", "themen": [...], "lebenslagen": [...],
@@ -183,7 +185,7 @@ async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float]
     ergebnis: list[KatalogProdukt] = []
 
     async def arbeite(modell: str, pause: float) -> None:
-        geschafft, erster = 0, True
+        geschafft, erster, fehler_in_folge = 0, True, 0
         while not schlange.empty():
             if not erster and pause:
                 await asyncio.sleep(pause)
@@ -194,17 +196,15 @@ async def _parallel(stapel: list[list[QuellProdukt]], arbeiter: dict[str, float]
             try:
                 fertig = await _stapel(teil, modell)
             except KiUeberlastet:
+                schlange.put_nowait(teil)  # ein anderes Modell oder ein späterer Versuch übernimmt ihn
                 # Bei Groq heißt 429 meist: Tageskontingent leer – Warten kostet nur Actions-Minuten.
-                # NVIDIA kennt nur ein Minutenlimit, da lohnt ein zweiter Versuch.
-                if ":" not in modell:
-                    schlange.put_nowait(teil)
+                # NVIDIA kennt nur ein Minutenlimit: warten und weitermachen statt aussteigen.
+                fehler_in_folge += 1
+                if ":" not in modell or fehler_in_folge >= MAX_FEHLER_IN_FOLGE:
                     break
                 await asyncio.sleep(WARTEN_NACH_UEBERLASTUNG)
-                try:
-                    fertig = await _stapel(teil, modell)
-                except KiUeberlastet:
-                    schlange.put_nowait(teil)  # ein anderes Modell kann ihn noch übernehmen
-                    break
+                continue
+            fehler_in_folge = 0
             if not geschafft:  # Stichprobe im Log, damit man die Modelle vergleichen kann
                 for p in fertig[:3]:
                     logger.warning("  %s: %s → %s, Note %d", modell, p.titel[:50], p.themen, p.note)
