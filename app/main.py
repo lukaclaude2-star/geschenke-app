@@ -24,7 +24,9 @@ def pruefe_token(authorization: str | None = Header(default=None)) -> None:
     APP_TOKEN darf mehrere Tokens mit Komma enthalten („neu,alt“): Ein ausgelesener Token lässt
     sich so mit einem neuen Release austauschen, ohne ältere Installationen sofort auszusperren."""
     tokens = [t.strip() for t in settings.app_token.split(",") if t.strip()]
-    gueltig = [hmac.compare_digest(authorization or "", f"Bearer {t}") for t in tokens]
+    # Bytes statt str: compare_digest wirft bei Nicht-ASCII-Zeichen im Header sonst einen Fehler (500).
+    gesendet = (authorization or "").encode()
+    gueltig = [hmac.compare_digest(gesendet, f"Bearer {t}".encode()) for t in tokens]
     if not authorization or not any(gueltig):
         raise HTTPException(status_code=401, detail="Nicht berechtigt")
 

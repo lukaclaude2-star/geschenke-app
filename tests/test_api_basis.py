@@ -24,3 +24,8 @@ def test_mehrere_tokens_gelten_waehrend_des_wechsels(client, monkeypatch):
     for falsch in ("", "neu, alt", "neu,alt", "ne"):
         r = client.post("/chat/naechste", json={}, headers={"Authorization": f"Bearer {falsch}"})
         assert r.status_code == 401
+
+
+def test_umlaut_im_token_gibt_401(client):
+    r = client.post("/chat/naechste", json={}, headers={"Authorization": "Bearer tést".encode("latin-1")})
+    assert r.status_code == 401
