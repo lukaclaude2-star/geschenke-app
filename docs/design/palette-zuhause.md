@@ -17,7 +17,9 @@ Schalter in den Einstellungen (Automatisch / Hell / Abendlicht).
 | text | `#F1E3C6` | `#23160C` | Fließtext, Titel |
 | leise | `#C0AE88` | `#7B5930` | Nebentext |
 | linie | `#7B5930` | `#23160C` | Linien der Illustrationen* |
-| akzent | `#C2721E` | `#C2721E` | Knöpfe, Hervorhebung |
+| akzent | `#C2721E` | `#C2721E` | Nebensachen: Abzeichen, Regler, Links |
+| fokus | `#B7CC4A` | `#B7CC4A` | nur das Wichtigste: Hauptknopf, „merken“ (DESIGN.md 2) |
+| fokustext | `#B7CC4A` | `#566F2D` | Fokus als Schrift auf Grund/Karte |
 | akzenttext | `#23160C` | `#23160C` | Schrift auf Akzent\*\* |
 | licht | `rgba(239,178,73,.22)` | `rgba(239,178,73,.30)` | Lichtinsel oben links (radialer Verlauf) |
 

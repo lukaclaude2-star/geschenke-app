@@ -57,9 +57,9 @@ struct ZuhauseWischView: View {
                     }
                     Button { wegOben(ja: true) } label: {
                         Label("merken", systemImage: "heart.fill")
-                            .font(.zuhause(.headline, .fett)).foregroundStyle(Look.aufAkzent)
+                            .font(.zuhause(.headline, .fett)).foregroundStyle(Look.aufFokus)
                             .frame(maxWidth: .infinity, minHeight: 52)
-                            .background(Look.akzent, in: Capsule())
+                            .background(Look.fokus, in: Capsule())
                     }
                 }
                 .buttonStyle(.plain)
@@ -173,9 +173,9 @@ struct ZuhauseWischView: View {
 
     @ViewBuilder private var stempel: some View {
         HStack {
-            Text("merken").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.aufAkzent)
+            Text("merken").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.aufFokus)
                 .padding(.horizontal, 12).padding(.vertical, 4)
-                .background(Look.akzent, in: Capsule())
+                .background(Look.fokus, in: Capsule())
                 .opacity(Double(max(0, versatz.width / 90)))
             Spacer()
             Text("weiter").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.text)
@@ -366,7 +366,7 @@ struct ZuhauseKarte: View {
                     Text(karte.shop).font(.zuhause(.footnote)).foregroundStyle(Look.leise).lineLimit(1)
                 }
                 if istTreffer {
-                    Text("passt besonders gut zu \(name)").font(.zuhause(.footnote, .fett)).foregroundStyle(Look.preis)
+                    Text("passt besonders gut zu \(name)").font(.zuhause(.footnote, .fett)).foregroundStyle(Look.fokusText)
                 } else if let grund {
                     Text(grund).font(.zuhause(.caption, .halbfett)).foregroundStyle(Look.text)
                         .padding(.horizontal, 10).padding(.vertical, 3)

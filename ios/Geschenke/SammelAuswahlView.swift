@@ -48,7 +48,7 @@ struct SammelAuswahlView: View {
                 let personen = zustand.daten.profile.filter { gewaehlt.contains($0.id) }.map(WischPerson.init)
                 ziel = WischZiel(personen: personen)
             }
-            .buttonStyle(GoldKnopf())
+            .buttonStyle(FokusKnopf())
             .disabled(!auswahlPasst)
             .opacity(auswahlPasst ? 1 : 0.5)
             .padding()

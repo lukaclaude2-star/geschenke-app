@@ -13,17 +13,25 @@ public struct Palette: Equatable {
     /// Textfarbe auf Akzentflächen (z. B. Knopf „merken“, Abzeichen „für Mama“).
     public let aufAkzent: UInt32
     public let preis: UInt32
+    /// Limette: zieht das Auge auf das Wichtigste (Hauptknopf, „merken“, „passt besonders gut“).
+    /// Sparsam einsetzen, sonst verliert sie die Wirkung. Kupfer bleibt für Nebensachen.
+    public let fokus: UInt32
+    public let aufFokus: UInt32
+    /// Fokus als Schrift auf Grund oder Karte (in Hell dunkler, Limette erreicht dort nur ca. 1,4).
+    public let fokusText: UInt32
 }
 
 public enum Designs {
     public static let zuhauseAbend = Palette(
         hell: false, hintergrund: 0x23160C, karte: 0x452C1B, rand: 0x5E3F27, text: 0xF1E3C6,
-        akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0xEFB249)
+        akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0xEFB249,
+        fokus: 0xB7CC4A, aufFokus: 0x23160C, fokusText: 0xB7CC4A)
 
     // aufAkzent dunkel: das helle #FFF6E6 aus dem Muster erreicht auf Kupfer nur ca. 3,4.
     public static let zuhauseHell = Palette(
         hell: true, hintergrund: 0xEFE6D6, karte: 0xF8F1E5, rand: 0xE0D0B5, text: 0x23160C,
-        akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0x9A3A24)
+        akzent: 0xC2721E, aufAkzent: 0x23160C, preis: 0x9A3A24,
+        fokus: 0xB7CC4A, aufFokus: 0x23160C, fokusText: 0x566F2D)
 
     /// Farbwelt nach der Einstellung „Erscheinung“ und dem Dunkelmodus des iPhones.
     public static func palette(erscheinung: Erscheinung, systemDunkel: Bool) -> Palette {

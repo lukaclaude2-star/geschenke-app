@@ -69,7 +69,7 @@ struct EinfuehrungView: View {
 
             punkte.padding(.vertical, 16)
             Button(istLetzte ? "Los geht’s" : "Weiter") { weiter() }
-                .buttonStyle(GoldKnopf())
+                .buttonStyle(FokusKnopf())
         }
         .padding(.horizontal, 20)
         .padding(.bottom, 12)
@@ -171,9 +171,9 @@ private struct UebungsKarte: View {
 
     @ViewBuilder private var stempel: some View {
         HStack {
-            Text("merken").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.aufAkzent)
+            Text("merken").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.aufFokus)
                 .padding(.horizontal, 12).padding(.vertical, 4)
-                .background(Look.akzent, in: Capsule())
+                .background(Look.fokus, in: Capsule())
                 .opacity(Double(max(0, versatz / 90)))
             Spacer()
             Text("weiter").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.text)

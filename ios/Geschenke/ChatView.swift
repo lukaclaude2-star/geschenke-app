@@ -95,7 +95,7 @@ struct ChatView: View {
             VStack(alignment: .leading, spacing: 12) {
                 if let profil = modell.profil { ErkannteStichwoerter(profil: profil) }
                 Button("Weiter wischen") { zeigeWischen = true }
-                    .buttonStyle(GoldKnopf())
+                    .buttonStyle(FokusKnopf())
             }
             .padding()
         } else if modell.budgetOffen {
@@ -108,7 +108,7 @@ struct ChatView: View {
                         let grenzen = BudgetSkala.grenzen(von: budgetVon, bis: budgetBis)
                         Task { await modell.budgetGewaehlt(von: grenzen.min, bis: grenzen.max) }
                     }
-                    .buttonStyle(GoldKnopf())
+                    .buttonStyle(FokusKnopf())
                 }
             }
             .padding()
@@ -192,7 +192,7 @@ struct ProfilSpeichernView: View {
                 speichert = true
                 fertig(name.trimmingCharacters(in: .whitespaces))
             }
-            .buttonStyle(GoldKnopf())
+            .buttonStyle(FokusKnopf())
             .disabled(speichert || name.trimmingCharacters(in: .whitespaces).isEmpty)
             Button("Nicht speichern, einfach los") {
                 guard !speichert else { return }

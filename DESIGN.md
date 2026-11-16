@@ -35,6 +35,14 @@ Oberfläche und Illustrationsfarben). Werte nie frei erfinden.
 - Kupfer als Schrift oder Symbol auf dem hellen Grund erreicht nur 2,97. In Hell steht
   Akzent-Schrift deshalb in Rotdunkel `#9A3A24` (`Look.akzentText`, auch der Tint der App);
   Kupfer bleibt dort Fläche (Knöpfe). Im Abendlicht ist Kupfer als Schrift erlaubt (4,8).
+- **Fokusfarbe Limette `#B7CC4A`** (Luka, 16.11.2026, nach Marco Pérez: „Let the loud color
+  do the work“). Sie zieht das Auge auf das Wichtigste eines Bildschirms und steht nur dort:
+  Hauptknopf (`FokusKnopf`, höchstens einer pro Ansicht), „merken“ (Knopf und Stempel),
+  „passt besonders gut zu …“. Schrift darauf Espresso (9,9). Als Schrift auf dem Grund in
+  Hell dunkles Moos `#566F2D` (`Look.fokusText`), im Abendlicht Limette selbst.
+  Kupfer ist ab jetzt die Farbe für Nebensachen: Abzeichen („Idee“, „für Mama“), eigene
+  Chat-Blasen, Budget-Regler, Seitenpunkte, Links und Tint. Nichts Neues grün machen, ohne
+  zu fragen, ob es wirklich das Wichtigste auf dem Bildschirm ist.
 
 ## 3. Schrift
 

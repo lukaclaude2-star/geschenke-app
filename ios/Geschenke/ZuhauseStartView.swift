@@ -55,9 +55,9 @@ struct ZuhauseStartView: View {
                 .fixedSize(horizontal: false, vertical: true)
             NavigationLink { LaengeView() } label: {
                 Text("Gespräch starten").font(.zuhause(.headline, .fett))
-                    .foregroundStyle(Look.aufAkzent)
+                    .foregroundStyle(Look.aufFokus)
                     .padding(.horizontal, 22).frame(minHeight: 46)
-                    .background(Look.akzent, in: Capsule())
+                    .background(Look.fokus, in: Capsule())
             }
             .buttonStyle(.plain)
             .padding(.top, 8)

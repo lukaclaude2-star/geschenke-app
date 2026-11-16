@@ -40,7 +40,7 @@ struct KiEinwilligungView: View {
             }
             .scrollBounceBehavior(.basedOnSize)
             VStack(spacing: 10) {
-                Button("Einverstanden") { fertig(true) }.buttonStyle(GoldKnopf())
+                Button("Einverstanden") { fertig(true) }.buttonStyle(FokusKnopf())
                 Button("Nicht jetzt") { fertig(false) }.buttonStyle(RandKnopf())
             }
             .padding(.top, 12)
