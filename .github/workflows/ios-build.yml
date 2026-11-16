@@ -1,8 +1,8 @@
 name: iOS-App bauen
 
 # Unsigniert: SideStore signiert beim Installieren mit der kostenlosen Apple-ID.
-# macOS-Minuten zählen zehnfach, deshalb nur auf Knopfdruck oder nach einem Push, der
-# die App berührt.
+# Das Repo ist öffentlich, macOS-Läufe kosten also keine Minuten. Gebaut wird nach jedem Push
+# (alle Zweige), der die App berührt, oder auf Knopfdruck. Aufs Handy kommt nur main (siehe unten).
 
 on:
   workflow_dispatch:
@@ -11,8 +11,6 @@ on:
         description: "macOS-Rechner (macos-26 hing oft in der Warteschlange, daher macos-15)"
         default: macos-15
   push:
-    # Auf Arbeits-Branches nur auf Knopfdruck – jeder Push dort würde Mac-Minuten kosten.
-    branches: [main]
     paths: [ios/**, rechtliches/**, .github/workflows/ios-build.yml]
 
 # Nacheinander statt gleichzeitig: Sonst kann ein älterer Build nach einem neueren fertig werden

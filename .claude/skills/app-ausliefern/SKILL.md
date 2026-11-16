@@ -14,10 +14,11 @@ an. Die SideStore-Quelle (`/dl/<geheimnis>/source.json`) liest immer das neueste
 1. **Arbeitszweig, nie direkt main.** Erst committen, dann `git push -u origin <zweig>`.
 2. **Kern-Tests:** Bei Änderungen unter `ios/GeschenkeCore/**` läuft „iOS-Kern testen“ von
    selbst. Abwarten mit `gh run watch <id> --exit-status`.
-3. **App auf dem Zweig bauen.** Auf Arbeitszweigen startet der Build nur per Hand, weil
-   Mac-Minuten Geld kosten:
+3. **App auf dem Zweig bauen.** Der Push aus Schritt 1 startet „iOS-App bauen“ von selbst,
+   wenn er `ios/**` oder `rechtliches/**` berührt (öffentliches Repo, Mac-Minuten gratis).
+   Ein Release entsteht nur auf main. Sonst per Hand:
+   `gh workflow run ios-build.yml --ref <zweig> -f runner=macos-15`.
    ```bash
-   gh workflow run ios-build.yml --ref <zweig> -f runner=macos-15
    gh run list --branch <zweig> --workflow ios-build.yml --limit 1   # Run-ID
    gh run watch <id> --exit-status
    gh run view <id> --log | grep -E "error:|BUILD SUCCEEDED|BUILD FAILED"
