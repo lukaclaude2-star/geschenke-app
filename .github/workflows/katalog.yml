@@ -4,8 +4,8 @@ name: Katalog bauen
 # verschlagworten lassen. Unveränderte Produkte werden wiederverwendet (kostet nichts).
 # Ändert sich katalog.json, wird committet – Render baut daraufhin neu.
 #
-# Kostet GitHub-Actions-Minuten (Gratis: 2.000/Monat). Nur im Notfall von Hand starten:
-# Die vier Läufe von Hand am 07./08.11.2026 haben zusammen ~1.100 Minuten verbraucht.
+# Das Repo ist seit 10.11.2026 öffentlich, Läufe auf ubuntu-latest kosten also keine Minuten mehr.
+# Ein Lauf schöpft aber das KI-Kontingent (Groq/NVIDIA) aus, darum nicht unnötig von Hand starten.
 
 on:
   schedule:
@@ -25,6 +25,13 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install -r requirements.txt
+      - name: Awin-Feeds laden
+        # Bis zur Annahme bei Awin ist das Secret leer, dann wird der Schritt übersprungen.
+        # Die awin-*.json werden nicht committet, sie kommen jede Nacht frisch.
+        env:
+          AWIN_FEEDS: ${{ secrets.AWIN_FEEDS }}
+        run: |
+          if [ -n "$AWIN_FEEDS" ]; then python scripts/lade_awin_feeds.py; else echo "AWIN_FEEDS leer, übersprungen"; fi
       - name: Katalog bauen
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}

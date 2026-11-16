@@ -5,7 +5,7 @@ import re
 from app.ideen import ideen_karten
 from app.modelle import (Karte, KartenAnfrage, KartenAntwort, KartenSammelAnfrage, KartenSammelAntwort,
                          KatalogProdukt, Profil, SammelKarte)
-from app.partnerlinks import ist_partnerlink
+from app.partnerlinks import ist_partnerlink, mit_partnerlink
 from app.ranking import kandidaten, waehle_aus
 from app.vokabular import tag_label
 
@@ -23,9 +23,10 @@ def ohne_shop_floskel(titel: str, shop: str = "") -> str:
 
 
 def produkt_zu_karte(p: KatalogProdukt) -> Karte:
+    link = mit_partnerlink(p.link)
     return Karte(
         id=p.id, art="produkt", titel=ohne_shop_floskel(p.titel, p.shop), preis=p.preis, bild_url=p.bild_url,
-        shop=p.shop, link=p.link, tags=p.themen + p.lebenslagen, anzeige=ist_partnerlink(p.link),
+        shop=p.shop, link=link, tags=p.themen + p.lebenslagen, anzeige=ist_partnerlink(link),
     )
 
 
