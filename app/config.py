@@ -21,6 +21,13 @@ class Settings(BaseSettings):
     nvidia_arbeiter_je_modell: int = 3
     katalog_pfad: str = "katalog/katalog.json"
     amazon_tag: str = ""
+    # Awin (nach der Annahme in Render eintragen, siehe docs/partnerlinks.md):
+    # AWIN_PUBLISHER_ID=123456, AWIN_PROGRAMME={"bergfreunde.de": 12345, "mydays.de": 678}
+    # Nur Programme eintragen, die Luka angenommen haben – sonst gibt es für Klicks keine Provision.
+    awin_publisher_id: str = ""
+    awin_programme: dict[str, int] = {}
+    # Nur für scripts/lade_awin_feeds.py (Shop → Download-Adresse; enthält den Awin-API-Schlüssel).
+    awin_feeds: dict[str, str] = {}
 
     # Impressum-Angaben (Name, Adresse, Telefon) als JSON-Objekt – nur in Render und als GitHub-Secret,
     # nie im Repo. rechtliches/rechtliches.json enthält nur Platzhalter, damit das Repo öffentlich sein kann.
