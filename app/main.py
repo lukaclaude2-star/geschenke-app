@@ -20,9 +20,12 @@ from app.profil import profil_aendern, profil_aus_gespraech
 
 
 def pruefe_token(authorization: str | None = Header(default=None)) -> None:
-    """Die App schickt den Token im Header, nicht in der URL: URLs landen in Logs."""
-    erwartet = f"Bearer {settings.app_token}"
-    if not settings.app_token or not authorization or not hmac.compare_digest(authorization, erwartet):
+    """Die App schickt den Token im Header, nicht in der URL: URLs landen in Logs.
+    APP_TOKEN darf mehrere Tokens mit Komma enthalten („neu,alt“): Ein ausgelesener Token lässt
+    sich so mit einem neuen Release austauschen, ohne ältere Installationen sofort auszusperren."""
+    tokens = [t.strip() for t in settings.app_token.split(",") if t.strip()]
+    gueltig = [hmac.compare_digest(authorization or "", f"Bearer {t}") for t in tokens]
+    if not authorization or not any(gueltig):
         raise HTTPException(status_code=401, detail="Nicht berechtigt")
 
 

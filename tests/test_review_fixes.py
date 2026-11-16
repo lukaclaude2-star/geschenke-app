@@ -112,6 +112,18 @@ async def test_aendern_mit_leerer_antwort_behaelt_alles(monkeypatch):
     assert neu.budget_max == 50.0 and [w.tag for w in neu.wuensche] == ["garten", "krimis"]
 
 
+async def test_aendern_verlangt_eine_aenderung_von_der_ki(monkeypatch):
+    gefragt = {}
+
+    async def ki(*_, brauchbar=None, **__):
+        gefragt["leer"] = brauchbar({})
+        gefragt["hund"] = brauchbar({"neue_wuensche": [{"tag": "hund", "gewicht": 1.3}]})
+        return {}
+    monkeypatch.setattr(profil_modul, "frage_json", ki)
+    await profil_aendern(ALT, "sie hat jetzt einen Hund")
+    assert gefragt == {"leer": False, "hund": True}
+
+
 async def test_aendern_fuegt_hinzu_und_entfernt_gezielt(monkeypatch):
     ki_antwortet(monkeypatch, {"neue_wuensche": [{"tag": "hund", "gewicht": 1.3}],
                                "entfernte_wuensche": ["krimis"],

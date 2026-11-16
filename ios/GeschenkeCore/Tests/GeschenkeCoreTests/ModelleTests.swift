@@ -3,6 +3,20 @@ import XCTest
 @testable import GeschenkeCore
 
 final class ModelleTests: XCTestCase {
+    func testGleicherInhaltIgnoriertLabels() {
+        let alt = Profil(zusammenfassung: "Oma", wuensche: [Wunsch(tag: "garten", label: "g", gewicht: 1.2)],
+                         ausschluesse: [Ausschluss(schluessel: "farbe:schwarz", label: "s")], budgetMax: 50)
+        var neu = alt
+        neu.wuensche[0].label = "🌱 Garten"
+        neu.ausschluesse[0].label = "Schwarz"
+        XCTAssertTrue(neu.gleicherInhalt(wie: alt))
+        neu.wuensche[0].gewicht = 1.5
+        XCTAssertFalse(neu.gleicherInhalt(wie: alt))
+        neu = alt
+        neu.budgetMax = 80
+        XCTAssertFalse(neu.gleicherInhalt(wie: alt))
+    }
+
     func testKarteDekodiertSnakeCase() throws {
         let json = """
         {"id":"idee:x","art":"idee","titel":"Kniekissen","preis":null,"preis_von":15,"preis_bis":25,

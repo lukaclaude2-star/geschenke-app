@@ -47,6 +47,14 @@ public struct Profil: Codable, Equatable {
         case budgetMin = "budget_min"
     }
 
+    /// Gleich bis auf die Labels: Die leitet der Server neu ab, sie zählen nicht als Änderung.
+    public func gleicherInhalt(wie anderes: Profil) -> Bool {
+        zusammenfassung == anderes.zusammenfassung
+            && wuensche.map { [$0.tag: $0.gewicht] } == anderes.wuensche.map { [$0.tag: $0.gewicht] }
+            && ausschluesse.map(\.schluessel) == anderes.ausschluesse.map(\.schluessel)
+            && budgetMin == anderes.budgetMin && budgetMax == anderes.budgetMax
+    }
+
     // Profile aus v1 haben kein budget_min.
     public init(from decoder: Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
