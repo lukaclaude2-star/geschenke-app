@@ -46,7 +46,7 @@ struct ProfilView: View {
                             ziel = WischZiel(personen: [WischPerson(aktuell)])
                         }
                     }
-                    .buttonStyle(GoldKnopf())
+                    .buttonStyle(FokusKnopf())
 
                     VStack(alignment: .leading, spacing: 10) {
                         Abschnittstitel(text: "Budget")

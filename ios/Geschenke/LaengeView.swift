@@ -29,7 +29,7 @@ struct LaengeView: View {
                         Text(laenge.untertitel).font(.zuhause(.caption)).opacity(0.8)
                     }
                 }
-                .buttonStyle(laenge.id == "normal" ? AnyButtonStyle(GoldKnopf()) : AnyButtonStyle(RandKnopf()))
+                .buttonStyle(laenge.id == "normal" ? AnyButtonStyle(FokusKnopf()) : AnyButtonStyle(RandKnopf()))
             }
             Spacer()
         }

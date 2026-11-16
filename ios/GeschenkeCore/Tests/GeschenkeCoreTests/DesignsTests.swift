@@ -15,6 +15,17 @@ final class DesignsTests: XCTestCase {
             XCTAssertGreaterThanOrEqual(kontrast(p.aufAkzent, p.akzent), 4.5, "\(p.hell) Knopf")
             XCTAssertGreaterThanOrEqual(kontrast(p.preis, p.karte), 4.5, "\(p.hell) Preis")
             XCTAssertGreaterThanOrEqual(kontrast(p.preis, p.hintergrund), 4.5, "\(p.hell) Preis/Hintergrund")
+            XCTAssertGreaterThanOrEqual(kontrast(p.aufFokus, p.fokus), 4.5, "\(p.hell) Fokus-Knopf")
+            XCTAssertGreaterThanOrEqual(kontrast(p.fokusText, p.karte), 4.5, "\(p.hell) Fokus-Schrift/Karte")
+            XCTAssertGreaterThanOrEqual(kontrast(p.fokusText, p.hintergrund), 4.5, "\(p.hell) Fokus-Schrift/Hintergrund")
+        }
+    }
+
+    /// Fokus ist die einzige grüne Farbe und hebt sich im Farbton klar vom Kupfer ab (DESIGN.md 2).
+    func testFokusIstLimetteUndNichtKupfer() {
+        for p in [Designs.zuhauseAbend, Designs.zuhauseHell] {
+            XCTAssertEqual(p.fokus, 0xB7CC4A)
+            XCTAssertNotEqual(p.fokus, p.akzent)
         }
     }
 

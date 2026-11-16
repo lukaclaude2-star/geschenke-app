@@ -120,9 +120,9 @@ struct MerklisteView: View {
             if let zumWischen {
                 Button("Zum Wischen", action: zumWischen)
                     .font(.zuhause(.headline, .fett))
-                    .foregroundStyle(Look.aufAkzent)
+                    .foregroundStyle(Look.aufFokus)
                     .padding(.horizontal, 24).frame(minHeight: 46)
-                    .background(Look.akzent, in: Capsule())
+                    .background(Look.fokus, in: Capsule())
                     .buttonStyle(.plain)
                     .padding(.top, 4)
             }

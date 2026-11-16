@@ -14,6 +14,10 @@ enum Look {
     /// deshalb Rotdunkel (5,64). Als Fläche bleibt überall `akzent`.
     static var akzentText: Color { palette.hell ? Color(hex: palette.preis) : akzent }
     static var aufAkzent: Color { Color(hex: palette.aufAkzent) }
+    /// Limette fürs Wichtigste auf dem Bildschirm (DESIGN.md 2); Kupfer bleibt für Nebensachen.
+    static var fokus: Color { Color(hex: palette.fokus) }
+    static var aufFokus: Color { Color(hex: palette.aufFokus) }
+    static var fokusText: Color { Color(hex: palette.fokusText) }
     static var preis: Color { Color(hex: palette.preis) }
     static var text: Color { Color(hex: palette.text) }
     /// Zweitrangiger Text: feste Palettenfarbe statt Deckkraft (Kontrast geprüft in palette-zuhause.md)
@@ -36,13 +40,14 @@ extension Color {
     }
 }
 
-struct GoldKnopf: ButtonStyle {
+/// Hauptknopf eines Bildschirms in Limette, höchstens einer pro Ansicht.
+struct FokusKnopf: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(.zuhause(.headline, .fett))
-            .foregroundStyle(Look.aufAkzent)
+            .foregroundStyle(Look.aufFokus)
             .frame(maxWidth: .infinity, minHeight: 50)
-            .background(Look.akzent.opacity(configuration.isPressed ? 0.8 : 1), in: Capsule())
+            .background(Look.fokus.opacity(configuration.isPressed ? 0.8 : 1), in: Capsule())
             .scaleEffect(configuration.isPressed ? 0.98 : 1)
             .animation(.easeOut(duration: 0.12), value: configuration.isPressed)
     }

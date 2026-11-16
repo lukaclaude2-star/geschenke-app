@@ -87,9 +87,9 @@ struct ZuhauseWischenListe: View {
                 }
                 NavigationLink { LaengeView() } label: {
                     Text(profile.isEmpty ? "Gespräch starten" : "Neue Person").font(.zuhause(.headline, .fett))
-                        .foregroundStyle(Look.aufAkzent)
+                        .foregroundStyle(Look.aufFokus)
                         .frame(maxWidth: .infinity, minHeight: 50)
-                        .background(Look.akzent, in: Capsule())
+                        .background(Look.fokus, in: Capsule())
                 }
                 .buttonStyle(.plain)
             }
