@@ -152,7 +152,14 @@ async def profil_aus_gespraech(nachrichten: list[ChatNachricht]) -> Profil:
     return bereinige_profil(roh)
 
 
+def _inhalt(profil: Profil) -> tuple:
+    """Ohne Labels: Die leitet der Server neu ab, sie zählen nicht als Änderung."""
+    return (profil.zusammenfassung, [(w.tag, w.gewicht) for w in profil.wuensche],
+            [a.schluessel for a in profil.ausschluesse], profil.budget_min, profil.budget_max)
+
+
 async def profil_aendern(profil: Profil, anweisung: str) -> Profil:
     nutzer = json.dumps({"profil": profil.model_dump(), "anweisung": anweisung}, ensure_ascii=False)
-    roh = await frage_json(SYSTEM_AENDERN, nutzer, max_tokens=1200)
+    roh = await frage_json(SYSTEM_AENDERN, nutzer, max_tokens=1200,
+                           brauchbar=lambda roh: _inhalt(wende_aenderung_an(profil, roh)) != _inhalt(profil))
     return wende_aenderung_an(profil, roh)

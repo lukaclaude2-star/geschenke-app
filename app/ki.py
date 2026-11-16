@@ -10,6 +10,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+from collections.abc import Callable
 
 import httpx
 
@@ -67,20 +68,32 @@ def _json_aus(antwort: httpx.Response) -> dict | None:
 
 async def frage_json(system: str, nutzer: str, *, client: httpx.AsyncClient | None = None,
                      max_tokens: int = 1500, modelle: list[str] | None = None,
-                     zeitlimit: float | None = None) -> dict:
-    """modelle: eigene Kette statt settings.ki_modelle (der Katalog-Bau fragt je Arbeiter ein Modell)."""
+                     zeitlimit: float | None = None,
+                     brauchbar: Callable[[dict], bool] | None = None) -> dict:
+    """modelle: eigene Kette statt settings.ki_modelle (der Katalog-Bau fragt je Arbeiter ein Modell).
+    brauchbar: Ist eine Antwort zwar gültiges JSON, aber unbrauchbar (gpt-oss-20b liefert bei
+    Profil-Änderungen manchmal `{}`), fragt die Kette das nächste Modell. Bleibt es dabei, kommt die
+    erste solche Antwort zurück: Dann gibt es vermutlich wirklich nichts zu tun."""
     grenze = zeitlimit or GESAMT_ZEITLIMIT
+    unbrauchbar: list[dict] = []
     try:
         async with asyncio.timeout(grenze):
-            return await _kette(system, nutzer, client, max_tokens, modelle or settings.ki_modelle)
+            return await _kette(system, nutzer, client, max_tokens, modelle or settings.ki_modelle,
+                                brauchbar, unbrauchbar)
     except TimeoutError:
         logger.warning("Groq: Gesamt-Zeitlimit von %s s überschritten", grenze)
+        if unbrauchbar:
+            return unbrauchbar[0]
         raise KiUeberlastet("Zeitlimit") from None
 
 
 async def _kette(system: str, nutzer: str, client: httpx.AsyncClient | None, max_tokens: int,
-                 modelle: list[str]) -> dict:
+                 modelle: list[str], brauchbar: Callable[[dict], bool] | None = None,
+                 unbrauchbar: list[dict] | None = None) -> dict:
+    """unbrauchbar: sammelt Antworten, die `brauchbar` ablehnt (liegt beim Aufrufer, damit sie
+    auch ein Zeitlimit überstehen)."""
     eigener_client = client is None
+    unbrauchbar = [] if unbrauchbar is None else unbrauchbar
     client = client or httpx.AsyncClient(timeout=TIMEOUT_SEKUNDEN)
     try:
         for modell in modelle:
@@ -102,10 +115,16 @@ async def _kette(system: str, nutzer: str, client: httpx.AsyncClient | None, max
                                    _fehlercode(antwort))
                     break
                 wert = _json_aus(antwort)
+                if wert is not None and brauchbar is not None and not brauchbar(wert):
+                    logger.warning("Groq %s: Antwort unbrauchbar, nächstes Modell", modell)
+                    unbrauchbar.append(wert)
+                    break
                 if wert is not None:
                     return wert
                 # Nur die Länge: Der Inhalt beschreibt die beschenkte Person (Grundbaustein 10).
                 logger.warning("Groq %s: leeres oder kaputtes JSON (%s Zeichen)", modell, len(antwort.text))
+        if unbrauchbar:
+            return unbrauchbar[0]
         raise KiUeberlastet("Kein Modell hat geantwortet")
     finally:
         if eigener_client:

@@ -147,6 +147,12 @@ struct ProfilView: View {
             // Aktuelle Fassung lesen: das Wischen kann Gelerntes gespeichert haben, seit die Ansicht offen ist.
             let aktuell = zustand.profil(eintrag.id) ?? eintrag
             let neu = try await zustand.api.profilAendern(aktuell.profil, anweisung: text)
+            if neu.gleicherInhalt(wie: aktuell.profil) {
+                verlauf.append(ChatNachricht(rolle: "app", text: "Daraus konnte ich keine Änderung machen. Beschreib es gern etwas genauer. Deine Nachricht steht wieder im Feld."))
+                anweisung = text
+                denkt = false
+                return
+            }
             var gewichtung = zustand.profil(eintrag.id)?.gewichtung ?? aktuell.gewichtung
             gewichtung.uebernimm(profil: neu)
             zustand.aktualisiere(eintrag.id, profil: neu, gewichtung: gewichtung)
