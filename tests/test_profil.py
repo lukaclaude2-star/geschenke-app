@@ -1,6 +1,5 @@
 import json
 
-import pytest
 
 from app import profil as profil_modul
 from app.ki import KiUeberlastet

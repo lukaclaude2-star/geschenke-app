@@ -142,7 +142,6 @@ async def test_bericht_zaehlt_richtig(ki_bau):
 def test_lade_katalog_filtert_niedrige_noten(tmp_path):
     import json as _json
     from app.katalog.laden import lade_katalog
-    from app.katalog.verschlagworten import inhalts_hash
     basis = produkt("a").model_dump()
     eintraege = [{**basis, "id": i, "themen": [], "lebenslagen": [], "farben": [], "eigenschaften": [],
                   "persoenlich": False, "note": n, "inhalts_hash": "h"} for i, n in (("gut", 7), ("mies", 3))]
