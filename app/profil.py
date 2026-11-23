@@ -96,7 +96,8 @@ def _ausschluss_schluessel(roh) -> list[str]:
     return ergebnis
 
 
-def _budget(wert) -> float | None:
+def positive_zahl(wert) -> float | None:
+    """Zahl > 0 aus KI-JSON, sonst None (auch bei true/false und Text)."""
     if isinstance(wert, bool) or not isinstance(wert, (int, float)) or wert <= 0:
         return None
     return float(wert)
@@ -121,8 +122,8 @@ def bereinige_profil(roh: dict) -> Profil:
         zusammenfassung.strip() if isinstance(zusammenfassung, str) else "",
         _wuensche(roh.get("wuensche")),
         _ausschluss_schluessel(roh.get("ausschluesse")),
-        _budget(roh.get("budget_max")),
-        _budget(roh.get("budget_min")),
+        positive_zahl(roh.get("budget_max")),
+        positive_zahl(roh.get("budget_min")),
     )
 
 
@@ -139,8 +140,8 @@ def wende_aenderung_an(profil: Profil, roh: dict) -> Profil:
         if s not in ausschluesse:
             ausschluesse.append(s)
 
-    budget = _budget(roh["budget_max"]) if "budget_max" in roh else profil.budget_max
-    budget_min = _budget(roh["budget_min"]) if "budget_min" in roh else profil.budget_min
+    budget = positive_zahl(roh["budget_max"]) if "budget_max" in roh else profil.budget_max
+    budget_min = positive_zahl(roh["budget_min"]) if "budget_min" in roh else profil.budget_min
     zusammenfassung = roh.get("zusammenfassung")
     if not isinstance(zusammenfassung, str) or not zusammenfassung.strip():
         zusammenfassung = profil.zusammenfassung

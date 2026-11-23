@@ -12,6 +12,7 @@ from app.config import settings
 from app.ki import KiUeberlastet, frage_json
 from app.modelle import Karte, KatalogProdukt, Profil
 from app.partnerlinks import ist_partnerlink
+from app.profil import positive_zahl
 from app.ranking import ist_ausgeschlossen
 from app.vokabular import EIGENSCHAFTEN, FARBEN, LEBENSLAGEN, THEMEN, vokabular_text
 
@@ -36,12 +37,6 @@ def _link(suchbegriff: str) -> str:
     if settings.amazon_tag:
         link += f"&tag={quote_plus(settings.amazon_tag)}"
     return link
-
-
-def _zahl(wert) -> float | None:
-    if isinstance(wert, bool) or not isinstance(wert, (int, float)) or wert <= 0:
-        return None
-    return float(wert)
 
 
 def _nur(werte, erlaubt) -> list[str]:
@@ -97,7 +92,7 @@ async def ideen_karten(profil: Profil, anzahl: int, gesehen: set[str],
         if karten_id in gesehen or karten_id in [k.id for k in karten]:
             continue
         themen = _nur(idee.get("themen"), THEMEN)
-        preis_von, preis_bis = _zahl(idee.get("preis_von")), _zahl(idee.get("preis_bis"))
+        preis_von, preis_bis = positive_zahl(idee.get("preis_von")), positive_zahl(idee.get("preis_bis"))
         if not spanne_im_budget(preis_von, preis_bis, profil):
             continue
         pruefling = KatalogProdukt(
