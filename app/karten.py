@@ -3,6 +3,7 @@ import math
 import re
 
 from app.ideen import ideen_karten
+from app.katalog.bildpruefung import app_bild_url
 from app.modelle import (Karte, KartenAnfrage, KartenAntwort, KartenSammelAnfrage, KartenSammelAntwort,
                          KatalogProdukt, Profil, SammelKarte)
 from app.partnerlinks import ist_partnerlink, mit_partnerlink
@@ -25,7 +26,8 @@ def ohne_shop_floskel(titel: str, shop: str = "") -> str:
 def produkt_zu_karte(p: KatalogProdukt) -> Karte:
     link = mit_partnerlink(p.link)
     return Karte(
-        id=p.id, art="produkt", titel=ohne_shop_floskel(p.titel, p.shop), preis=p.preis, bild_url=p.bild_url,
+        id=p.id, art="produkt", titel=ohne_shop_floskel(p.titel, p.shop), preis=p.preis,
+        bild_url=app_bild_url(p.bild_url),
         shop=p.shop, link=link, tags=p.themen + p.lebenslagen, anzeige=ist_partnerlink(link),
     )
 

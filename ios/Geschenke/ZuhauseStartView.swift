@@ -207,26 +207,52 @@ struct ZuhauseStartView: View {
 struct ZuhauseFoto: View {
     let karte: Karte
     var ecken: CGFloat = 16
+    /// AsyncImage versucht es nach einem Fehler nie wieder – auch nicht, wenn das Laden nur beim
+    /// Scrollen abgebrochen wurde. Darum bis zu dreimal neu anstoßen, erst dann das Geschenk-Symbol.
+    @State private var versuch = 0
+    private static let maxVersuche = 3
 
     var body: some View {
         ZStack {
             Look.creme
-            if let adresse = karte.bildURL, let url = URL(string: adresse) {
+            if let url = bildAdresse {
                 AsyncImage(url: url) { phase in
                     switch phase {
                     case .success(let bild):
                         // etwas aufgehellt: fast weiße Fotogründe bilden sonst einen sichtbaren Kasten
                         bild.resizable().scaledToFit().brightness(0.04).blendMode(.multiply).padding(6)
-                    case .failure: platzhalter
-                    default: ProgressView().tint(Color(hex: 0x7B5930))
+                    case .failure:
+                        if versuch < Self.maxVersuche {
+                            ladeanzeige.task {
+                                guard (try? await Task.sleep(for: .seconds(Double(versuch + 1)))) != nil else { return }
+                                versuch += 1
+                            }
+                        } else {
+                            platzhalter
+                        }
+                    default: ladeanzeige
                     }
                 }
+                .id(versuch)
             } else {
                 platzhalter
             }
         }
         .compositingGroup()
         .clipShape(RoundedRectangle(cornerRadius: ecken))
+        .onChange(of: karte.bildURL) { versuch = 0 }
+    }
+
+    /// iOS lädt kein http (App Transport Security). Der Server liefert inzwischen https,
+    /// alte Einträge der Merkliste können aber noch http haben.
+    private var bildAdresse: URL? {
+        guard let adresse = karte.bildURL else { return nil }
+        if adresse.hasPrefix("http://") { return URL(string: "https://" + adresse.dropFirst(7)) }
+        return URL(string: adresse)
+    }
+
+    private var ladeanzeige: some View {
+        ProgressView().tint(Color(hex: 0x7B5930))
     }
 
     private var platzhalter: some View {

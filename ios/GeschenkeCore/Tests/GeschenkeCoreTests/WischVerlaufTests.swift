@@ -38,15 +38,22 @@ final class WischVerlaufTests: XCTestCase {
     func testUebernimmtGeaendertesGewicht() {
         var g = Gewichtung(profil: testProfil([("garten", 1.0)]))
         g.ja(tags: ["garten"])
-        g.uebernimm(profil: testProfil([("garten", 0.5)]))
-        XCTAssertEqual(g.gewichte["garten"], 0.5)
+        g.uebernimm(profil: testProfil([("garten", 1.5)]))
+        XCTAssertEqual(g.gewichte["garten"], 1.5)
+    }
+
+    func testUebernimmHebtNeuesSchwachesGewichtAufHaelfte() {
+        var g = Gewichtung(profil: testProfil([("garten", 1.5)]))
+        g.uebernimm(profil: testProfil([("garten", 0.5), ("hund", 0.2)]))
+        XCTAssertEqual(g.gewichte["garten"], 1.0)
+        XCTAssertEqual(g.gewichte["hund"], 1.0)
     }
 
     func testUebernimmBehaeltGelerntesBeiGleichemGewicht() {
         var g = Gewichtung(profil: testProfil([("garten", 1.0)]))
         g.ja(tags: ["garten"])
         g.uebernimm(profil: testProfil([("garten", 1.0)]))
-        XCTAssertEqual(g.gewichte["garten"]!, 1.15, accuracy: 0.0001)
+        XCTAssertEqual(g.gewichte["garten"]!, 1.05, accuracy: 0.0001)
     }
 }
 
