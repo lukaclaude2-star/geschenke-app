@@ -26,6 +26,10 @@ enum Look {
     static var linie: Color { palette.hell ? Color(hex: 0x23160C).opacity(0.25) : Color(hex: 0x7B5930) }
     /// Fläche für Chips und den Umschalter
     static var flaeche: Color { Color(hex: palette.hell ? 0xE6D9C3 : 0x3A2516) }
+    /// Grund der Produktbilder und der Lichtflut
+    static var creme: Color { Color(hex: palette.hell ? 0xF6E7C8 : 0xEBD9B4) }
+    /// Warmes Lampenlicht der Lichtinsel
+    static let licht = Color(hex: 0xEFB249)
     /// Trennlinie zwischen Zeilen
     static var trenner: some View { flaeche.frame(height: 1) }
 }
@@ -88,7 +92,7 @@ struct ZuhauseHintergrund: View {
         ZStack {
             Look.hintergrund
             GeometryReader { _ in
-                RadialGradient(colors: [Color(hex: 0xEFB249).opacity(Look.palette.hell ? 0.30 : 0.22), .clear],
+                RadialGradient(colors: [Look.licht.opacity(Look.palette.hell ? 0.30 : 0.22), .clear],
                                center: .center, startRadius: 0, endRadius: 202)
                     .frame(width: 404, height: 404)
                     // Fest bei 130/100: dorthin zieht sich auch das Licht des Startbildschirms zusammen
@@ -97,6 +101,13 @@ struct ZuhauseHintergrund: View {
             .allowsHitTesting(false)
         }
     }
+}
+
+/// Ändert Zustand ohne Animation, z. B. um eine weggeflogene Karte unsichtbar zurückzusetzen.
+func ohneAnimation(_ aenderung: () -> Void) {
+    var transaktion = Transaction()
+    transaktion.disablesAnimations = true
+    withTransaction(transaktion, aenderung)
 }
 
 extension View {

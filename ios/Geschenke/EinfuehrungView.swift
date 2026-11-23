@@ -192,9 +192,7 @@ private struct UebungsKarte: View {
             if bewegungReduziert { sichtbar = false } else { versatz = ja ? 420 : -420 }
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-            var ohneAnimation = Transaction()
-            ohneAnimation.disablesAnimations = true
-            withTransaction(ohneAnimation) {
+            ohneAnimation {
                 versatz = 0
                 sichtbar = false
                 ergebnis = ja ? "gemerkt. So landet ein Geschenk in der Merkliste." : "weiter. Dann kommt die nächste Karte."

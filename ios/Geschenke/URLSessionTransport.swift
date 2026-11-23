@@ -28,3 +28,11 @@ func fehlerText(_ fehler: Error) -> String {
 
 /// Render Free schläft nach 15 Minuten und braucht bis zu einer Minute zum Aufwachen.
 let wachtAufText = "Einen Moment, ich bin gleich bei dir. Beim ersten Mal kann das bis zu einer Minute dauern."
+
+/// Ruft `melde` nach 5 Sekunden auf, damit `wachtAufText` erscheint. Abbrechen, sobald die Antwort da ist.
+func wachtAufUhr(_ melde: @escaping @MainActor () -> Void) -> Task<Void, Never> {
+    Task { @MainActor in
+        try? await Task.sleep(nanoseconds: 5_000_000_000)
+        if !Task.isCancelled { melde() }
+    }
+}

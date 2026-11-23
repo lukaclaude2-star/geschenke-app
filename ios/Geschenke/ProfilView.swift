@@ -135,10 +135,7 @@ struct ProfilView: View {
         anweisung = ""
         verlauf.append(ChatNachricht(rolle: "nutzer", text: text))
         denkt = true
-        let hinweis = Task {
-            try? await Task.sleep(nanoseconds: 5_000_000_000)
-            if !Task.isCancelled { wachtAuf = true }
-        }
+        let hinweis = wachtAufUhr { wachtAuf = true }
         defer {
             hinweis.cancel()
             wachtAuf = false

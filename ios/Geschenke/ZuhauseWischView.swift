@@ -53,7 +53,7 @@ struct ZuhauseWischView: View {
                             .font(.zuhause(.headline, .fett)).foregroundStyle(Look.text)
                             .frame(maxWidth: .infinity, minHeight: 52)
                             .background(Look.karte, in: Capsule())
-                            .overlay(Capsule().stroke(Color(hex: Look.palette.hell ? 0x23160C : 0x7B5930).opacity(Look.palette.hell ? 0.25 : 1), lineWidth: 1))
+                            .overlay(Capsule().stroke(Look.linie, lineWidth: 1))
                     }
                     Button { wegOben(ja: true) } label: {
                         Label("merken", systemImage: "heart.fill")
@@ -287,9 +287,7 @@ struct ZuhauseWischView: View {
 
     private func flugAbschliessen() {
         guard let id = wischt else { return }
-        var ohneAnimation = Transaction()
-        ohneAnimation.disablesAnimations = true
-        withTransaction(ohneAnimation) {
+        ohneAnimation {
             if let karte = modell.stapel.first, karte.id == id {
                 if flugJa { modell.ja(karte) } else { modell.nein(karte) }
             }
@@ -325,9 +323,7 @@ struct ZuhauseWischView: View {
     /// Schnelles Weiterwischen: Auspacken sofort zu Ende bringen statt es abzuwarten.
     private func auspackenBeenden() {
         guard let id = auspackID else { return }
-        var ohneAnimation = Transaction()
-        ohneAnimation.disablesAnimations = true
-        withTransaction(ohneAnimation) {
+        ohneAnimation {
             ausgepackt.insert(id)
             auspackFortschritt = Verpackung.ende
             auspackID = nil
@@ -414,7 +410,7 @@ struct Verpackung: View, Animatable {
     private let ecke: CGFloat = 24
     private var linienFarbe: Color { Color(hex: Look.palette.hell ? 0x23160C : 0x7B5930) }
     private var rot: Color { Color(hex: Look.palette.hell ? 0xBE4A2E : 0xC9573A) }
-    private var creme: Color { Color(hex: Look.palette.hell ? 0xF6E7C8 : 0xEBD9B4) }
+    private var creme: Color { Look.creme }
     private let schaum = Color(hex: 0xD7BA81)
 
     var body: some View {
@@ -453,9 +449,9 @@ struct Verpackung: View, Animatable {
         let staerke = ruhig ? 0 : 0.9 * sanft(seg(auspacken, 0.14, 0.32)) * (1 - sanft(seg(auspacken, 0.34, 0.54)))
         RadialGradient(stops: [
             .init(color: creme, location: 0),
-            .init(color: Color(hex: 0xEFB249).opacity(0.9), location: 0.34),
-            .init(color: Color(hex: 0xEFB249).opacity(0.4), location: 0.64),
-            .init(color: Color(hex: 0xEFB249).opacity(0), location: 0.88),
+            .init(color: Look.licht.opacity(0.9), location: 0.34),
+            .init(color: Look.licht.opacity(0.4), location: 0.64),
+            .init(color: Look.licht.opacity(0), location: 0.88),
         ], center: .center, startRadius: 0, endRadius: 260)
         .scaleEffect(0.75 + 0.35 * seg(auspacken, 0.14, 0.54))
         .opacity(staerke)

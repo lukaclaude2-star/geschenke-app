@@ -84,10 +84,7 @@ final class KartenStapelModell: ObservableObject {
         let meine = generation
         laedt = true
         fehler = nil
-        let hinweis = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 5_000_000_000)
-            if !Task.isCancelled { self?.wachtAuf = true }
-        }
+        let hinweis = wachtAufUhr { [weak self] in self?.wachtAuf = true }
         defer {
             hinweis.cancel()
             wachtAuf = false

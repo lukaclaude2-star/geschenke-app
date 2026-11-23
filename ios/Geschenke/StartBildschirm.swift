@@ -80,17 +80,17 @@ struct StartBildschirm: View {
     /// Nach dem Video: volle Flut in Creme, die sich nach oben links zur Lichtinsel zusammenzieht.
     private func lichtFlut(s: CGFloat, mitte: CGPoint) -> some View {
         // Creme wie im letzten Videobild, sonst springt die Farbe beim Übergang
-        let creme = Color(hex: Look.palette.hell ? 0xF6E7C8 : 0xEBD9B4)
+        let creme = Look.creme
         return ZStack {
             creme.opacity(lichtZurueckFortschritt ? 0 : 1)
                 .animation(.easeOut(duration: 0.45), value: lichtZurueckFortschritt)
             RadialGradient(stops: [
                 .init(color: creme, location: 0),
                 .init(color: creme, location: 0.2),
-                .init(color: Color(hex: 0xEFB249), location: 0.43),
-                .init(color: Color(hex: 0xEFB249).opacity(0.55), location: 0.66),
-                .init(color: Color(hex: 0xEFB249).opacity(0.15), location: 0.86),
-                .init(color: Color(hex: 0xEFB249).opacity(0), location: 1),
+                .init(color: Look.licht, location: 0.43),
+                .init(color: Look.licht.opacity(0.55), location: 0.66),
+                .init(color: Look.licht.opacity(0.15), location: 0.86),
+                .init(color: Look.licht.opacity(0), location: 1),
             ], center: .center, startRadius: 0, endRadius: 315 * s)
             .frame(width: 630 * s, height: 630 * s)
             .scaleEffect(lichtZurueckFortschritt ? 0.5 : 3.08)

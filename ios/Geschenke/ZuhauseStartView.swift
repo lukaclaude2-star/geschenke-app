@@ -210,7 +210,7 @@ struct ZuhauseFoto: View {
 
     var body: some View {
         ZStack {
-            Color(hex: Look.palette.hell ? 0xF6E7C8 : 0xEBD9B4)
+            Look.creme
             if let adresse = karte.bildURL, let url = URL(string: adresse) {
                 AsyncImage(url: url) { phase in
                     switch phase {

@@ -101,10 +101,7 @@ final class ChatModell: ObservableObject {
     private func mitWarten(_ arbeit: @escaping () async throws -> Void) async {
         denkt = true
         wachtAuf = false
-        let hinweis = Task { [weak self] in
-            try? await Task.sleep(nanoseconds: 5_000_000_000)
-            if !Task.isCancelled { self?.wachtAuf = true }
-        }
+        let hinweis = wachtAufUhr { [weak self] in self?.wachtAuf = true }
         do {
             try await arbeit()
         } catch {
