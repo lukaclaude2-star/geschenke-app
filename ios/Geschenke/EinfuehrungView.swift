@@ -169,20 +169,8 @@ private struct UebungsKarte: View {
             .accessibilityAction(named: "Weiter") { werfen(ja: false) }
     }
 
-    @ViewBuilder private var stempel: some View {
-        HStack {
-            Text("merken").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.aufFokus)
-                .padding(.horizontal, 12).padding(.vertical, 4)
-                .background(Look.fokus, in: Capsule())
-                .opacity(Double(max(0, versatz / 90)))
-            Spacer()
-            Text("weiter").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.text)
-                .padding(.horizontal, 12).padding(.vertical, 4)
-                .background(Look.flaeche, in: Capsule())
-                .opacity(Double(max(0, -versatz / 90)))
-        }
-        .padding(14)
-        .allowsHitTesting(false)
+    private var stempel: some View {
+        WischStempel(zug: versatz, weiterGrund: Look.flaeche, rand: 14)
     }
 
     /// Wegfliegen (höchstens 280 ms, DESIGN.md 6), dann kommt die Karte mit dem Ergebnis wieder.

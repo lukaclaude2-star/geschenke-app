@@ -171,20 +171,8 @@ struct ZuhauseWischView: View {
         }
     }
 
-    @ViewBuilder private var stempel: some View {
-        HStack {
-            Text("merken").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.aufFokus)
-                .padding(.horizontal, 12).padding(.vertical, 4)
-                .background(Look.fokus, in: Capsule())
-                .opacity(Double(max(0, versatz.width / 90)))
-            Spacer()
-            Text("weiter").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.text)
-                .padding(.horizontal, 12).padding(.vertical, 4)
-                .background(Look.karte, in: Capsule())
-                .opacity(Double(max(0, -versatz.width / 90)))
-        }
-        .padding(20)
-        .allowsHitTesting(false)
+    private var stempel: some View {
+        WischStempel(zug: versatz.width, weiterGrund: Look.karte, rand: 20)
     }
 
     @ViewBuilder private var leer: some View {
@@ -328,6 +316,29 @@ struct ZuhauseWischView: View {
             auspackFortschritt = Verpackung.ende
             auspackID = nil
         }
+    }
+}
+
+/// „merken“ und „weiter“ erscheinen beim Ziehen, auch auf der Übungskarte der Einführung.
+struct WischStempel: View {
+    let zug: CGFloat
+    let weiterGrund: Color
+    let rand: CGFloat
+
+    var body: some View {
+        HStack {
+            Text("merken").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.aufFokus)
+                .padding(.horizontal, 12).padding(.vertical, 4)
+                .background(Look.fokus, in: Capsule())
+                .opacity(Double(max(0, zug / 90)))
+            Spacer()
+            Text("weiter").font(.zuhause(.subheadline, .extrafett)).foregroundStyle(Look.text)
+                .padding(.horizontal, 12).padding(.vertical, 4)
+                .background(weiterGrund, in: Capsule())
+                .opacity(Double(max(0, -zug / 90)))
+        }
+        .padding(rand)
+        .allowsHitTesting(false)
     }
 }
 
