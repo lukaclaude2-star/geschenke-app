@@ -75,10 +75,10 @@ async def quelle(geheimnis: str) -> dict:
     async def arbeit(client: httpx.AsyncClient) -> dict:
         nummer, datum, asset = await _neuestes_release(client)
         return {
-            "name": "Geschenke (Luka)",
+            "name": "Copperlid",
             "identifier": "de.luka.geschenke.quelle",
             "apps": [{
-                "name": "Geschenke",
+                "name": "Copperlid",
                 "bundleIdentifier": "de.luka.geschenke",
                 "developerName": "Luka",
                 "localizedDescription": "Geschenke per Chat und Wischen finden.",
