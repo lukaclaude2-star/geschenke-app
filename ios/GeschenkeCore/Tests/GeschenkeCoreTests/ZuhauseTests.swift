@@ -39,7 +39,11 @@ final class ZuhauseTests: XCTestCase {
     // MARK: Richtig gute Treffer
 
     private func gewichtung() -> Gewichtung {
-        Gewichtung(profil: testProfil([("garten", 1.0), ("krimis", 0.5), ("tee", 1.6)]))
+        // Krimis schwach (0,5) geht nur als gelerntes Schlagwort: Hauptinteressen bleiben bei mindestens 1,0.
+        var g = Gewichtung(profil: testProfil([("garten", 1.0), ("tee", 1.6)]))
+        g.ja(tags: ["krimis"])
+        g.setze("krimis", auf: 0.5)
+        return g
     }
 
     /// `anzahl` Karten mit gleichen Tags, IDs `<praefix>0`, `<praefix>1` …
@@ -85,7 +89,8 @@ final class ZuhauseTests: XCTestCase {
     }
 
     func testOhnePositivePunktzahlNieTreffer() {
-        var g = gewichtung()
+        var g = Gewichtung(profil: testProfil([("krimis", 1.0)]))
+        g.ja(tags: ["garten"])
         g.setze("garten", auf: 0)
         XCTAssertEqual(richtigGuteTreffer(stapel(10, "u", tags: ["gaming"]), gewichtung: g), [])
         XCTAssertEqual(richtigGuteTreffer(stapel(10, "n", tags: ["garten"]), gewichtung: g), [])
@@ -133,8 +138,9 @@ final class ZuhauseTests: XCTestCase {
         var g = gewichtungMitLabels()
         XCTAssertNil(passtWeil(testKarte("a", tags: ["gaming"]), gewichtung: g))
         XCTAssertNil(passtWeil(testKarte("b", tags: []), gewichtung: g))
-        g.setze("garten", auf: 0)
-        XCTAssertNil(passtWeil(testKarte("c", tags: ["garten"]), gewichtung: g))
+        g.ja(tags: ["lesen"])
+        g.setze("lesen", auf: 0)
+        XCTAssertNil(passtWeil(testKarte("c", tags: ["lesen"]), gewichtung: g))
     }
 
     func testPasstWeilOhneLabelNimmtTag() {

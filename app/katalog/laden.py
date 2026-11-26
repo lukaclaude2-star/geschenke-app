@@ -2,6 +2,7 @@ import json
 from pathlib import Path
 
 from app.config import settings
+from app.katalog.bildpruefung import app_bild_url, bild_kaputt, bilder_pfad, lade_stand
 from app.modelle import KatalogProdukt
 
 
@@ -18,5 +19,6 @@ def lade_alle(pfad: str) -> list[KatalogProdukt]:
 
 
 def lade_katalog(pfad: str) -> list[KatalogProdukt]:
-    """Der Katalog, wie der Server ihn zeigt."""
-    return zeigbar(lade_alle(pfad))
+    """Der Katalog, wie der Server ihn zeigt: ohne Produkte, deren Foto in der App nicht lädt."""
+    bilder = lade_stand(bilder_pfad(pfad))
+    return [p for p in zeigbar(lade_alle(pfad)) if not bild_kaputt(bilder.get(app_bild_url(p.bild_url)))]

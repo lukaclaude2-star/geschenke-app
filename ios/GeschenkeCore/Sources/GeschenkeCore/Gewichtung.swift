@@ -4,12 +4,16 @@ import Foundation
 ///
 /// Ein Ja hebt die Schlagwörter der Karte stärker, als ein Nein sie senkt. Wird sehr einseitig
 /// Nein gesagt, zählen die wenigen Ja deutlich mehr (bis zum Dreifachen).
+/// Hauptinteressen (die Wünsche aus dem Profil) bleiben immer mindestens bei der Hälfte des
+/// Reglers – weder Wischen noch der Regler drückt sie tiefer (Luka, 23.11.2026).
 public struct Gewichtung: Codable, Equatable {
-    public static let jaSchritt = 0.15
-    public static let neinSchritt = 0.05
+    // Ein Drittel der alten Schritte (0,15/0,05): einzelne Wischer sollen kaum ausschlagen.
+    public static let jaSchritt = 0.05
+    public static let neinSchritt = 0.015
     public static let neuStart = 0.3
     public static let minimum = 0.0
     public static let maximum = 2.0
+    public static let hauptMinimum = 1.0
     static let fenster = 20
     static let mindestEntscheidungen = 5
 
@@ -22,13 +26,38 @@ public struct Gewichtung: Codable, Equatable {
         var gewichte: [String: Double] = [:]
         var labels: [String: String] = [:]
         for w in profil.wuensche {
-            gewichte[w.tag] = Self.geklemmt(w.gewicht)
+            gewichte[w.tag] = Self.hauptGeklemmt(w.gewicht)
             labels[w.tag] = w.label
         }
         self.gewichte = gewichte
         self.start = gewichte
         self.verlauf = []
         self.labels = labels
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case gewichte, start, verlauf, labels
+    }
+
+    /// Ältere Speicherstände kennen die Untergrenze noch nicht: Hauptinteressen beim Laden anheben.
+    public init(from decoder: Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        start = try c.decode([String: Double].self, forKey: .start).mapValues(Self.hauptGeklemmt)
+        gewichte = try c.decode([String: Double].self, forKey: .gewichte)
+        verlauf = try c.decode([Bool].self, forKey: .verlauf)
+        labels = try c.decode([String: String].self, forKey: .labels)
+        for tag in start.keys {
+            gewichte[tag] = Self.hauptGeklemmt(gewichte[tag] ?? Self.hauptMinimum)
+        }
+    }
+
+    /// Hauptinteressen nie unter die Reglermitte, alles Gelernte bis 0.
+    public func untergrenze(_ tag: String) -> Double {
+        start[tag] == nil ? Self.minimum : Self.hauptMinimum
+    }
+
+    private func geklemmt(_ wert: Double, fuer tag: String) -> Double {
+        max(untergrenze(tag), Self.geklemmt(wert))
     }
 
     private var neinAnteil: Double {
@@ -41,7 +70,7 @@ public struct Gewichtung: Codable, Equatable {
         let schritt = Self.jaSchritt * (1 + 2 * neinAnteil)
         for tag in Set(tags) {
             if let alt = gewichte[tag] {
-                gewichte[tag] = Self.geklemmt(alt + schritt)
+                gewichte[tag] = geklemmt(alt + schritt, fuer: tag)
             } else {
                 gewichte[tag] = Self.neuStart
             }
@@ -52,14 +81,14 @@ public struct Gewichtung: Codable, Equatable {
     public mutating func nein(tags: [String]) {
         for tag in Set(tags) {
             if let alt = gewichte[tag] {
-                gewichte[tag] = Self.geklemmt(alt - Self.neinSchritt)
+                gewichte[tag] = geklemmt(alt - Self.neinSchritt, fuer: tag)
             }
         }
         verlauf.append(false)
     }
 
     public mutating func setze(_ tag: String, auf wert: Double) {
-        gewichte[tag] = Self.geklemmt(wert)
+        gewichte[tag] = geklemmt(wert, fuer: tag)
     }
 
     public mutating func zuruecksetzen() {
@@ -75,7 +104,7 @@ public struct Gewichtung: Codable, Equatable {
     /// Wünsche fallen weg, gelernte Werte bestehender Wünsche bleiben – außer die Änderung hat
     /// ihr Gewicht ausdrücklich neu gesetzt („Garten ist ihr jetzt nicht mehr so wichtig“).
     public mutating func uebernimm(profil: Profil) {
-        let neu = Dictionary(profil.wuensche.map { ($0.tag, Self.geklemmt($0.gewicht)) }) { a, _ in a }
+        let neu = Dictionary(profil.wuensche.map { ($0.tag, Self.hauptGeklemmt($0.gewicht)) }) { a, _ in a }
         for tag in start.keys where neu[tag] == nil {
             gewichte[tag] = nil
         }
@@ -83,6 +112,9 @@ public struct Gewichtung: Codable, Equatable {
             gewichte[tag] = wert
         }
         start = neu
+        for tag in start.keys {
+            gewichte[tag] = geklemmt(gewichte[tag] ?? Self.hauptMinimum, fuer: tag)
+        }
         for w in profil.wuensche {
             labels[w.tag] = w.label
         }
@@ -117,6 +149,10 @@ public struct Gewichtung: Codable, Equatable {
 
     static func geklemmt(_ wert: Double) -> Double {
         min(maximum, max(minimum, wert))
+    }
+
+    static func hauptGeklemmt(_ wert: Double) -> Double {
+        max(hauptMinimum, geklemmt(wert))
     }
 }
 

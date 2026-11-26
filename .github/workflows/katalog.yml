@@ -18,7 +18,8 @@ permissions:
 jobs:
   bauen:
     runs-on: ubuntu-latest
-    timeout-minutes: 60
+    # Katalog bis ~50 min, danach Bilder prüfen bis 10 min.
+    timeout-minutes: 75
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -41,10 +42,15 @@ jobs:
           # Was offen bleibt, kommt beim nächsten Nachtlauf dran.
           KATALOG_MAX_MINUTEN: "45"
         run: python scripts/build_katalog.py
+      - name: Bilder prüfen
+        # Produkte, deren Foto nicht lädt, zeigt der Server nicht (app/katalog/bildpruefung.py).
+        env:
+          BILDER_MAX_MINUTEN: "10"
+        run: python scripts/pruefe_bilder.py
       - name: Committen, falls geändert
         run: |
           git config user.name katalog-bot
           git config user.email katalog-bot@users.noreply.github.com
-          git add katalog/katalog.json
+          git add katalog/katalog.json katalog/bilder.json
           git diff --cached --quiet || git commit -m "Katalog aktualisieren"
           git push
